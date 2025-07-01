@@ -128,6 +128,8 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
       if (!user) throw new Error('You must be logged in to create a listing.');
       if (!videoFile) throw new Error('A video is required for every listing.');
       // Insert listing
+      const videoUrl = await uploadToCloudinary(videoFile);
+      const imageUrls = await Promise.all(photoFiles.map(uploadToCloudinary));
       const { error: insertError } = await supabase.from('listings').insert({
         seller_id: user.id,
         title,
@@ -138,8 +140,8 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
         latitude,
         longitude,
         location_name: locationName,
-        video: videoFile.name,
-        images: []
+        video: videoUrl,
+        images: imageUrls
       });
       if (insertError) throw insertError;
       showToast('Listing created!', 'success');
