@@ -1,0 +1,213 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
+import { ArrowLeft, Send } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
+import { useToast } from '@/hooks/use-toast';
+import { useAppContext } from '@/contexts/AppContext';
+
+interface Message {
+  id: string;
+  content: string;
+  sender_id: string;
+  created_at: string;
+}
+
+interface ChatWindowProps {
+  conversationId: string;
+  listingTitle: string;
+  onBack: () => void;
+}
+
+const ChatWindow: React.FC<ChatWindowProps> = ({ 
+  conversationId, 
+  listingTitle, 
+  onBack 
+}) => {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
+  const { user } = useAppContext();
+  const currentUserId = user?.id;
+  const [otherUserEmail, setOtherUserEmail] = useState<string>('');
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isOtherTyping, setIsOtherTyping] = useState(false);
+  const typingTimeout = useRef<NodeJS.Timeout | null>(null);
+  const typingChannel = useRef<any>(null);
+
+  useEffect(() => {
+    loadMessages();
+    // Subscribe to new messages in this conversation
+    const channel = supabase.channel('messages-realtime')
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'messages',
+        filter: `conversation_id=eq.${conversationId}`
+      }, (payload) => {
+        loadMessages();
+      })
+      .subscribe();
+    // Typing indicator channel
+    typingChannel.current = supabase.channel(`typing-${conversationId}`)
+      .on('broadcast', { event: 'typing' }, (payload) => {
+        if (payload.payload.userId !== currentUserId) {
+          setIsOtherTyping(true);
+          if (typingTimeout.current) clearTimeout(typingTimeout.current);
+          typingTimeout.current = setTimeout(() => setIsOtherTyping(false), 2000);
+        }
+      })
+      .subscribe();
+    // Fetch other user's email
+    fetchOtherUserEmail();
+    return () => {
+      supabase.removeChannel(channel);
+      if (typingChannel.current) supabase.removeChannel(typingChannel.current);
+      if (typingTimeout.current) clearTimeout(typingTimeout.current);
+    };
+  }, [conversationId]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const fetchOtherUserEmail = async () => {
+    // Get conversation info
+    const { data: conv } = await supabase.from('conversations').select('*').eq('id', conversationId).single();
+    if (conv && currentUserId) {
+      const otherUserId = conv.buyer_id === currentUserId ? conv.seller_id : conv.buyer_id;
+      const { data: userData } = await supabase.from('users').select('email').eq('id', otherUserId).single();
+      if (userData) setOtherUserEmail(userData.email);
+    }
+  };
+
+  const loadMessages = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('conversation_id', conversationId)
+        .order('created_at', { ascending: true });
+
+      if (error) throw error;
+      setMessages(data || []);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to load messages",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const sendMessage = async () => {
+    if (!newMessage.trim() || !currentUserId) return;
+    try {
+      const { error } = await supabase
+        .from('messages')
+        .insert({
+          conversation_id: conversationId,
+          sender_id: currentUserId,
+          content: newMessage.trim()
+        });
+      if (error) throw error;
+      setNewMessage('');
+      loadMessages();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to send message",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewMessage(e.target.value);
+    if (typingChannel.current && currentUserId) {
+      typingChannel.current.send({
+        type: 'broadcast',
+        event: 'typing',
+        payload: { userId: currentUserId }
+      });
+    }
+  };
+
+  return (
+    <div className="flex flex-col h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b p-4">
+        <div className="flex items-center">
+          <Button variant="ghost" size="sm" onClick={onBack} className="mr-3">
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <div>
+            <h2 className="font-semibold">{listingTitle}</h2>
+            <p className="text-sm text-gray-500">Chat with {otherUserEmail || 'user'}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {isLoading ? (
+          <div className="text-center text-gray-500">Loading messages...</div>
+        ) : messages.length === 0 ? (
+          <div className="text-center text-gray-500">No messages yet. Start the conversation!</div>
+        ) : (
+          messages.map((message) => (
+            <div
+              key={message.id}
+              className={`flex ${
+                message.sender_id === currentUserId ? 'justify-end' : 'justify-start'
+              }`}
+            >
+              <Card className={`max-w-xs p-3 ${
+                message.sender_id === currentUserId 
+                  ? 'bg-blue-600 text-white' 
+                  : 'bg-white'
+              }`}>
+                <div className="flex flex-col">
+                  <span className="text-xs font-semibold mb-1">
+                    {message.sender_id === currentUserId ? 'You' : otherUserEmail || 'User'}
+                  </span>
+                  <p className="text-sm">{message.content}</p>
+                  <p className={`text-xs mt-1 ${
+                    message.sender_id === currentUserId ? 'text-blue-100' : 'text-gray-500'
+                  }`}>
+                    {new Date(message.created_at).toLocaleTimeString()}
+                  </p>
+                </div>
+              </Card>
+            </div>
+          ))
+        )}
+        {isOtherTyping && (
+          <div className="text-left text-xs text-gray-400 pl-2">{otherUserEmail || 'User'} is typing…</div>
+        )}
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Input */}
+      <div className="bg-white border-t p-4">
+        <div className="flex space-x-2">
+          <Input
+            value={newMessage}
+            onChange={handleInputChange}
+            placeholder="Type a message..."
+            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+          />
+          <Button onClick={sendMessage} disabled={!newMessage.trim()}>
+            <Send className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ChatWindow;
