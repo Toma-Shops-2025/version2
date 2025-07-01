@@ -54,6 +54,7 @@ const AuthPage: React.FC = () => {
           value={email}
           onChange={e => setEmail(e.target.value)}
           required
+          autoComplete="email"
         />
         <Input
           type="password"
@@ -61,6 +62,7 @@ const AuthPage: React.FC = () => {
           value={password}
           onChange={e => setPassword(e.target.value)}
           required
+          autoComplete={isSignUp ? "new-password" : "current-password"}
         />
         {error && <div className="text-red-500 text-sm text-center">{error}</div>}
         <Button type="submit" className="w-full" disabled={loading}>
