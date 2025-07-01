@@ -30,15 +30,15 @@ const Contact: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">Your Name:</label>
-            <input name="name" value={form.name} onChange={handleChange} className="w-full border rounded px-3 py-2" required />
+            <input name="name" value={form.name} onChange={handleChange} className="w-full border rounded px-3 py-2" required autoComplete="name" />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Your Email:</label>
-            <input name="email" type="email" value={form.email} onChange={handleChange} className="w-full border rounded px-3 py-2" required />
+            <input name="email" type="email" value={form.email} onChange={handleChange} className="w-full border rounded px-3 py-2" required autoComplete="email" />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Your Message:</label>
-            <textarea name="message" value={form.message} onChange={handleChange} className="w-full border rounded px-3 py-2" rows={4} required />
+            <textarea name="message" value={form.message} onChange={handleChange} className="w-full border rounded px-3 py-2" rows={4} required autoComplete="off" />
           </div>
           <button type="submit" className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Submit</button>
         </form>
