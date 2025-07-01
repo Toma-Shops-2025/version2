@@ -26,19 +26,6 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/categories/vehicles" element={<CategoryVehicles />} />
-            <Route path="/categories/electronics" element={<CategoryElectronics />} />
-            <Route path="/categories/furniture" element={<CategoryFurniture />} />
-            <Route path="/categories/clothing" element={<CategoryClothing />} />
-            <Route path="/categories/tools" element={<CategoryTools />} />
-            <Route path="/categories/sports-outdoors" element={<CategorySportsOutdoors />} />
-            <Route path="/categories/home-garden" element={<CategoryHomeGarden />} />
-            <Route path="/categories/toys-games" element={<CategoryToysGames />} />
-            <Route path="/favorites" element={<Favorites />} />
-            <Route path="/notifications" element={<Notifications />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/sell" element={<Sell />} />
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/why-tomashops" element={<WhyTomaShops />} />
             <Route path="/safety" element={<Safety />} />
