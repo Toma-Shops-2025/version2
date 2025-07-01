@@ -6,7 +6,14 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/theme-provider";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import { CategoryVehicles, CategoryElectronics, CategoryFurniture, CategoryClothing, CategoryTools, CategorySportsOutdoors, CategoryHomeGarden, CategoryToysGames, Favorites, Notifications, Cart, Profile, Sell, HowItWorks, WhyTomaShops, Safety, Shipping, Privacy, Terms, Faq } from "@/pages/Placeholders";
+import HowItWorks from './pages/HowItWorks';
+import WhyTomaShops from './pages/WhyTomaShops';
+import Safety from './pages/Safety';
+import Shipping from './pages/Shipping';
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
+import Faq from './pages/Faq';
+import Contact from './pages/Contact';
 
 const queryClient = new QueryClient();
 
@@ -39,6 +46,7 @@ const App = () => (
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/faq" element={<Faq />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
