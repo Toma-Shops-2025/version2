@@ -6,6 +6,7 @@ import { ArrowLeft, MapPin, Heart, Share } from 'lucide-react';
 // import { Listing } from '@/data/mockListings';
 import MessageButton from './MessageButton';
 import OfferButton from './OfferButton';
+import Map from './Map';
 
 interface ProductDetailProps {
   listing: Listing;
@@ -22,6 +23,8 @@ interface Listing {
   images?: string[];
   seller_id?: string;
   isJustListed?: boolean;
+  latitude?: number;
+  longitude?: number;
 }
 
 const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
@@ -78,6 +81,16 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
             <MapPin className="h-4 w-4 mr-1" />
             <span>{listing.location}</span>
           </div>
+          {listing.latitude && listing.longitude && (
+            <div className="mb-6">
+              <Map
+                listings={[{ id: listing.id, title: listing.title, latitude: listing.latitude, longitude: listing.longitude }]}
+                lat={listing.latitude}
+                lng={listing.longitude}
+                zoom={13}
+              />
+            </div>
+          )}
         </div>
 
         <div className="mb-6">

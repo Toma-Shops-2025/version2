@@ -8,6 +8,7 @@ import Footer from './Footer';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase';
 import { MapPin, MessageCircle } from 'lucide-react';
+import Map from './Map';
 
 const HomePage: React.FC = () => {
   const [selectedListing, setSelectedListing] = useState<string | null>(null);
@@ -110,10 +111,15 @@ const HomePage: React.FC = () => {
           ) : error ? (
             <div className="text-center text-red-500 py-8">{error}</div>
           ) : (
-            <ListingsGrid 
-              listings={listings} 
-              onListingClick={handleListingClick}
-            />
+            <>
+              <ListingsGrid 
+                listings={listings} 
+                onListingClick={handleListingClick}
+              />
+              {!loading && !error && (
+                <Map listings={listings} />
+              )}
+            </>
           )}
         </div>
       </main>

@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, Home, Grid3X3, Heart, Bell, ShoppingCart, User, Plus } from 'lucide-react';
 import { useAppContext } from '@/contexts/AppContext';
+import { Link } from "react-router-dom";
 
 const Header: React.FC = () => {
   const { user, logout } = useAppContext();
@@ -20,30 +21,42 @@ const Header: React.FC = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Button variant="ghost" className="flex items-center space-x-2">
-              <Home className="h-5 w-5" />
-              <span>Home</span>
-            </Button>
-            <Button variant="ghost" className="flex items-center space-x-2">
-              <Grid3X3 className="h-5 w-5" />
-              <span>Categories</span>
-            </Button>
-            <Button variant="ghost" className="flex items-center space-x-2">
-              <Heart className="h-5 w-5" />
-              <span>Favorites</span>
-            </Button>
-            <Button variant="ghost" className="flex items-center space-x-2">
-              <Bell className="h-5 w-5" />
-              <span>Notifications</span>
-            </Button>
-            <Button variant="ghost" className="flex items-center space-x-2">
-              <ShoppingCart className="h-5 w-5" />
-              <span>Cart</span>
-            </Button>
-            <Button variant="ghost" className="flex items-center space-x-2">
-              <User className="h-5 w-5" />
-              <span>Profile</span>
-            </Button>
+            <Link to="/" className="flex items-center space-x-2">
+              <Button variant="ghost">
+                <Home className="h-5 w-5" />
+                <span>Home</span>
+              </Button>
+            </Link>
+            <Link to="/categories/vehicles" className="flex items-center space-x-2">
+              <Button variant="ghost">
+                <Grid3X3 className="h-5 w-5" />
+                <span>Categories</span>
+              </Button>
+            </Link>
+            <Link to="/favorites" className="flex items-center space-x-2">
+              <Button variant="ghost">
+                <Heart className="h-5 w-5" />
+                <span>Favorites</span>
+              </Button>
+            </Link>
+            <Link to="/notifications" className="flex items-center space-x-2">
+              <Button variant="ghost">
+                <Bell className="h-5 w-5" />
+                <span>Notifications</span>
+              </Button>
+            </Link>
+            <Link to="/cart" className="flex items-center space-x-2">
+              <Button variant="ghost">
+                <ShoppingCart className="h-5 w-5" />
+                <span>Cart</span>
+              </Button>
+            </Link>
+            <Link to="/profile" className="flex items-center space-x-2">
+              <Button variant="ghost">
+                <User className="h-5 w-5" />
+                <span>Profile</span>
+              </Button>
+            </Link>
           </nav>
 
           {/* Search Bar */}
@@ -59,10 +72,12 @@ const Header: React.FC = () => {
           </div>
 
           {/* Post Listing Button */}
-          <Button className="bg-teal-600 hover:bg-teal-700 text-white flex items-center space-x-2">
-            <Plus className="h-4 w-4" />
-            <span className="hidden sm:inline">Post New Listing</span>
-          </Button>
+          <Link to="/sell" className="flex items-center space-x-2">
+            <Button className="bg-teal-600 hover:bg-teal-700 text-white">
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline">Post New Listing</span>
+            </Button>
+          </Link>
 
           {/* User Menu */}
           <div className="flex items-center space-x-4">

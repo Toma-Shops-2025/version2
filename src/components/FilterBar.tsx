@@ -11,6 +11,8 @@ interface FilterBarProps {
   onLocationChange: (location: string) => void;
   priceRange: string;
   onPriceRangeChange: (range: string) => void;
+  radius: string;
+  onRadiusChange: (radius: string) => void;
 }
 
 const categories = [
@@ -25,13 +27,23 @@ const categories = [
   'Toys & Games'
 ];
 
+const radiusOptions = [
+  { label: '5 miles', value: '5' },
+  { label: '10 miles', value: '10' },
+  { label: '25 miles', value: '25' },
+  { label: '50 miles', value: '50' },
+  { label: '100 miles', value: '100' },
+];
+
 const FilterBar: React.FC<FilterBarProps> = ({
   selectedCategory,
   onCategoryChange,
   location,
   onLocationChange,
   priceRange,
-  onPriceRangeChange
+  onPriceRangeChange,
+  radius,
+  onRadiusChange
 }) => {
   return (
     <div className="bg-white border-b border-gray-200 py-4">
@@ -74,6 +86,18 @@ const FilterBar: React.FC<FilterBarProps> = ({
               <SelectItem value="100-500">$100 - $500</SelectItem>
               <SelectItem value="500-1000">$500 - $1,000</SelectItem>
               <SelectItem value="1000+">$1,000+</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Radius Filter */}
+          <Select value={radius} onValueChange={onRadiusChange}>
+            <SelectTrigger className="w-32">
+              <SelectValue placeholder="Radius" />
+            </SelectTrigger>
+            <SelectContent>
+              {radiusOptions.map(opt => (
+                <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Mail, Phone } from 'lucide-react';
+import { Link } from "react-router-dom";
 
 const Footer: React.FC = () => {
   return (
@@ -37,10 +38,10 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2">
-              <li><Button variant="link" className="text-gray-300 hover:text-white p-0 h-auto">How It Works</Button></li>
-              <li><Button variant="link" className="text-gray-300 hover:text-white p-0 h-auto">Why Choose TomaShops</Button></li>
-              <li><Button variant="link" className="text-gray-300 hover:text-white p-0 h-auto">Safety Measures</Button></li>
-              <li><Button variant="link" className="text-gray-300 hover:text-white p-0 h-auto">Shipping & Handling</Button></li>
+              <li><Link to="/how-it-works"><Button variant="link" className="text-gray-300 hover:text-white p-0 h-auto">How It Works</Button></Link></li>
+              <li><Link to="/why-tomashops"><Button variant="link" className="text-gray-300 hover:text-white p-0 h-auto">Why Choose TomaShops</Button></Link></li>
+              <li><Link to="/safety"><Button variant="link" className="text-gray-300 hover:text-white p-0 h-auto">Safety Measures</Button></Link></li>
+              <li><Link to="/shipping"><Button variant="link" className="text-gray-300 hover:text-white p-0 h-auto">Shipping & Handling</Button></Link></li>
             </ul>
           </div>
 
@@ -48,9 +49,9 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="font-semibold mb-4">Support & Legal</h4>
             <ul className="space-y-2 mb-6">
-              <li><Button variant="link" className="text-gray-300 hover:text-white p-0 h-auto">Privacy Policy</Button></li>
-              <li><Button variant="link" className="text-gray-300 hover:text-white p-0 h-auto">Terms of Service</Button></li>
-              <li><Button variant="link" className="text-gray-300 hover:text-white p-0 h-auto">FAQ</Button></li>
+              <li><Link to="/privacy"><Button variant="link" className="text-gray-300 hover:text-white p-0 h-auto">Privacy Policy</Button></Link></li>
+              <li><Link to="/terms"><Button variant="link" className="text-gray-300 hover:text-white p-0 h-auto">Terms of Service</Button></Link></li>
+              <li><Link to="/faq"><Button variant="link" className="text-gray-300 hover:text-white p-0 h-auto">FAQ</Button></Link></li>
             </ul>
             
             {/* Contact Info */}
