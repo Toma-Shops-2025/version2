@@ -26,6 +26,24 @@ const categories = [
   'Toys & Games'
 ];
 
+// Cloudinary upload function
+const CLOUDINARY_CLOUD_NAME = 'dumnzljgn';
+const CLOUDINARY_UPLOAD_PRESET = 'unsigned_preset';
+
+async function uploadToCloudinary(file: File) {
+  const url = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+  const res = await fetch(url, {
+    method: 'POST',
+    body: formData,
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error?.message || 'Cloudinary upload failed');
+  return data.secure_url;
+}
+
 const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
@@ -109,36 +127,6 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
     try {
       if (!user) throw new Error('You must be logged in to create a listing.');
       if (!videoFile) throw new Error('A video is required for every listing.');
-      // Debug: Log video file info
-      console.log('Uploading video file:', videoFile);
-      console.log('Video file size (bytes):', videoFile.size);
-      // Upload video
-      const videoExt = videoFile.name.split('.').pop();
-      const videoName = `${user.id}_${Date.now()}_video.${videoExt}`;
-      const { error: videoError } = await supabase.storage.from('listings').upload(videoName, videoFile, { upsert: true });
-      if (videoError) {
-        console.error('Supabase video upload error:', videoError);
-        throw videoError;
-      }
-      const { data: videoUrlData } = supabase.storage.from('listings').getPublicUrl(videoName);
-      const videoUrl = videoUrlData.publicUrl;
-      // Upload photos
-      const imageUrls: string[] = [];
-      for (let i = 0; i < photoFiles.length; i++) {
-        const file = photoFiles[i];
-        // Debug: Log image file info
-        console.log(`Uploading image file ${i}:`, file);
-        console.log(`Image file ${i} size (bytes):`, file.size);
-        const ext = file.name.split('.').pop();
-        const imgName = `${user.id}_${Date.now()}_photo${i}.${ext}`;
-        const { error: imgError } = await supabase.storage.from('listings').upload(imgName, file, { upsert: true });
-        if (imgError) {
-          console.error(`Supabase image upload error (photo ${i}):`, imgError);
-          throw imgError;
-        }
-        const { data: imgUrlData } = supabase.storage.from('listings').getPublicUrl(imgName);
-        imageUrls.push(imgUrlData.publicUrl);
-      }
       // Insert listing
       const { error: insertError } = await supabase.from('listings').insert({
         seller_id: user.id,
@@ -150,8 +138,8 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
         latitude,
         longitude,
         location_name: locationName,
-        video: videoUrl,
-        images: imageUrls
+        video: videoFile.name,
+        images: []
       });
       if (insertError) throw insertError;
       showToast('Listing created!', 'success');
