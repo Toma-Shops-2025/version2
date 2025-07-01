@@ -109,21 +109,33 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
     try {
       if (!user) throw new Error('You must be logged in to create a listing.');
       if (!videoFile) throw new Error('A video is required for every listing.');
+      // Debug: Log video file info
+      console.log('Uploading video file:', videoFile);
+      console.log('Video file size (bytes):', videoFile.size);
       // Upload video
       const videoExt = videoFile.name.split('.').pop();
       const videoName = `${user.id}_${Date.now()}_video.${videoExt}`;
       const { error: videoError } = await supabase.storage.from('listings').upload(videoName, videoFile, { upsert: true });
-      if (videoError) throw videoError;
+      if (videoError) {
+        console.error('Supabase video upload error:', videoError);
+        throw videoError;
+      }
       const { data: videoUrlData } = supabase.storage.from('listings').getPublicUrl(videoName);
       const videoUrl = videoUrlData.publicUrl;
       // Upload photos
       const imageUrls: string[] = [];
       for (let i = 0; i < photoFiles.length; i++) {
         const file = photoFiles[i];
+        // Debug: Log image file info
+        console.log(`Uploading image file ${i}:`, file);
+        console.log(`Image file ${i} size (bytes):`, file.size);
         const ext = file.name.split('.').pop();
         const imgName = `${user.id}_${Date.now()}_photo${i}.${ext}`;
         const { error: imgError } = await supabase.storage.from('listings').upload(imgName, file, { upsert: true });
-        if (imgError) throw imgError;
+        if (imgError) {
+          console.error(`Supabase image upload error (photo ${i}):`, imgError);
+          throw imgError;
+        }
         const { data: imgUrlData } = supabase.storage.from('listings').getPublicUrl(imgName);
         imageUrls.push(imgUrlData.publicUrl);
       }
