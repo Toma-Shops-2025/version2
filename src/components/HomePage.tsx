@@ -116,9 +116,19 @@ const HomePage: React.FC = () => {
                 listings={listings} 
                 onListingClick={handleListingClick}
               />
-              {!loading && !error && (
-                <Map listings={listings} />
-              )}
+              <div className="my-8">
+                <iframe
+                  width="100%"
+                  height="315"
+                  src="https://www.youtube.com/embed/uS_JhdsZpcg?si=OrIIXCO2IYI2CJ2K"
+                  title="TomaShops How-To Demo"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="rounded-lg shadow"
+                ></iframe>
+              </div>
+              <Map listings={listings} />
             </>
           )}
         </div>

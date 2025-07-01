@@ -52,6 +52,7 @@ const Footer: React.FC = () => {
               <li><Link to="/privacy"><Button variant="link" className="text-gray-300 hover:text-white p-0 h-auto">Privacy Policy</Button></Link></li>
               <li><Link to="/terms"><Button variant="link" className="text-gray-300 hover:text-white p-0 h-auto">Terms of Service</Button></Link></li>
               <li><Link to="/faq"><Button variant="link" className="text-gray-300 hover:text-white p-0 h-auto">FAQ</Button></Link></li>
+              <li><Link to="/contact"><Button variant="link" className="text-gray-300 hover:text-white p-0 h-auto">Contact Us</Button></Link></li>
             </ul>
             
             {/* Contact Info */}
