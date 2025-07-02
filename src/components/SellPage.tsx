@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -9,6 +9,8 @@ import { supabase } from '@/lib/supabase';
 import { useAppContext } from '@/contexts/AppContext';
 import Map from './Map';
 import mapboxgl from 'mapbox-gl';
+import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 
 interface SellPageProps {
   onBack: () => void;
@@ -63,8 +65,37 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
   const [latitude, setLatitude] = useState<number | null>(38.2527); // Default Louisville
   const [longitude, setLongitude] = useState<number | null>(-85.7585);
   const [locationName, setLocationName] = useState<string>('Louisville, Kentucky');
-  const [addressQuery, setAddressQuery] = useState('');
-  const [addressSuggestions, setAddressSuggestions] = useState<any[]>([]);
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<mapboxgl.Map | null>(null);
+  const geocoderRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!mapContainer.current) return;
+    if (mapRef.current) return;
+    mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN || '';
+    mapRef.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/streets-v12',
+      center: [longitude || -85.7585, latitude || 38.2527],
+      zoom: 10,
+    });
+    geocoderRef.current = new MapboxGeocoder({
+      accessToken: mapboxgl.accessToken,
+      mapboxgl: mapboxgl,
+      marker: true,
+    });
+    mapRef.current.addControl(geocoderRef.current);
+    geocoderRef.current.on('result', (e: any) => {
+      const { center, place_name } = e.result;
+      setLongitude(center[0]);
+      setLatitude(center[1]);
+      setLocationName(place_name);
+    });
+    return () => {
+      mapRef.current?.remove();
+      mapRef.current = null;
+    };
+  }, []);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -93,31 +124,6 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
     const newFiles = photoFiles.filter((_, i) => i !== idx);
     setPhotoFiles(newFiles);
     setPhotoPreviews(newFiles.map(f => URL.createObjectURL(f)));
-  };
-
-  const reverseGeocode = async (lat: number, lng: number) => {
-    const resp = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${mapboxgl.accessToken}`);
-    const data = await resp.json();
-    return data.features?.[0]?.place_name || '';
-  };
-
-  const handleAddressInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAddressQuery(e.target.value);
-    if (e.target.value.length < 3) {
-      setAddressSuggestions([]);
-      return;
-    }
-    const resp = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(e.target.value)}.json?access_token=${mapboxgl.accessToken}&autocomplete=true&limit=5`);
-    const data = await resp.json();
-    setAddressSuggestions(data.features || []);
-  };
-
-  const handleSuggestionSelect = (feature: any) => {
-    setLatitude(feature.center[1]);
-    setLongitude(feature.center[0]);
-    setLocationName(feature.place_name);
-    setAddressQuery(feature.place_name);
-    setAddressSuggestions([]);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -260,56 +266,18 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
                   rows={4}
                 />
               </div>
-
-              {/* Address Autocomplete */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">Search Address</label>
-                <Input
-                  value={addressQuery}
-                  onChange={handleAddressInput}
-                  placeholder="Type an address or place..."
-                  autoComplete="off"
-                />
-                {addressSuggestions.length > 0 && (
-                  <ul className="bg-white border rounded shadow mt-1 max-h-40 overflow-auto z-50 relative">
-                    {addressSuggestions.map((feature, idx) => (
-                      <li
-                        key={feature.id}
-                        className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
-                        onClick={() => handleSuggestionSelect(feature)}
-                      >
-                        {feature.place_name}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
             </CardContent>
           </Card>
 
-          {/* Location Map */}
+          {/* Location Picker */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2"><MapPin className="h-5 w-5" /> Location</CardTitle>
+              <CardTitle className="text-lg">Location</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="mb-2 text-gray-600">Drag the marker or click the map to set your item location.</div>
-              <div style={{ height: 300, borderRadius: 8, overflow: 'hidden', marginBottom: 8 }}>
-                <Map
-                  listings={latitude && longitude ? [{ id: 'selected', title: 'Selected Location', latitude, longitude }] : []}
-                  lng={longitude || -85.7585}
-                  lat={latitude || 38.2527}
-                  zoom={12}
-                  // @ts-ignore
-                  onMapClick={async (lng: number, lat: number) => {
-                    setLatitude(lat);
-                    setLongitude(lng);
-                    const name = await reverseGeocode(lat, lng);
-                    setLocationName(name);
-                  }}
-                />
-              </div>
-              <div className="text-sm text-gray-700">{locationName}</div>
+              <div className="mb-2">Search for your address and drop a pin:</div>
+              <div ref={mapContainer} style={{ width: '100%', height: 300 }} />
+              <div className="mt-2 text-sm text-gray-600">Selected: {locationName}</div>
             </CardContent>
           </Card>
 
