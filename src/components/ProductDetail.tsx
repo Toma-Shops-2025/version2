@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, MapPin, Heart, Share } from 'lucide-react';
+import { ArrowLeft, MapPin, Heart, Share, X } from 'lucide-react';
 // import { Listing } from '@/data/mockListings';
 import MessageButton from './MessageButton';
 import OfferButton from './OfferButton';
 import Map from './Map';
+import { supabase } from '@/lib/supabase';
+import { useAppContext } from '@/contexts/AppContext';
 
 interface ProductDetailProps {
   listing: Listing;
@@ -28,6 +30,56 @@ interface Listing {
 }
 
 const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
+  const { user } = useAppContext();
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [favoriteId, setFavoriteId] = useState<string | null>(null);
+  const [modalImg, setModalImg] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchFavorite = async () => {
+      if (!user) return;
+      const { data } = await supabase
+        .from('favorites')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('listing_id', listing.id)
+        .single();
+      if (data) {
+        setIsFavorite(true);
+        setFavoriteId(data.id);
+      } else {
+        setIsFavorite(false);
+        setFavoriteId(null);
+      }
+    };
+    fetchFavorite();
+  }, [user, listing.id]);
+
+  const handleFavorite = async () => {
+    if (!user) return;
+    if (isFavorite && favoriteId) {
+      await supabase.from('favorites').delete().eq('id', favoriteId);
+      setIsFavorite(false);
+      setFavoriteId(null);
+    } else {
+      const { data } = await supabase.from('favorites').insert({ user_id: user.id, listing_id: listing.id }).select('id').single();
+      setIsFavorite(true);
+      setFavoriteId(data?.id || null);
+    }
+  };
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: listing.title, url });
+      } catch {}
+    } else {
+      await navigator.clipboard.writeText(url);
+      alert('Link copied to clipboard!');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <div className="sticky top-0 bg-white border-b z-10">
@@ -36,10 +88,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="flex space-x-2">
-            <Button variant="ghost" size="sm">
-              <Heart className="h-5 w-5" />
+            <Button variant={isFavorite ? 'default' : 'ghost'} size="sm" onClick={handleFavorite} aria-label="Favorite">
+              <Heart className={`h-5 w-5 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
             </Button>
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" onClick={handleShare} aria-label="Share">
               <Share className="h-5 w-5" />
             </Button>
           </div>
@@ -65,9 +117,22 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
               key={idx}
               src={img}
               alt={`Photo ${idx + 1}`}
-              className="h-32 w-32 object-cover rounded"
+              className="h-32 w-32 object-cover rounded cursor-pointer"
+              onClick={() => setModalImg(img)}
             />
           ))}
+        </div>
+      )}
+
+      {/* Modal for enlarged photo */}
+      {modalImg && (
+        <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
+          <div className="relative">
+            <img src={modalImg} alt="Enlarged" className="max-h-[80vh] max-w-[90vw] rounded shadow-lg" />
+            <Button variant="secondary" className="absolute top-2 right-2" onClick={() => setModalImg(null)}>
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
       )}
 
