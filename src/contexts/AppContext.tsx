@@ -34,10 +34,9 @@ export const useAppContext = () => useContext(AppContext);
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing session on mount
-    const session = supabase.auth.getSession ? undefined : null;
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         setUser({
@@ -47,8 +46,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           email_confirmed_at: session.user.email_confirmed_at || null,
         });
       }
+      setLoading(false);
     });
-    // Listen for auth state changes
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
         setUser({
@@ -91,6 +90,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setUser(null);
     showToast('Logged out successfully.');
   };
+
+  // Show loading spinner/message while checking session
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center bg-black text-white">Checking session...</div>;
+  }
 
   return (
     <AppContext.Provider
