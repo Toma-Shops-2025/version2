@@ -38,6 +38,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Supabase getSession:', session);
       if (session?.user) {
         setUser({
           id: session.user.id,
@@ -49,6 +50,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setLoading(false);
     });
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log('Supabase onAuthStateChange:', session);
       if (session?.user) {
         setUser({
           id: session.user.id,
