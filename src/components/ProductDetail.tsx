@@ -9,6 +9,7 @@ import OfferButton from './OfferButton';
 import Map from './Map';
 import { supabase } from '@/lib/supabase';
 import { useAppContext } from '@/contexts/AppContext';
+import ListingsGrid from './ListingsGrid';
 
 interface ProductDetailProps {
   listing: Listing;
@@ -34,6 +35,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [favoriteId, setFavoriteId] = useState<string | null>(null);
   const [modalImg, setModalImg] = useState<string | null>(null);
+  const [similarListings, setSimilarListings] = useState<Listing[]>([]);
+  const [sellerListings, setSellerListings] = useState<Listing[]>([]);
+  const [reviews, setReviews] = useState<any[]>([]); // Adjust type if you have a reviews table
 
   useEffect(() => {
     const fetchFavorite = async () => {
@@ -54,6 +58,42 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
     };
     fetchFavorite();
   }, [user, listing.id]);
+
+  useEffect(() => {
+    // Fetch similar listings
+    const fetchSimilar = async () => {
+      const { data } = await supabase
+        .from('listings')
+        .select('*')
+        .eq('category', listing.category)
+        .neq('id', listing.id)
+        .limit(6);
+      setSimilarListings(data || []);
+    };
+    // Fetch other listings from this seller
+    const fetchSellerListings = async () => {
+      const { data } = await supabase
+        .from('listings')
+        .select('*')
+        .eq('seller_id', listing.seller_id)
+        .neq('id', listing.id)
+        .limit(6);
+      setSellerListings(data || []);
+    };
+    // Fetch seller reviews (if reviews table exists)
+    const fetchReviews = async () => {
+      const { data } = await supabase
+        .from('reviews')
+        .select('*')
+        .eq('seller_id', listing.seller_id)
+        .order('created_at', { ascending: false })
+        .limit(5);
+      setReviews(data || []);
+    };
+    fetchSimilar();
+    fetchSellerListings();
+    fetchReviews();
+  }, [listing]);
 
   const handleFavorite = async () => {
     if (!user) return;
@@ -176,6 +216,44 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
               currentPrice={listing.price}
               listingTitle={listing.title}
             />
+          )}
+        </div>
+      </div>
+      {/* New sections */}
+      <div className="p-4 space-y-8">
+        {/* Similar Listings */}
+        <div>
+          <h3 className="text-lg font-semibold mb-2">Similar Listings</h3>
+          {similarListings.length === 0 ? (
+            <div className="text-gray-500">No similar listings found.</div>
+          ) : (
+            <ListingsGrid listings={similarListings} />
+          )}
+        </div>
+        {/* Other Listings from This Seller */}
+        <div>
+          <h3 className="text-lg font-semibold mb-2">Other Listings from This Seller</h3>
+          {sellerListings.length === 0 ? (
+            <div className="text-gray-500">No other listings from this seller.</div>
+          ) : (
+            <ListingsGrid listings={sellerListings} />
+          )}
+        </div>
+        {/* Seller Reviews */}
+        <div>
+          <h3 className="text-lg font-semibold mb-2">Seller Reviews</h3>
+          {reviews.length === 0 ? (
+            <div className="text-gray-500">No reviews for this seller yet.</div>
+          ) : (
+            <div className="space-y-4">
+              {reviews.map((review, idx) => (
+                <div key={idx} className="bg-gray-100 rounded p-3 text-gray-800">
+                  <div className="font-semibold">{review.reviewer_name || 'User'}</div>
+                  <div className="text-sm">{review.comment}</div>
+                  <div className="text-xs text-gray-500">{new Date(review.created_at).toLocaleString()}</div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>
