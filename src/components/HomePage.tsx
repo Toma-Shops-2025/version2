@@ -100,23 +100,6 @@ const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      {user && !user.email_confirmed_at && (
-        <div className="p-4">
-          <Alert variant="warning">
-            <AlertTitle>Email not confirmed</AlertTitle>
-            <AlertDescription>
-              Please confirm your email address to unlock all features. <br />
-              <button
-                className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-                onClick={handleResend}
-                disabled={resending || resent}
-              >
-                {resending ? 'Resending...' : resent ? 'Email Sent!' : 'Resend confirmation email'}
-              </button>
-            </AlertDescription>
-          </Alert>
-        </div>
-      )}
       
       <main className="pb-8">
         <div className="bg-gray-900 text-white px-4 py-3">

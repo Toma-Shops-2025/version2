@@ -5,7 +5,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/lib/supabase';
-import PaymentDialog from './PaymentDialog';
 import { useAppContext } from '@/contexts/AppContext';
 
 interface OfferButtonProps {
@@ -85,7 +84,8 @@ const OfferButton: React.FC<OfferButtonProps> = ({
             Make offer
           </Button>
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent aria-describedby="offer-dialog-desc">
+          <div id="offer-dialog-desc" className="sr-only">Make an offer for this listing by entering your price.</div>
           <DialogHeader>
             <DialogTitle>Make an Offer</DialogTitle>
           </DialogHeader>
@@ -117,20 +117,6 @@ const OfferButton: React.FC<OfferButtonProps> = ({
           </div>
         </DialogContent>
       </Dialog>
-      
-      <Button 
-        onClick={handleBuyNow}
-        className="w-full bg-green-600 hover:bg-green-700"
-      >
-        Buy Now - ${currentPrice}
-      </Button>
-
-      <PaymentDialog
-        isOpen={showPayment}
-        onClose={() => setShowPayment(false)}
-        amount={currentPrice}
-        listingTitle={listingTitle}
-      />
     </>
   );
 };

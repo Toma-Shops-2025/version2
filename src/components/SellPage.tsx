@@ -17,15 +17,25 @@ interface SellPageProps {
 }
 
 const categories = [
-  'All Categories',
   'Vehicles',
   'Electronics',
   'Furniture',
   'Clothing',
-  'Tools',
+  'Jewelry',
+  'Kids',
+  'Collectibles & Art',
+  'Pet Supplies',
+  'Health & Beauty',
+  'Everything Else',
+  'Rentals',
   'Sports & Outdoors',
   'Home & Garden',
-  'Toys & Games'
+  'Toys & Games',
+  'Free Stuff',
+  'Musical Instruments',
+  'Office Supplies',
+  'Hobbies',
+  'Tools'
 ];
 
 // Cloudinary upload function
@@ -250,7 +260,7 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.filter(cat => cat !== 'All Categories').map((cat) => (
+                    {categories.map((cat) => (
                       <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                     ))}
                   </SelectContent>
