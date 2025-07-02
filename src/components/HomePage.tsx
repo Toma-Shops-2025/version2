@@ -17,6 +17,7 @@ const HomePage: React.FC = () => {
   const [listings, setListings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [filter, setFilter] = useState<'all' | 'local'>('all');
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -24,6 +25,7 @@ const HomePage: React.FC = () => {
       setError(null);
       try {
         const { data, error } = await supabase.from('listings').select('*').order('created_at', { ascending: false });
+        console.log('Fetched listings:', data, error);
         if (error) throw error;
         setListings(data || []);
       } catch (err: any) {
@@ -61,6 +63,10 @@ const HomePage: React.FC = () => {
 
   const currentListing = selectedListing ? listings.find(l => l.id === selectedListing) : null;
 
+  const filteredListings = filter === 'local'
+    ? listings.filter(l => l.location?.toLowerCase().includes('louisville'))
+    : listings;
+
   if (showMessages) {
     return <MessagesPage onBack={handleBackFromMessages} />;
   }
@@ -93,8 +99,8 @@ const HomePage: React.FC = () => {
           
           <div className="flex space-x-6">
             <Button variant="ghost" className="text-white hover:bg-gray-700" onClick={handleSellClick}>Sell</Button>
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white px-6">For you</Button>
-            <Button variant="ghost" className="text-white hover:bg-gray-700">Local</Button>
+            <Button className={`px-6 ${filter === 'all' ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'text-white hover:bg-gray-700'}`} onClick={() => setFilter('all')}>For you</Button>
+            <Button className={filter === 'local' ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'text-white hover:bg-gray-700'} onClick={() => setFilter('local')}>Local</Button>
           </div>
         </div>
 
@@ -113,7 +119,7 @@ const HomePage: React.FC = () => {
           ) : (
             <>
               <ListingsGrid 
-                listings={listings} 
+                listings={filteredListings} 
                 onListingClick={handleListingClick}
               />
               <div className="my-8">

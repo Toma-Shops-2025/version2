@@ -28,12 +28,10 @@ const ListingCard: React.FC<ListingCardProps> = ({
     <Card className="cursor-pointer hover:shadow-md transition-shadow border-0 shadow-sm" onClick={onClick}>
       <div className="relative">
         {video ? (
-          <video
-            src={video}
-            muted
-            playsInline
+          <img
+            src={getCloudinaryVideoThumbnail(video)}
+            alt={title}
             className="w-full aspect-square object-cover rounded-t-lg"
-            style={{ objectFit: 'cover' }}
           />
         ) : image ? (
           <img
@@ -67,5 +65,13 @@ const ListingCard: React.FC<ListingCardProps> = ({
     </Card>
   );
 };
+
+function getCloudinaryVideoThumbnail(videoUrl?: string) {
+  if (!videoUrl) return '';
+  // Only handle Cloudinary URLs
+  if (!videoUrl.includes('res.cloudinary.com')) return '';
+  // Replace /upload/ with /upload/so_1/ and .mp4/.mov/.webm with .jpg
+  return videoUrl.replace('/upload/', '/upload/so_1/').replace(/\.(mp4|mov|webm)(\?.*)?$/, '.jpg$2');
+}
 
 export default ListingCard;
