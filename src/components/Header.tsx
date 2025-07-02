@@ -76,26 +76,30 @@ const Header: React.FC = () => {
       {/* Mobile Navigation */}
       <div className="md:hidden border-t border-gray-200">
         <div className="flex justify-around py-2">
-          <Button variant="ghost" size="sm" className="flex flex-col items-center">
-            <Home className="h-5 w-5" />
-            <span className="text-xs mt-1">Home</span>
-          </Button>
-          <Button variant="ghost" size="sm" className="flex flex-col items-center">
-            <Grid3X3 className="h-5 w-5" />
-            <span className="text-xs mt-1">Categories</span>
-          </Button>
-          <Button variant="ghost" size="sm" className="flex flex-col items-center">
-            <Search className="h-5 w-5" />
-            <span className="text-xs mt-1">Search</span>
-          </Button>
-          <Button variant="ghost" size="sm" className="flex flex-col items-center">
-            <Heart className="h-5 w-5" />
-            <span className="text-xs mt-1">Favorites</span>
-          </Button>
-          <Button variant="ghost" size="sm" className="flex flex-col items-center">
-            <User className="h-5 w-5" />
-            <span className="text-xs mt-1">Profile</span>
-          </Button>
+          <Link to="/">
+            <Button variant="ghost" size="sm" className="flex flex-col items-center">
+              <Home className="h-5 w-5" />
+              <span className="text-xs mt-1">Home</span>
+            </Button>
+          </Link>
+          <Link to="/categories">
+            <Button variant="ghost" size="sm" className="flex flex-col items-center">
+              <Grid3X3 className="h-5 w-5" />
+              <span className="text-xs mt-1">Categories</span>
+            </Button>
+          </Link>
+          <Link to="/favorites">
+            <Button variant="ghost" size="sm" className="flex flex-col items-center">
+              <Heart className="h-5 w-5" />
+              <span className="text-xs mt-1">Favorites</span>
+            </Button>
+          </Link>
+          <Link to="/profile">
+            <Button variant="ghost" size="sm" className="flex flex-col items-center">
+              <User className="h-5 w-5" />
+              <span className="text-xs mt-1">Profile</span>
+            </Button>
+          </Link>
         </div>
       </div>
     </header>
