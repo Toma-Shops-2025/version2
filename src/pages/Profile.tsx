@@ -13,10 +13,15 @@ const Profile: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [profilePic, setProfilePic] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [userLoading, setUserLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setUserLoading(false);
+      return;
+    }
+    setUserLoading(false);
     const fetchListings = async () => {
       setLoading(true);
       setError(null);
@@ -55,10 +60,15 @@ const Profile: React.FC = () => {
     if (!user) return;
     const filePath = `profile-pics/${user.id}.png`;
     const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
-    setProfilePic(data.publicUrl);
+    if (data && data.publicUrl && !data.publicUrl.endsWith('/')) {
+      setProfilePic(data.publicUrl);
+    } else {
+      setProfilePic(null);
+    }
   }, [user]);
 
-  if (!user) return null;
+  if (userLoading) return <div className="min-h-screen flex items-center justify-center bg-black text-white">Loading...</div>;
+  if (!user) return <div className="min-h-screen flex items-center justify-center bg-black text-white">You must be logged in to view your profile.</div>;
 
   return (
     <div className="min-h-screen flex flex-col items-center py-8 bg-black text-white">
@@ -68,6 +78,7 @@ const Profile: React.FC = () => {
             src={profilePic || '/placeholder.svg'}
             alt="Profile"
             className="w-28 h-28 rounded-full object-cover border-4 border-yellow-400 bg-gray-800"
+            onError={e => (e.currentTarget.src = '/placeholder.svg')}
           />
           <label className="absolute bottom-0 right-0 bg-yellow-400 text-black rounded-full p-2 cursor-pointer hover:bg-yellow-300 transition">
             <input type="file" accept="image/*" className="hidden" onChange={handleProfilePicChange} disabled={uploading} />
@@ -77,7 +88,7 @@ const Profile: React.FC = () => {
         <h1 className="text-2xl font-bold mb-1">{user.name || user.email}</h1>
         <p className="text-gray-400 mb-2">{user.email}</p>
         <p className="text-gray-500 text-sm mb-2">User ID: {user.id}</p>
-        <p className="text-gray-500 text-sm mb-2">Joined: {/* TODO: fetch join date if available */}</p>
+        <p className="text-gray-500 text-sm mb-2">Joined: {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}</p>
         <Button variant="secondary" onClick={() => navigate(-1)} className="mt-2">Back</Button>
       </div>
       <div className="w-full max-w-3xl">

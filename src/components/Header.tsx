@@ -3,16 +3,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, Home, Grid3X3, Heart, Bell, ShoppingCart, User, Plus } from 'lucide-react';
 import { useAppContext } from '@/contexts/AppContext';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Header: React.FC = () => {
   const { user, logout } = useAppContext();
   const [search, setSearch] = useState('');
+  const navigate = useNavigate();
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (search.trim()) {
-      console.log('Search:', search);
-      // TODO: Implement actual search navigation/filtering
+      navigate(`/?search=${encodeURIComponent(search)}`);
+      setSearch('');
     }
   };
 
