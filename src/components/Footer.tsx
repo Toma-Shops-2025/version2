@@ -1,10 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Mail, Phone } from 'lucide-react';
 import { Link } from "react-router-dom";
+import { supabase } from '@/lib/supabase';
 
 const Footer: React.FC = () => {
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterStatus, setNewsletterStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newsletterEmail) return;
+    const { error } = await supabase.from('newsletter_signups').insert({ email: newsletterEmail });
+    if (error) {
+      setNewsletterStatus('error');
+    } else {
+      setNewsletterStatus('success');
+      setNewsletterEmail('');
+    }
+  };
+
   return (
     <footer className="bg-gray-900 text-white mt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -21,16 +37,25 @@ const Footer: React.FC = () => {
             {/* Newsletter Signup */}
             <div className="mb-6">
               <h4 className="font-semibold mb-2">Stay Updated</h4>
-              <div className="flex gap-2">
+              <form className="flex gap-2" onSubmit={handleNewsletterSubmit}>
                 <Input
                   type="email"
                   placeholder="Enter your email"
                   className="bg-gray-800 border-gray-700 text-white"
+                  value={newsletterEmail}
+                  onChange={e => setNewsletterEmail(e.target.value)}
+                  required
                 />
-                <Button className="bg-teal-600 hover:bg-teal-700">
+                <Button className="bg-teal-600 hover:bg-teal-700" type="submit">
                   Subscribe
                 </Button>
-              </div>
+              </form>
+              {newsletterStatus === 'success' && (
+                <div className="text-green-400 mt-2">Thank you for subscribing!</div>
+              )}
+              {newsletterStatus === 'error' && (
+                <div className="text-red-400 mt-2">There was an error. Please try again.</div>
+              )}
             </div>
           </div>
 
