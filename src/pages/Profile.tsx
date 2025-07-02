@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Profile: React.FC = () => {
   const { user } = useAppContext();
+  console.log('Profile user:', user); // Debug log
   const [listings, setListings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -88,7 +89,6 @@ const Profile: React.FC = () => {
         <h1 className="text-2xl font-bold mb-1">{user.name || user.email}</h1>
         <p className="text-gray-400 mb-2">{user.email}</p>
         <p className="text-gray-500 text-sm mb-2">User ID: {user.id}</p>
-        <p className="text-gray-500 text-sm mb-2">Joined: {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}</p>
         <Button variant="secondary" onClick={() => navigate(-1)} className="mt-2">Back</Button>
       </div>
       <div className="w-full max-w-3xl">

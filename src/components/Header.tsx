@@ -56,20 +56,6 @@ const Header: React.FC = () => {
             </Link>
           </nav>
 
-          {/* Search Bar */}
-          <form onSubmit={handleSearch} className="flex-1 max-w-xs mx-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                type="text"
-                placeholder="Search for anything..."
-                className="pl-10 pr-4 py-2 w-full rounded-full border border-yellow-400 focus:border-yellow-600"
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-              />
-            </div>
-          </form>
-
           {/* User Menu */}
           <div className="flex items-center space-x-4">
             {user && (
