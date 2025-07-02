@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, Home, Grid3X3, Heart, Bell, ShoppingCart, User, Plus } from 'lucide-react';
@@ -7,6 +7,14 @@ import { Link } from "react-router-dom";
 
 const Header: React.FC = () => {
   const { user, logout } = useAppContext();
+  const [search, setSearch] = useState('');
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (search.trim()) {
+      console.log('Search:', search);
+      // TODO: Implement actual search navigation/filtering
+    }
+  };
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -39,18 +47,6 @@ const Header: React.FC = () => {
                 <span>Favorites</span>
               </Button>
             </Link>
-            <Link to="/notifications" className="flex items-center space-x-2">
-              <Button variant="ghost">
-                <Bell className="h-5 w-5" />
-                <span>Notifications</span>
-              </Button>
-            </Link>
-            <Link to="/cart" className="flex items-center space-x-2">
-              <Button variant="ghost">
-                <ShoppingCart className="h-5 w-5" />
-                <span>Cart</span>
-              </Button>
-            </Link>
             <Link to="/profile" className="flex items-center space-x-2">
               <Button variant="ghost">
                 <User className="h-5 w-5" />
@@ -60,24 +56,18 @@ const Header: React.FC = () => {
           </nav>
 
           {/* Search Bar */}
-          <div className="flex-1 max-w-lg mx-8">
+          <form onSubmit={handleSearch} className="flex-1 max-w-xs mx-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
                 type="text"
                 placeholder="Search for anything..."
-                className="pl-10 pr-4 py-2 w-full"
+                className="pl-10 pr-4 py-2 w-full rounded-full border border-yellow-400 focus:border-yellow-600"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
               />
             </div>
-          </div>
-
-          {/* Post Listing Button */}
-          <Link to="/sell" className="flex items-center space-x-2">
-            <Button className="bg-teal-600 hover:bg-teal-700 text-white">
-              <Plus className="h-4 w-4" />
-              <span className="hidden sm:inline">Post New Listing</span>
-            </Button>
-          </Link>
+          </form>
 
           {/* User Menu */}
           <div className="flex items-center space-x-4">
