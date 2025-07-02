@@ -1,15 +1,23 @@
 import React from 'react';
-const Faq: React.FC = () => (
-  <div className="max-w-2xl mx-auto py-8 px-4">
-    <h1 className="text-3xl font-bold mb-4">❓ Frequently Asked Questions (FAQ)</h1>
-    <ul className="mb-4 space-y-4">
-      <li><b>📹 Do I have to post a video to list an item?</b><br />Yes. Every product listed on TomaShops™ must include a short video to increase trust and visibility.</li>
-      <li><b>🛍️ Can I sell items locally?</b><br />Absolutely! Buyers and sellers can meet locally to exchange items, just like OfferUp or Facebook Marketplace.</li>
-      <li><b>🚚 Can I ship items too?</b><br />Yes. Shipping is worked out between buyers and sellers through the in-app messaging system.</li>
-      <li><b>💬 How do I talk to a buyer or seller?</b><br />Use our secure chat feature within the app. No need to share personal contact info.</li>
-      <li><b>💳 How do I get paid?</b><br />Buyers and sellers can agree on payment methods, including cash, Venmo, Cash App, etc.</li>
-      <li><b>🧾 Does TomaShops take a fee?</b><br />Currently, TomaShops™ does not take a cut from your sales. You keep 100% of your profit.</li>
-    </ul>
-  </div>
-);
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
+
+const Faq: React.FC = () => {
+  const navigate = useNavigate();
+  return (
+    <div className="max-w-2xl mx-auto py-8 px-4">
+      <Button variant="secondary" className="mb-4" onClick={() => navigate(-1)}>Back</Button>
+      <h1 className="text-3xl font-bold mb-4">❓ Frequently Asked Questions (FAQ)</h1>
+      <ul className="mb-4 space-y-4">
+        <li><b>📹 Do I have to post a video to list an item?</b><br />Yes. Every product listed on TomaShops™ must include a short video to increase trust and visibility.</li>
+        <li><b>🛍️ Can I sell items locally?</b><br />Absolutely! Buyers and sellers can meet locally to exchange items, just like OfferUp or Facebook Marketplace.</li>
+        <li><b>🚚 Can I ship items too?</b><br />Yes. Shipping is worked out between buyers and sellers through the in-app messaging system.</li>
+        <li><b>💬 How do I talk to a buyer or seller?</b><br />Use our secure chat feature within the app. No need to share personal contact info.</li>
+        <li><b>💳 How do I get paid?</b><br />Buyers and sellers can agree on payment methods, including cash, Venmo, Cash App, etc.</li>
+        <li><b>🧾 Does TomaShops take a fee?</b><br />Currently, TomaShops™ does not take a cut from your sales. You keep 100% of your profit.</li>
+      </ul>
+    </div>
+  );
+};
+
 export default Faq; 

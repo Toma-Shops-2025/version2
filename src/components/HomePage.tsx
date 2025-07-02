@@ -105,6 +105,9 @@ const HomePage: React.FC = () => {
         </div>
 
         <div className="px-4 py-4">
+          {filter !== 'all' && (
+            <Button variant="secondary" className="mb-4" onClick={() => setFilter('all')}>Back</Button>
+          )}
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900">Today's picks</h3>
             <div className="flex items-center text-sm text-gray-600">

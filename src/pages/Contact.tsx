@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const Contact: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -15,6 +18,7 @@ const Contact: React.FC = () => {
 
   return (
     <div className="max-w-2xl mx-auto py-8 px-4">
+      <Button variant="secondary" className="mb-4" onClick={() => navigate(-1)}>Back</Button>
       <h1 className="text-3xl font-bold mb-4">📞 Contact Us</h1>
       <p className="mb-2">Have questions or need help? We're here 24/7.</p>
       <div className="mb-4">
