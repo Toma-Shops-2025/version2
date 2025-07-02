@@ -27,7 +27,7 @@ const Header: React.FC = () => {
                 <span>Home</span>
               </Button>
             </Link>
-            <Link to="/categories/vehicles" className="flex items-center space-x-2">
+            <Link to="/categories" className="flex items-center space-x-2">
               <Button variant="ghost">
                 <Grid3X3 className="h-5 w-5" />
                 <span>Categories</span>

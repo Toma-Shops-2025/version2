@@ -14,6 +14,12 @@ import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import Faq from './pages/Faq';
 import Contact from './pages/Contact';
+import Categories from './pages/Categories';
+import Favorites from './pages/Favorites';
+import Notifications from './pages/Notifications';
+import Cart from './pages/Cart';
+import Profile from './pages/Profile';
+import Sell from './pages/Sell';
 
 const queryClient = new QueryClient();
 
@@ -34,6 +40,12 @@ const App = () => (
             <Route path="/terms" element={<Terms />} />
             <Route path="/faq" element={<Faq />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/categories" element={<Categories />} />
+            <Route path="/favorites" element={<Favorites />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/sell" element={<Sell />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
