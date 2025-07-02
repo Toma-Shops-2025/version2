@@ -6,6 +6,7 @@ interface User {
   id: string;
   name: string;
   email: string;
+  email_confirmed_at?: string | null;
 }
 
 interface AppContextType {
@@ -43,6 +44,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           id: session.user.id,
           name: session.user.email?.split('@')[0] || 'User',
           email: session.user.email || '',
+          email_confirmed_at: session.user.email_confirmed_at || null,
         });
       }
     });
@@ -53,6 +55,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           id: session.user.id,
           name: session.user.email?.split('@')[0] || 'User',
           email: session.user.email || '',
+          email_confirmed_at: session.user.email_confirmed_at || null,
         });
       } else {
         setUser(null);

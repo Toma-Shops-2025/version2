@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase';
 import { MapPin, MessageCircle } from 'lucide-react';
 import Map from './Map';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { useAppContext } from '@/contexts/AppContext';
 
 const HomePage: React.FC = () => {
   const [selectedListing, setSelectedListing] = useState<string | null>(null);
@@ -18,6 +20,9 @@ const HomePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'local'>('all');
+  const { user, showToast } = useAppContext();
+  const [resending, setResending] = useState(false);
+  const [resent, setResent] = useState(false);
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -67,6 +72,19 @@ const HomePage: React.FC = () => {
     ? listings.filter(l => l.location?.toLowerCase().includes('louisville'))
     : listings;
 
+  const handleResend = async () => {
+    setResending(true);
+    setResent(false);
+    const { error } = await supabase.auth.resend({ type: 'signup', email: user?.email });
+    setResending(false);
+    if (error) {
+      showToast('Failed to resend confirmation email. Please try again.', 'error');
+    } else {
+      setResent(true);
+      showToast('Confirmation email resent! Please check your inbox.', 'success');
+    }
+  };
+
   if (showMessages) {
     return <MessagesPage onBack={handleBackFromMessages} />;
   }
@@ -82,6 +100,23 @@ const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <Header />
+      {user && !user.email_confirmed_at && (
+        <div className="p-4">
+          <Alert variant="warning">
+            <AlertTitle>Email not confirmed</AlertTitle>
+            <AlertDescription>
+              Please confirm your email address to unlock all features. <br />
+              <button
+                className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                onClick={handleResend}
+                disabled={resending || resent}
+              >
+                {resending ? 'Resending...' : resent ? 'Email Sent!' : 'Resend confirmation email'}
+              </button>
+            </AlertDescription>
+          </Alert>
+        </div>
+      )}
       
       <main className="pb-8">
         <div className="bg-gray-900 text-white px-4 py-3">
