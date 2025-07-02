@@ -99,6 +99,7 @@ const Footer: React.FC = () => {
         
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
           <p>&copy; 2024 TomaShops™ Video 1st Marketplace. All rights reserved.</p>
+          <div className="onesignal-customlink-container" />
         </div>
       </div>
     </footer>

@@ -11,6 +11,7 @@ import { MapPin, MessageCircle } from 'lucide-react';
 import Map from './Map';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { useAppContext } from '@/contexts/AppContext';
+import { useSearchParams } from 'react-router-dom';
 
 const HomePage: React.FC = () => {
   const [selectedListing, setSelectedListing] = useState<string | null>(null);
@@ -23,6 +24,8 @@ const HomePage: React.FC = () => {
   const { user, showToast } = useAppContext();
   const [resending, setResending] = useState(false);
   const [resent, setResent] = useState(false);
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get('search')?.toLowerCase() || '';
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -72,6 +75,14 @@ const HomePage: React.FC = () => {
     ? listings.filter(l => l.location?.toLowerCase().includes('louisville'))
     : listings;
 
+  const searchFilteredListings = searchQuery
+    ? filteredListings.filter(l =>
+        l.title?.toLowerCase().includes(searchQuery) ||
+        l.description?.toLowerCase().includes(searchQuery) ||
+        l.location?.toLowerCase().includes(searchQuery)
+      )
+    : filteredListings;
+
   const handleResend = async () => {
     setResending(true);
     setResent(false);
@@ -100,6 +111,7 @@ const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <Header />
+      <div className="onesignal-customlink-container" />
       
       <main className="pb-8">
         <div className="bg-gray-900 text-white px-4 py-3">
@@ -140,7 +152,7 @@ const HomePage: React.FC = () => {
           ) : (
             <>
               <ListingsGrid 
-                listings={filteredListings} 
+                listings={searchFilteredListings} 
                 onListingClick={handleListingClick}
               />
               <div className="my-8">

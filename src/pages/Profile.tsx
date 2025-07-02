@@ -89,6 +89,7 @@ const Profile: React.FC = () => {
         <h1 className="text-2xl font-bold mb-1">{user.name || user.email}</h1>
         <p className="text-gray-400 mb-2">{user.email}</p>
         <p className="text-gray-500 text-sm mb-2">User ID: {user.id}</p>
+        <div className="onesignal-customlink-container" />
         <Button variant="secondary" onClick={() => navigate(-1)} className="mt-2">Back</Button>
       </div>
       <div className="w-full max-w-3xl">
