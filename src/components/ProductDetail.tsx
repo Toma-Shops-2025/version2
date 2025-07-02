@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, MapPin, Heart, Share, X } from 'lucide-react';
+import { ArrowLeft, MapPin, Heart, Share, X, Star } from 'lucide-react';
 // import { Listing } from '@/data/mockListings';
 import MessageButton from './MessageButton';
 import OfferButton from './OfferButton';
@@ -38,6 +38,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
   const [similarListings, setSimilarListings] = useState<Listing[]>([]);
   const [sellerListings, setSellerListings] = useState<Listing[]>([]);
   const [reviews, setReviews] = useState<any[]>([]); // Adjust type if you have a reviews table
+  const [reviewComment, setReviewComment] = useState('');
+  const [reviewRating, setReviewRating] = useState(5);
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [hasReviewed, setHasReviewed] = useState(false);
 
   useEffect(() => {
     const fetchFavorite = async () => {
@@ -95,6 +99,21 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
     fetchReviews();
   }, [listing]);
 
+  useEffect(() => {
+    // Check if user has already reviewed this seller
+    if (!user || !listing.seller_id) return;
+    const checkReviewed = async () => {
+      const { data } = await supabase
+        .from('reviews')
+        .select('id')
+        .eq('seller_id', listing.seller_id)
+        .eq('reviewer_id', user.id)
+        .single();
+      setHasReviewed(!!data);
+    };
+    checkReviewed();
+  }, [user, listing.seller_id]);
+
   const handleFavorite = async () => {
     if (!user) return;
     if (isFavorite && favoriteId) {
@@ -117,6 +136,33 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
     } else {
       await navigator.clipboard.writeText(url);
       alert('Link copied to clipboard!');
+    }
+  };
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user || !listing.seller_id) return;
+    setSubmittingReview(true);
+    const { error } = await supabase.from('reviews').insert({
+      seller_id: listing.seller_id,
+      reviewer_id: user.id,
+      reviewer_name: user.name || user.email,
+      comment: reviewComment,
+      rating: reviewRating,
+    });
+    setSubmittingReview(false);
+    if (!error) {
+      setReviewComment('');
+      setReviewRating(5);
+      setHasReviewed(true);
+      // Refresh reviews
+      const { data } = await supabase
+        .from('reviews')
+        .select('*')
+        .eq('seller_id', listing.seller_id)
+        .order('created_at', { ascending: false })
+        .limit(5);
+      setReviews(data || []);
     }
   };
 
@@ -242,13 +288,49 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
         {/* Seller Reviews */}
         <div>
           <h3 className="text-lg font-semibold mb-2">Seller Reviews</h3>
+          {/* Review submission form */}
+          {user && user.id !== listing.seller_id && !hasReviewed && (
+            <form onSubmit={handleReviewSubmit} className="mb-6 bg-gray-50 rounded p-4">
+              <div className="mb-2 flex items-center gap-2">
+                <span className="font-semibold">Your Rating:</span>
+                {[1,2,3,4,5].map((star) => (
+                  <button
+                    type="button"
+                    key={star}
+                    onClick={() => setReviewRating(star)}
+                    className={star <= reviewRating ? 'text-yellow-500' : 'text-gray-300'}
+                  >
+                    <Star className="inline h-5 w-5" fill={star <= reviewRating ? '#facc15' : 'none'} />
+                  </button>
+                ))}
+              </div>
+              <textarea
+                className="w-full border rounded p-2 mb-2"
+                rows={3}
+                placeholder="Write your review..."
+                value={reviewComment}
+                onChange={e => setReviewComment(e.target.value)}
+                required
+              />
+              <Button type="submit" disabled={submittingReview || !reviewComment.trim()}>
+                {submittingReview ? 'Submitting...' : 'Submit Review'}
+              </Button>
+            </form>
+          )}
           {reviews.length === 0 ? (
             <div className="text-gray-500">No reviews for this seller yet.</div>
           ) : (
             <div className="space-y-4">
               {reviews.map((review, idx) => (
                 <div key={idx} className="bg-gray-100 rounded p-3 text-gray-800">
-                  <div className="font-semibold">{review.reviewer_name || 'User'}</div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-semibold">{review.reviewer_name || 'User'}</span>
+                    <span className="flex gap-1">
+                      {[1,2,3,4,5].map((star) => (
+                        <Star key={star} className="h-4 w-4" fill={star <= review.rating ? '#facc15' : 'none'} stroke="#facc15" />
+                      ))}
+                    </span>
+                  </div>
                   <div className="text-sm">{review.comment}</div>
                   <div className="text-xs text-gray-500">{new Date(review.created_at).toLocaleString()}</div>
                 </div>
