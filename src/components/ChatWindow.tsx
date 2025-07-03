@@ -104,6 +104,15 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
     }
   };
 
+  // Helper to get the other user's ID
+  const getOtherUserId = async () => {
+    const { data: conv } = await supabase.from('conversations').select('*').eq('id', conversationId).single();
+    if (conv && currentUserId) {
+      return conv.buyer_id === currentUserId ? conv.seller_id : conv.buyer_id;
+    }
+    return null;
+  };
+
   const sendMessage = async () => {
     if (!newMessage.trim() || !currentUserId) return;
     try {
@@ -117,6 +126,19 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
       if (error) throw error;
       setNewMessage('');
       loadMessages();
+      // Send OneSignal notification to the other user
+      const otherUserId = await getOtherUserId();
+      if (otherUserId) {
+        await fetch('/api/send-notification', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            recipientUserId: otherUserId,
+            title: 'New message',
+            message: `You have a new message about "${listingTitle}"`,
+          }),
+        });
+      }
     } catch (error) {
       toast({
         title: "Error",
