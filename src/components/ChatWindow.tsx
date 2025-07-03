@@ -120,16 +120,21 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
     try {
       const otherUserId = await getOtherUserId();
       if (!otherUserId) throw new Error('Could not determine receiver');
+      const payload = {
+        conversation_id: conversationId,
+        sender_id: currentUserId,
+        receiver_id: otherUserId,
+        listing_id: listingId,
+        content: newMessage.trim()
+      };
+      console.log('Message payload:', payload);
       const { error } = await supabase
         .from('messages')
-        .insert({
-          conversation_id: conversationId,
-          sender_id: currentUserId,
-          receiver_id: otherUserId,
-          listing_id: listingId,
-          content: newMessage.trim()
-        });
-      if (error) throw error;
+        .insert(payload);
+      if (error) {
+        console.error('Supabase insert error:', error);
+        throw error;
+      }
       setNewMessage('');
       loadMessages();
       // Send OneSignal notification to the other user
