@@ -17,12 +17,14 @@ interface Message {
 interface ChatWindowProps {
   conversationId: string;
   listingTitle: string;
+  listingId: string;
   onBack: () => void;
 }
 
 const ChatWindow: React.FC<ChatWindowProps> = ({ 
   conversationId, 
   listingTitle, 
+  listingId, 
   onBack 
 }) => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -116,18 +118,21 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   const sendMessage = async () => {
     if (!newMessage.trim() || !currentUserId) return;
     try {
+      const otherUserId = await getOtherUserId();
+      if (!otherUserId) throw new Error('Could not determine receiver');
       const { error } = await supabase
         .from('messages')
         .insert({
           conversation_id: conversationId,
           sender_id: currentUserId,
+          receiver_id: otherUserId,
+          listing_id: listingId,
           content: newMessage.trim()
         });
       if (error) throw error;
       setNewMessage('');
       loadMessages();
       // Send OneSignal notification to the other user
-      const otherUserId = await getOtherUserId();
       if (otherUserId) {
         await fetch('/api/send-notification', {
           method: 'POST',

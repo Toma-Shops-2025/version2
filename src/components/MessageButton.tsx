@@ -68,6 +68,7 @@ const MessageButton: React.FC<MessageButtonProps> = ({
       <ChatWindow
         conversationId={conversationId}
         listingTitle={listingTitle}
+        listingId={listingId}
         onBack={() => setShowChat(false)}
       />
     );
