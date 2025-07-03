@@ -119,6 +119,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
     if (!newMessage.trim() || !currentUserId) return;
     try {
       const otherUserId = await getOtherUserId();
+      // Debug logging for seller reply issue
+      const { data: conv } = await supabase.from('conversations').select('*').eq('id', conversationId).single();
+      console.log('Conversation:', conv);
+      console.log('Current user ID:', currentUserId);
+      console.log('Other user ID:', otherUserId);
       if (!otherUserId) throw new Error('Could not determine receiver');
       const payload = {
         conversation_id: conversationId,
@@ -127,19 +132,19 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         listing_id: listingId,
         content: newMessage.trim()
       };
-      console.log('Message payload:', payload);
+      console.log('Message payload:', payload); // Debug log
       const { error } = await supabase
         .from('messages')
         .insert(payload);
       if (error) {
-        console.error('Supabase insert error:', error);
+        console.error('Supabase insert error:', error); // Debug log
         throw error;
       }
       setNewMessage('');
       loadMessages();
       // Send OneSignal notification to the other user
       if (otherUserId) {
-        await fetch('/api/send-notification', {
+        await fetch('/.netlify/functions/send-notification', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -226,17 +231,23 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
 
       {/* Input */}
       <div className="bg-white border-t p-4">
-        <div className="flex space-x-2">
-          <Input
-            value={newMessage}
-            onChange={handleInputChange}
-            placeholder="Type a message..."
-            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-          />
-          <Button onClick={sendMessage} disabled={!newMessage.trim()}>
-            <Send className="h-4 w-4" />
-          </Button>
-        </div>
+        {currentUserId ? (
+          <div className="flex space-x-2">
+            <Input
+              value={newMessage}
+              onChange={handleInputChange}
+              placeholder="Type a message..."
+              onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+            />
+            <Button onClick={sendMessage} disabled={!newMessage.trim()}>
+              <Send className="h-4 w-4" />
+            </Button>
+          </div>
+        ) : (
+          <div className="text-center text-red-500">
+            Please log in to send messages.
+          </div>
+        )}
       </div>
     </div>
   );
