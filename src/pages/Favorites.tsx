@@ -7,11 +7,12 @@ import ListingsGrid from '@/components/ListingsGrid';
 
 const Favorites: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAppContext();
+  const { user, loading } = useAppContext();
   const [favorites, setFavorites] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingState, setLoading] = useState(true);
 
   useEffect(() => {
+    if (loading) return; // Wait for session to finish loading
     const fetchFavorites = async () => {
       if (!user) {
         setFavorites([]);
@@ -42,14 +43,14 @@ const Favorites: React.FC = () => {
       setLoading(false);
     };
     fetchFavorites();
-  }, [user]);
+  }, [user, loading]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
       <h1 className="text-2xl font-bold mb-4">Favorites</h1>
       {loading ? (
         <div className="mb-6">Loading...</div>
-      ) : !user ? (
+      ) : !user && !loading ? (
         <p className="mb-6">You must be logged in to view your favorites.</p>
       ) : favorites.length === 0 ? (
         <p className="mb-6">You have no favorite items yet.</p>

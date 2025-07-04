@@ -70,6 +70,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       } else {
         setUser(null);
       }
+      setLoading(false);
     });
     return () => {
       listener?.subscription.unsubscribe();
