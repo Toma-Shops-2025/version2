@@ -11,6 +11,8 @@ const Favorites: React.FC = () => {
   const [favorites, setFavorites] = useState<any[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
 
+  console.log('Favorites page - user:', user, 'loading:', loading);
+
   useEffect(() => {
     if (loading) return; // Wait for session to finish loading
     const fetchFavorites = async () => {

@@ -12,6 +12,8 @@ const OffersPage: React.FC = () => {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  console.log('Offers page - user:', user, 'loading:', loading);
+
   useEffect(() => {
     if (loading) return;
     const fetchOffers = async () => {
