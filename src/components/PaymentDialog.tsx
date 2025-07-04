@@ -37,7 +37,8 @@ const PaymentDialog: React.FC<PaymentDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md" aria-describedby="payment-dialog-desc">
+        <div id="payment-dialog-desc" className="sr-only">Secure payment dialog. Enter your payment details to complete the purchase.</div>
         <DialogHeader>
           <DialogTitle className="flex items-center">
             <Shield className="h-5 w-5 mr-2 text-green-600" />

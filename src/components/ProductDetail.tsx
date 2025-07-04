@@ -28,6 +28,7 @@ interface Listing {
   isJustListed?: boolean;
   latitude?: number;
   longitude?: number;
+  category?: string;
 }
 
 const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {

@@ -15,6 +15,9 @@ const Profile: React.FC = () => {
   const [profilePic, setProfilePic] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [userLoading, setUserLoading] = useState(true);
+  const [offers, setOffers] = useState<any[]>([]);
+  const [offersLoading, setOffersLoading] = useState(true);
+  const [offersError, setOffersError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,6 +40,28 @@ const Profile: React.FC = () => {
       }
     };
     fetchListings();
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchOffers = async () => {
+      setOffersLoading(true);
+      setOffersError(null);
+      try {
+        const { data, error } = await supabase
+          .from('offers')
+          .select('*')
+          .eq('seller_id', user.id)
+          .order('created_at', { ascending: false });
+        if (error) throw error;
+        setOffers(data || []);
+      } catch (err: any) {
+        setOffersError(err.message);
+      } finally {
+        setOffersLoading(false);
+      }
+    };
+    fetchOffers();
   }, [user]);
 
   const handleProfilePicChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -102,6 +127,30 @@ const Profile: React.FC = () => {
           <div className="text-center text-gray-400 py-8">You have no listings yet.</div>
         ) : (
           <ListingsGrid listings={listings} />
+        )}
+      </div>
+      <div className="w-full max-w-3xl mt-8">
+        <h2 className="text-xl font-semibold mb-4">Offers Received</h2>
+        {offersLoading ? (
+          <div className="text-center text-gray-400 py-8">Loading offers...</div>
+        ) : offersError ? (
+          <div className="text-center text-red-500 py-8">{offersError}</div>
+        ) : offers.length === 0 ? (
+          <div className="text-center text-gray-400 py-8">You have no offers yet.</div>
+        ) : (
+          <ul className="divide-y divide-gray-700">
+            {offers.map((offer) => (
+              <li key={offer.id} className="py-4 flex flex-col md:flex-row md:items-center md:justify-between">
+                <div>
+                  <div className="font-semibold">Offer Amount: <span className="text-yellow-400">${offer.amount}</span></div>
+                  <div className="text-sm text-gray-400">From User ID: {offer.buyer_id}</div>
+                  <div className="text-sm text-gray-400">Listing ID: {offer.listing_id}</div>
+                  <div className="text-xs text-gray-500">{new Date(offer.created_at).toLocaleString()}</div>
+                </div>
+                {/* You can add Accept/Reject buttons here if needed */}
+              </li>
+            ))}
+          </ul>
         )}
       </div>
     </div>

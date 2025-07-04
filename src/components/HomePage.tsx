@@ -26,6 +26,7 @@ const HomePage: React.FC = () => {
   const [resent, setResent] = useState(false);
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('search')?.toLowerCase() || '';
+  const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -44,6 +45,37 @@ const HomePage: React.FC = () => {
     };
     fetchListings();
   }, [showSellPage]); // refetch after selling
+
+  useEffect(() => {
+    const checkUnreadMessagesAndOffers = async () => {
+      if (!user?.id) return setHasUnreadMessages(false);
+      // Check unread messages
+      const { data: conversations } = await supabase
+        .from('conversations')
+        .select('id')
+        .or(`buyer_id.eq.${user.id},seller_id.eq.${user.id}`);
+      let hasUnread = false;
+      if (conversations && conversations.length > 0) {
+        const convIds = conversations.map((c: any) => c.id);
+        const { data: messages } = await supabase
+          .from('messages')
+          .select('id')
+          .in('conversation_id', convIds)
+          .eq('receiver_id', user.id)
+          .is('read_at', null);
+        hasUnread = !!messages && messages.length > 0;
+      }
+      // Check new offers (for user as seller)
+      const { data: offers } = await supabase
+        .from('offers')
+        .select('id')
+        .eq('seller_id', user.id)
+        .is('read_at', null); // assumes you have a read_at or similar field
+      const hasNewOffers = !!offers && offers.length > 0;
+      setHasUnreadMessages(hasUnread || hasNewOffers);
+    };
+    checkUnreadMessagesAndOffers();
+  }, [user]);
 
   const handleListingClick = (id: string) => {
     setSelectedListing(id);
@@ -123,7 +155,12 @@ const HomePage: React.FC = () => {
               className="text-white hover:bg-gray-700"
               onClick={handleMessagesClick}
             >
-              <MessageCircle className="h-5 w-5" />
+              <div className="relative">
+                <MessageCircle className="h-8 w-8" />
+                {hasUnreadMessages && (
+                  <span className="absolute top-0 right-0 block h-3 w-3 rounded-full bg-red-500 border-2 border-white" />
+                )}
+              </div>
             </Button>
           </div>
           
