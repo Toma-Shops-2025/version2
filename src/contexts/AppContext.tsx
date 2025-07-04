@@ -16,6 +16,7 @@ interface AppContextType {
   sidebarOpen: boolean;
   toggleSidebar: () => void;
   showToast: (message: string, type?: 'success' | 'error') => void;
+  loading: boolean;
 }
 
 const defaultAppContext: AppContextType = {
@@ -25,6 +26,7 @@ const defaultAppContext: AppContextType = {
   sidebarOpen: false,
   toggleSidebar: () => {},
   showToast: () => {},
+  loading: true,
 };
 
 const AppContext = createContext<AppContextType>(defaultAppContext);
@@ -133,6 +135,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         sidebarOpen,
         toggleSidebar,
         showToast,
+        loading,
       }}
     >
       {showNotifButton && (

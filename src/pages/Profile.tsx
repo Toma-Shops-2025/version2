@@ -7,14 +7,12 @@ import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
 
 const Profile: React.FC = () => {
-  const { user } = useAppContext();
+  const { user, loading } = useAppContext();
   console.log('Profile user:', user); // Debug log
   const [listings, setListings] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [profilePic, setProfilePic] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [userLoading, setUserLoading] = useState(true);
   const [offers, setOffers] = useState<any[]>([]);
   const [offersLoading, setOffersLoading] = useState(true);
   const [offersError, setOffersError] = useState<string | null>(null);
@@ -22,12 +20,9 @@ const Profile: React.FC = () => {
 
   useEffect(() => {
     if (!user) {
-      setUserLoading(false);
       return;
     }
-    setUserLoading(false);
     const fetchListings = async () => {
-      setLoading(true);
       setError(null);
       try {
         const { data, error } = await supabase.from('listings').select('*').eq('seller_id', user.id).order('created_at', { ascending: false });
@@ -35,8 +30,6 @@ const Profile: React.FC = () => {
         setListings(data || []);
       } catch (err: any) {
         setError(err.message);
-      } finally {
-        setLoading(false);
       }
     };
     fetchListings();
@@ -93,7 +86,7 @@ const Profile: React.FC = () => {
     }
   }, [user]);
 
-  if (userLoading) return <div className="min-h-screen flex items-center justify-center bg-black text-white">Loading...</div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center bg-black text-white">Loading...</div>;
   if (!user) return <div className="min-h-screen flex items-center justify-center bg-black text-white">You must be logged in to view your profile.</div>;
 
   return (
@@ -119,9 +112,7 @@ const Profile: React.FC = () => {
       </div>
       <div className="w-full max-w-3xl">
         <h2 className="text-xl font-semibold mb-4">Your Listings</h2>
-        {loading ? (
-          <div className="text-center text-gray-400 py-8">Loading your listings...</div>
-        ) : error ? (
+        {error ? (
           <div className="text-center text-red-500 py-8">{error}</div>
         ) : listings.length === 0 ? (
           <div className="text-center text-gray-400 py-8">You have no listings yet.</div>
