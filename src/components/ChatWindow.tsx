@@ -132,7 +132,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         conversation_id: conversationId,
         sender_id: currentUserId,
         receiver_id: otherUserId,
-        listing_id: listingId,
+        listing_id: conv?.listing_id,
         content: newMessage.trim()
       };
       console.log('Message payload:', payload); // Debug log
