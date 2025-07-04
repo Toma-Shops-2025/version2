@@ -20,6 +20,7 @@ import Notifications from './pages/Notifications';
 import Cart from './pages/Cart';
 import OffersPage from './pages/OffersPage';
 import Sell from './pages/Sell';
+import Account from './pages/Account';
 
 const queryClient = new QueryClient();
 
@@ -46,6 +47,7 @@ const App = () => (
             <Route path="/cart" element={<Cart />} />
             <Route path="/offers" element={<OffersPage />} />
             <Route path="/sell" element={<Sell />} />
+            <Route path="/account" element={<Account />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
