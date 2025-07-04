@@ -38,6 +38,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   const [isOtherTyping, setIsOtherTyping] = useState(false);
   const typingTimeout = useRef<NodeJS.Timeout | null>(null);
   const typingChannel = useRef<any>(null);
+  const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
     loadMessages();
@@ -119,9 +120,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
     console.log('Current user object:', user);
     console.log('Current user ID:', currentUserId);
     if (!newMessage.trim() || !currentUserId) return;
+    setIsSending(true);
     try {
       const otherUserId = await getOtherUserId();
-      // Debug logging for seller reply issue
       const { data: conv } = await supabase.from('conversations').select('*').eq('id', conversationId).single();
       console.log('Conversation:', conv);
       console.log('Current user ID:', currentUserId);
@@ -135,33 +136,46 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         content: newMessage.trim()
       };
       console.log('Message payload:', payload); // Debug log
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('messages')
-        .insert(payload);
+        .insert(payload)
+        .select(); // Get the inserted row(s)
       if (error) {
         console.error('Supabase insert error:', error); // Debug log
-        throw error;
+        toast({
+          title: "Error",
+          description: error.message || "Failed to send message",
+          variant: "destructive"
+        });
+        return;
       }
-      setNewMessage('');
-      loadMessages();
-      // Send OneSignal notification to the other user
-      if (otherUserId) {
+      if (data && data.length > 0) {
+        setNewMessage('');
+        loadMessages();
+        toast({
+          title: "Message sent",
+          description: "Your message was sent successfully.",
+          variant: "default"
+        });
+        // Send OneSignal notification to the other user
         await fetch('/.netlify/functions/send-notification', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             recipientUserId: otherUserId,
             title: 'New message',
-            message: `You have a new message about "${listingTitle}"`,
+            message: `You have a new message about \"${listingTitle}\"`,
           }),
         });
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to send message",
+        description: error?.message || "Failed to send message",
         variant: "destructive"
       });
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -241,7 +255,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
               placeholder="Type a message..."
               onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
             />
-            <Button onClick={sendMessage} disabled={!newMessage.trim()}>
+            <Button onClick={sendMessage} disabled={!newMessage.trim() || isSending}>
               <Send className="h-4 w-4" />
             </Button>
           </div>
