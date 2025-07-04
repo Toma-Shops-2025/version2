@@ -65,13 +65,13 @@ const HomePage: React.FC = () => {
           .is('read_at', null);
         hasUnread = !!messages && messages.length > 0;
       }
-      // Check new offers (for user as seller)
+      // Check new offers (for user as seller, only pending)
       const { data: offers } = await supabase
         .from('offers')
-        .select('id')
+        .select('id, status')
         .eq('seller_id', user.id)
-        .is('read_at', null); // assumes you have a read_at or similar field
-      const hasNewOffers = !!offers && offers.length > 0;
+        .or('status.is.null,status.eq.pending');
+      const hasNewOffers = !!offers && offers.some((o: any) => !o.status || o.status === 'pending');
       setHasUnreadMessages(hasUnread || hasNewOffers);
     };
     checkUnreadMessagesAndOffers();

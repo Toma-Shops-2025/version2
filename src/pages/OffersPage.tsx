@@ -13,7 +13,12 @@ const OffersPage: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) return;
+    if (loading) return; // Wait for session to finish loading
+    if (!user) {
+      setOffers([]);
+      setOffersLoading(false);
+      return;
+    }
     const fetchOffers = async () => {
       setOffersLoading(true);
       setOffersError(null);
@@ -32,7 +37,7 @@ const OffersPage: React.FC = () => {
       }
     };
     fetchOffers();
-  }, [user]);
+  }, [user, loading]);
 
   const handleAction = async (offerId: string, action: 'accept' | 'reject') => {
     setActionLoading(offerId + action);
@@ -48,7 +53,7 @@ const OffersPage: React.FC = () => {
   };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-black text-white">Loading...</div>;
-  if (!user) return <div className="min-h-screen flex items-center justify-center bg-black text-white">You must be logged in to view offers.</div>;
+  if (!user && !loading) return <div className="min-h-screen flex items-center justify-center bg-black text-white">You must be logged in to view offers.</div>;
 
   return (
     <div className="min-h-screen flex flex-col items-center py-8 bg-black text-white">
@@ -73,7 +78,7 @@ const OffersPage: React.FC = () => {
                 </div>
                 <div className="flex space-x-2 mt-2 md:mt-0">
                   <Button
-                    variant="success"
+                    variant="secondary"
                     disabled={actionLoading === offer.id + 'accept' || offer.status === 'accept'}
                     onClick={() => handleAction(offer.id, 'accept')}
                   >
