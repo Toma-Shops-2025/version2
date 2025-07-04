@@ -48,10 +48,10 @@ const Header: React.FC = () => {
                 <span>Favorites</span>
               </Button>
             </Link>
-            <Link to="/profile" className="flex items-center space-x-2">
+            <Link to="/offers" className="flex items-center space-x-2">
               <Button variant="ghost">
-                <User className="h-5 w-5" />
-                <span>Profile</span>
+                <ShoppingCart className="h-5 w-5" />
+                <span>Offers</span>
               </Button>
             </Link>
           </nav>
@@ -94,10 +94,10 @@ const Header: React.FC = () => {
               <span className="text-xs mt-1">Favorites</span>
             </Button>
           </Link>
-          <Link to="/profile">
+          <Link to="/offers">
             <Button variant="ghost" size="sm" className="flex flex-col items-center">
-              <User className="h-5 w-5" />
-              <span className="text-xs mt-1">Profile</span>
+              <ShoppingCart className="h-5 w-5" />
+              <span className="text-xs mt-1">Offers</span>
             </Button>
           </Link>
         </div>

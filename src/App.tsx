@@ -18,7 +18,7 @@ import Categories from './pages/Categories';
 import Favorites from './pages/Favorites';
 import Notifications from './pages/Notifications';
 import Cart from './pages/Cart';
-import Profile from './pages/Profile';
+import OffersPage from './pages/OffersPage';
 import Sell from './pages/Sell';
 
 const queryClient = new QueryClient();
@@ -44,7 +44,7 @@ const App = () => (
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/cart" element={<Cart />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/offers" element={<OffersPage />} />
             <Route path="/sell" element={<Sell />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
