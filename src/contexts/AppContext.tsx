@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from '@/components/ui/use-toast';
-import { supabase } from '@/lib/supabase';
+import { supabase, addPlayerIdToUser } from '@/lib/supabase';
 
 interface User {
   id: string;
@@ -31,10 +31,17 @@ const AppContext = createContext<AppContextType>(defaultAppContext);
 
 export const useAppContext = () => useContext(AppContext);
 
+declare global {
+  interface Window {
+    OneSignal: any;
+  }
+}
+
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [showNotifButton, setShowNotifButton] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -67,11 +74,30 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
   }, []);
 
+  // OneSignal subscription and player ID saving logic
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.OneSignalDeferred && user?.id) {
-      window.OneSignalDeferred.push(function(OneSignal) {
-        OneSignal.setExternalUserId(user.id);
+    if (typeof window !== 'undefined' && user?.id && (window as any).OneSignal) {
+      setShowNotifButton(true);
+      // Prompt for push notifications (auto)
+      (window as any).OneSignal.showSlidedownPrompt();
+      // Listen for subscription and save player ID
+      (window as any).OneSignal.getUserId().then((playerId: string | null) => {
+        if (playerId) {
+          addPlayerIdToUser(playerId);
+        }
       });
+      // Listen for changes in subscription
+      (window as any).OneSignal.on('subscriptionChange', function (isSubscribed: boolean) {
+        if (isSubscribed) {
+          (window as any).OneSignal.getUserId().then((playerId: string | null) => {
+            if (playerId) {
+              addPlayerIdToUser(playerId);
+            }
+          });
+        }
+      });
+    } else {
+      setShowNotifButton(false);
     }
   }, [user]);
 
@@ -109,6 +135,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         showToast,
       }}
     >
+      {showNotifButton && (
+        <button
+          style={{ position: 'fixed', bottom: 20, right: 20, zIndex: 9999, padding: '12px 20px', background: '#2563eb', color: 'white', border: 'none', borderRadius: 8, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
+          onClick={() => (window as any).OneSignal.showSlidedownPrompt()}
+        >
+          Enable Notifications
+        </button>
+      )}
       {children}
     </AppContext.Provider>
   );
