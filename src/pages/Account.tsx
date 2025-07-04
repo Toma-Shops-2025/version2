@@ -5,8 +5,6 @@ import { Button } from '@/components/ui/button';
 const Account: React.FC = () => {
   const { user, logout, loading } = useAppContext();
 
-  console.log('Account page - user:', user, 'loading:', loading);
-
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-black text-white">Loading...</div>;
   if (!user) return <div className="min-h-screen flex items-center justify-center bg-black text-white">You must be logged in to view your account.</div>;
 

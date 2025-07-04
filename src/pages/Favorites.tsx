@@ -11,10 +11,8 @@ const Favorites: React.FC = () => {
   const [favorites, setFavorites] = useState<any[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
 
-  console.log('Favorites page - user:', user, 'loading:', loading);
-
   useEffect(() => {
-    if (loading) return; // Wait for session to finish loading
+    if (loading) return;
     const fetchFavorites = async () => {
       setDataLoading(true);
       if (!user) {
@@ -22,7 +20,6 @@ const Favorites: React.FC = () => {
         setDataLoading(false);
         return;
       }
-      // Get favorite listing IDs
       const { data: favs, error: favsError } = await supabase
         .from('favorites')
         .select('listing_id')
@@ -33,7 +30,6 @@ const Favorites: React.FC = () => {
         return;
       }
       const listingIds = favs.map(f => f.listing_id);
-      // Get listings
       const { data: listings, error: listingsError } = await supabase
         .from('listings')
         .select('*')

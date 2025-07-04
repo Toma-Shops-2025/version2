@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAppContext } from '@/contexts/AppContext';
 import { Button } from '@/components/ui/button';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const OffersPage: React.FC = () => {
   const { user, loading } = useAppContext();
@@ -10,9 +10,6 @@ const OffersPage: React.FC = () => {
   const [dataLoading, setDataLoading] = useState(true);
   const [offersError, setOffersError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
-  const navigate = useNavigate();
-
-  console.log('Offers page - user:', user, 'loading:', loading);
 
   useEffect(() => {
     if (loading) return;
@@ -43,7 +40,6 @@ const OffersPage: React.FC = () => {
 
   const handleAction = async (offerId: string, action: 'accept' | 'reject') => {
     setActionLoading(offerId + action);
-    // You can update the offer status in your DB here
     const { error } = await supabase
       .from('offers')
       .update({ status: action })
@@ -61,9 +57,7 @@ const OffersPage: React.FC = () => {
     <div className="min-h-screen flex flex-col items-center py-8 bg-black text-white">
       <div className="w-full max-w-3xl">
         <h2 className="text-2xl font-bold mb-6">Offers Received</h2>
-        {dataLoading ? (
-          <div className="text-center text-gray-400 py-8">Loading offers...</div>
-        ) : offersError ? (
+        {offersError ? (
           <div className="text-center text-red-500 py-8">{offersError}</div>
         ) : offers.length === 0 ? (
           <div className="text-center text-gray-400 py-8">You have no offers yet.</div>
