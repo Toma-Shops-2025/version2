@@ -47,8 +47,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   useEffect(() => {
     setLoading(true);
+    console.log('AppContext useEffect: MOUNT');
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log('Supabase onAuthStateChange:', session);
+      console.log('onAuthStateChange fired:', session);
       if (session?.user) {
         setUser({
           id: session.user.id,
@@ -60,9 +61,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setUser(null);
       }
       setLoading(false);
+      console.log('onAuthStateChange: setUser and setLoading(false)', session?.user);
     });
-    // On mount, check the current session once
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('getSession resolved:', session);
       if (session?.user) {
         setUser({
           id: session.user.id,
@@ -74,9 +76,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setUser(null);
       }
       setLoading(false);
+      console.log('getSession: setUser and setLoading(false)', session?.user);
     });
     return () => {
       listener?.subscription.unsubscribe();
+      console.log('AppContext useEffect: UNMOUNT');
     };
   }, []);
 
