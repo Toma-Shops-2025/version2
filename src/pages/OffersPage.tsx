@@ -7,21 +7,21 @@ import { useNavigate, Link } from 'react-router-dom';
 const OffersPage: React.FC = () => {
   const { user, loading } = useAppContext();
   const [offers, setOffers] = useState<any[]>([]);
-  const [offersLoading, setOffersLoading] = useState(true);
+  const [dataLoading, setDataLoading] = useState(true);
   const [offersError, setOffersError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (loading) return; // Wait for session to finish loading
-    if (!user) {
-      setOffers([]);
-      setOffersLoading(false);
-      return;
-    }
+    if (loading) return;
     const fetchOffers = async () => {
-      setOffersLoading(true);
+      setDataLoading(true);
       setOffersError(null);
+      if (!user) {
+        setOffers([]);
+        setDataLoading(false);
+        return;
+      }
       try {
         const { data, error } = await supabase
           .from('offers')
@@ -33,7 +33,7 @@ const OffersPage: React.FC = () => {
       } catch (err: any) {
         setOffersError(err.message);
       } finally {
-        setOffersLoading(false);
+        setDataLoading(false);
       }
     };
     fetchOffers();
@@ -52,14 +52,14 @@ const OffersPage: React.FC = () => {
     setActionLoading(null);
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center bg-black text-white">Loading...</div>;
-  if (!user && !loading) return <div className="min-h-screen flex items-center justify-center bg-black text-white">You must be logged in to view offers.</div>;
+  if (loading || dataLoading) return <div className="min-h-screen flex items-center justify-center bg-black text-white">Loading...</div>;
+  if (!user) return <div className="min-h-screen flex items-center justify-center bg-black text-white">You must be logged in to view offers.</div>;
 
   return (
     <div className="min-h-screen flex flex-col items-center py-8 bg-black text-white">
       <div className="w-full max-w-3xl">
         <h2 className="text-2xl font-bold mb-6">Offers Received</h2>
-        {offersLoading ? (
+        {dataLoading ? (
           <div className="text-center text-gray-400 py-8">Loading offers...</div>
         ) : offersError ? (
           <div className="text-center text-red-500 py-8">{offersError}</div>

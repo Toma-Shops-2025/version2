@@ -9,14 +9,15 @@ const Favorites: React.FC = () => {
   const navigate = useNavigate();
   const { user, loading } = useAppContext();
   const [favorites, setFavorites] = useState<any[]>([]);
-  const [loadingState, setLoading] = useState(true);
+  const [dataLoading, setDataLoading] = useState(true);
 
   useEffect(() => {
     if (loading) return; // Wait for session to finish loading
     const fetchFavorites = async () => {
+      setDataLoading(true);
       if (!user) {
         setFavorites([]);
-        setLoading(false);
+        setDataLoading(false);
         return;
       }
       // Get favorite listing IDs
@@ -26,7 +27,7 @@ const Favorites: React.FC = () => {
         .eq('user_id', user.id);
       if (favsError || !favs || favs.length === 0) {
         setFavorites([]);
-        setLoading(false);
+        setDataLoading(false);
         return;
       }
       const listingIds = favs.map(f => f.listing_id);
@@ -40,7 +41,7 @@ const Favorites: React.FC = () => {
       } else {
         setFavorites(listings || []);
       }
-      setLoading(false);
+      setDataLoading(false);
     };
     fetchFavorites();
   }, [user, loading]);
@@ -48,9 +49,9 @@ const Favorites: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
       <h1 className="text-2xl font-bold mb-4">Favorites</h1>
-      {loading ? (
+      {loading || dataLoading ? (
         <div className="mb-6">Loading...</div>
-      ) : !user && !loading ? (
+      ) : !user ? (
         <p className="mb-6">You must be logged in to view your favorites.</p>
       ) : favorites.length === 0 ? (
         <p className="mb-6">You have no favorite items yet.</p>
