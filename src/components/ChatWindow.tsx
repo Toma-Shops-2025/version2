@@ -116,6 +116,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   };
 
   const sendMessage = async () => {
+    console.log('Current user object:', user);
+    console.log('Current user ID:', currentUserId);
     if (!newMessage.trim() || !currentUserId) return;
     try {
       const otherUserId = await getOtherUserId();
@@ -245,7 +247,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
           </div>
         ) : (
           <div className="text-center text-red-500">
-            Please log in to send messages.
+            Please <a href="/login" className="underline text-blue-600">log in</a> to send messages.
           </div>
         )}
       </div>
