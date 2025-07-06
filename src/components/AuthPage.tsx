@@ -3,7 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { useAppContext } from '@/contexts/AppContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const AuthPage: React.FC = () => {
   const { setUser, showToast } = useAppContext();
@@ -48,8 +48,22 @@ const AuthPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <form onSubmit={handleAuth} className="bg-white p-8 rounded shadow-md w-full max-w-sm space-y-6">
+    <div className="min-h-screen flex items-center justify-center" style={{
+      background: 'linear-gradient(135deg, #e0e7ff 0%, #f0fdfa 100%)',
+    }}>
+      <form onSubmit={handleAuth} className="bg-white p-8 rounded shadow-md w-full max-w-sm space-y-6 flex flex-col items-center">
+        <Link to="/" className="block w-full flex flex-col items-center mb-2">
+          <img
+            src={encodeURI('/TomaShops™ Logo - Retail Marketplace Layout_20250602_012328_0.png')}
+            alt="TomaShops Logo"
+            className="mb-2"
+            style={{ maxWidth: '320px', width: '100%', height: 'auto', objectFit: 'contain' }}
+          />
+        </Link>
+        {/* Tagline if not present in logo */}
+        <div className="text-center text-gray-600 text-base font-medium mb-2" style={{letterSpacing: '0.01em'}}>
+          SHOP OR SELL THROUGH ENGAGING VIDEOS
+        </div>
         <h2 className="text-2xl font-bold text-center mb-2">{isSignUp ? 'Sign Up' : 'Login'}</h2>
         <Input
           type="email"
