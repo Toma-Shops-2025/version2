@@ -21,6 +21,7 @@ import Cart from './pages/Cart';
 import OffersPage from './pages/OffersPage';
 import Sell from './pages/Sell';
 import Account from './pages/Account';
+import AuthPage from './components/AuthPage';
 import { AppProvider } from './contexts/AppContext';
 
 const queryClient = new QueryClient();
@@ -50,6 +51,7 @@ const App = () => (
               <Route path="/offers" element={<OffersPage />} />
               <Route path="/sell" element={<Sell />} />
               <Route path="/account" element={<Account />} />
+              <Route path="/login" element={<AuthPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
