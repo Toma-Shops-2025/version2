@@ -60,7 +60,6 @@ const AuthPage: React.FC = () => {
             style={{ maxWidth: '320px', width: '100%', height: 'auto', objectFit: 'contain' }}
           />
         </Link>
-        {/* Tagline removed since it's in the logo */}
         <h2 className="text-2xl font-bold text-center mb-2">{isSignUp ? 'Sign Up' : 'Login'}</h2>
         <Input
           type="email"
