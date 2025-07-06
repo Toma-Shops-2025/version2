@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { useAppContext } from '@/contexts/AppContext';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const AuthPage: React.FC = () => {
   const { setUser, showToast } = useAppContext();
@@ -11,6 +12,7 @@ const AuthPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,6 +35,7 @@ const AuthPage: React.FC = () => {
           email: result.data.user.email || '',
         });
         showToast(isSignUp ? 'Sign up successful!' : 'Login successful!');
+        navigate('/');
       } else {
         setError('Unknown error.');
       }
