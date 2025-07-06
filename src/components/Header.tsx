@@ -58,9 +58,13 @@ const Header: React.FC = () => {
 
           {/* User Menu */}
           <div className="flex items-center space-x-4">
-            {user && (
+            {user ? (
               <Link to="/account" className="flex items-center space-x-2 px-3 py-1 rounded hover:bg-gray-100">
                 <span className="font-medium">{user.name || user.email}</span>
+              </Link>
+            ) : (
+              <Link to="/login">
+                <Button variant="outline">Login</Button>
               </Link>
             )}
           </div>
@@ -94,6 +98,14 @@ const Header: React.FC = () => {
               <span className="text-xs mt-1">Offers</span>
             </Button>
           </Link>
+          {!user && (
+            <Link to="/login">
+              <Button variant="outline" size="sm" className="flex flex-col items-center">
+                <User className="h-5 w-5" />
+                <span className="text-xs mt-1">Login</span>
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
     </header>
