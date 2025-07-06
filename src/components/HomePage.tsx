@@ -143,7 +143,6 @@ const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      <div className="onesignal-customlink-container" />
       
       <main className="pb-8">
         <div className="bg-gray-900 text-white px-4 py-3">

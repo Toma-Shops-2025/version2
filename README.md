@@ -14,15 +14,13 @@
    ```
 
 3. **Set up environment variables:**
-   - Copy `.env.example` to `.env` and fill in your Supabase and OneSignal credentials:
+   - Copy `.env.example` to `.env` and fill in your Supabase credentials:
      ```sh
      cp .env.example .env
      ```
    - Required variables:
      - `VITE_SUPABASE_URL` (from your Supabase project)
      - `VITE_SUPABASE_ANON_KEY` (from your Supabase project)
-     - `VITE_ONESIGNAL_APP_ID` (from your OneSignal dashboard, optional)
-     - `VITE_ONESIGNAL_SAFARI_WEB_ID` (from OneSignal, optional)
 
 4. **Run the app locally:**
    ```sh
@@ -42,8 +40,6 @@
    - Add the same variables as in your `.env` file:
      - `VITE_SUPABASE_URL`
      - `VITE_SUPABASE_ANON_KEY`
-     - `VITE_ONESIGNAL_APP_ID` (optional)
-     - `VITE_ONESIGNAL_SAFARI_WEB_ID` (optional)
 5. **Deploy!**
    - Netlify will build and deploy your site over HTTPS.
 

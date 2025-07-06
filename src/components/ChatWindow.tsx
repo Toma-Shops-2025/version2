@@ -157,16 +157,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
           description: "Your message was sent successfully.",
           variant: "default"
         });
-        // Send OneSignal notification to the other user
-        await fetch('/.netlify/functions/send-notification', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            recipientUserId: otherUserId,
-            title: 'New message',
-            message: `You have a new message about \"${listingTitle}\"`,
-          }),
-        });
       }
     } catch (error) {
       toast({

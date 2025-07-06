@@ -58,16 +58,6 @@ const OfferButton: React.FC<OfferButtonProps> = ({
         title: "Offer submitted",
         description: `Your offer of $${offerAmount} has been sent to the seller`
       });
-      // Send OneSignal notification to the seller
-      await fetch('/.netlify/functions/send-notification', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          recipientUserId: sellerId,
-          title: 'New offer',
-          message: `You have a new offer on your listing!`,
-        }),
-      });
       setIsOpen(false);
       setOfferAmount('');
     } catch (error) {

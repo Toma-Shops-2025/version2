@@ -84,32 +84,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
   }, []);
 
-  // OneSignal subscription and player ID saving logic
-  useEffect(() => {
-    if (typeof window !== 'undefined' && user?.id && (window as any).OneSignal) {
-      setShowNotifButton(true);
-      // Prompt for push notifications (auto)
-      (window as any).OneSignal.showSlidedownPrompt();
-      // Listen for subscription and save player ID
-      (window as any).OneSignal.getUserId().then((playerId: string | null) => {
-        if (playerId) {
-          addPlayerIdToUser(playerId);
-        }
-      });
-      // Listen for changes in subscription
-      (window as any).OneSignal.on('subscriptionChange', function (isSubscribed: boolean) {
-        if (isSubscribed) {
-          (window as any).OneSignal.getUserId().then((playerId: string | null) => {
-            if (playerId) {
-              addPlayerIdToUser(playerId);
-            }
-          });
-        }
-      });
-    } else {
-      setShowNotifButton(false);
-    }
-  }, [user]);
+  // Remove all OneSignal-related code, including OneSignal logic, player ID handling, and references.
 
   const toggleSidebar = () => {
     setSidebarOpen(prev => !prev);
@@ -141,14 +116,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         loading,
       }}
     >
-      {showNotifButton && (
-        <button
-          style={{ position: 'fixed', bottom: 20, right: 20, zIndex: 9999, padding: '12px 20px', background: '#2563eb', color: 'white', border: 'none', borderRadius: 8, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
-          onClick={() => (window as any).OneSignal.showSlidedownPrompt()}
-        >
-          Enable Notifications
-        </button>
-      )}
+      {/* Remove all OneSignal-related code, including OneSignal logic, player ID handling, and references. */}
       {children}
     </AppContext.Provider>
   );
