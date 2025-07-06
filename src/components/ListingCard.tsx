@@ -12,6 +12,13 @@ interface ListingCardProps {
   location: string;
   isJustListed?: boolean;
   onClick?: () => void;
+  status?: string; // 'active', 'sold', 'trashed'
+  sold_at?: string | null;
+  isOwner?: boolean;
+  onMarkAsSold?: () => void;
+  onDelete?: () => void;
+  onRestore?: () => void;
+  onPermanentDelete?: () => void;
 }
 
 const ListingCard: React.FC<ListingCardProps> = ({
@@ -22,7 +29,14 @@ const ListingCard: React.FC<ListingCardProps> = ({
   video,
   location,
   isJustListed = false,
-  onClick
+  onClick,
+  status = 'active',
+  sold_at = null,
+  isOwner = false,
+  onMarkAsSold,
+  onDelete,
+  onRestore,
+  onPermanentDelete
 }) => {
   return (
     <Card className="cursor-pointer hover:shadow-md transition-shadow border-0 shadow-sm" onClick={onClick}>
@@ -51,6 +65,11 @@ const ListingCard: React.FC<ListingCardProps> = ({
             Just listed
           </Badge>
         )}
+        {status === 'sold' && (
+          <Badge className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 shadow-sm">
+            SOLD
+          </Badge>
+        )}
       </div>
       <CardContent className="p-3">
         <div className="mb-1">
@@ -59,10 +78,54 @@ const ListingCard: React.FC<ListingCardProps> = ({
           </h3>
         </div>
         <p className="text-gray-700 text-sm mb-2 line-clamp-2 leading-tight">{title}</p>
-        <div className="flex items-center text-gray-500 text-xs">
+        <div className="flex items-center text-gray-500 text-xs mb-2">
           <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
           <span className="truncate">{location}</span>
         </div>
+        {isOwner && status === 'active' && (
+          <button
+            className="mt-2 px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition mr-2"
+            onClick={e => {
+              e.stopPropagation();
+              onMarkAsSold && onMarkAsSold();
+            }}
+          >
+            Mark as Sold
+          </button>
+        )}
+        {isOwner && status !== 'trashed' && (
+          <button
+            className="mt-2 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition"
+            onClick={e => {
+              e.stopPropagation();
+              onDelete && onDelete();
+            }}
+          >
+            Delete
+          </button>
+        )}
+        {isOwner && status === 'trashed' && (
+          <>
+            <button
+              className="mt-2 px-3 py-1 bg-yellow-500 text-black rounded hover:bg-yellow-600 transition mr-2"
+              onClick={e => {
+                e.stopPropagation();
+                onRestore && onRestore();
+              }}
+            >
+              Restore
+            </button>
+            <button
+              className="mt-2 px-3 py-1 bg-red-800 text-white rounded hover:bg-red-900 transition"
+              onClick={e => {
+                e.stopPropagation();
+                onPermanentDelete && onPermanentDelete();
+              }}
+            >
+              Permanently Delete
+            </button>
+          </>
+        )}
       </CardContent>
     </Card>
   );

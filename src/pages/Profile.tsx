@@ -16,6 +16,7 @@ const Profile: React.FC = () => {
   const [offers, setOffers] = useState<any[]>([]);
   const [offersLoading, setOffersLoading] = useState(true);
   const [offersError, setOffersError] = useState<string | null>(null);
+  const [trashedListings, setTrashedListings] = useState<any[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,7 +28,8 @@ const Profile: React.FC = () => {
       try {
         const { data, error } = await supabase.from('listings').select('*').eq('seller_id', user.id).order('created_at', { ascending: false });
         if (error) throw error;
-        setListings(data || []);
+        setListings((data || []).filter((l: any) => l.status !== 'trashed'));
+        setTrashedListings((data || []).filter((l: any) => l.status === 'trashed'));
       } catch (err: any) {
         setError(err.message);
       }
@@ -86,6 +88,73 @@ const Profile: React.FC = () => {
     }
   }, [user]);
 
+  const handleMarkAsSold = async (listingId: string) => {
+    try {
+      const { error } = await supabase
+        .from('listings')
+        .update({ status: 'sold', sold_at: new Date().toISOString() })
+        .eq('id', listingId);
+      if (error) throw error;
+      // Refresh listings
+      const { data, error: fetchError } = await supabase.from('listings').select('*').eq('seller_id', user.id).order('created_at', { ascending: false });
+      if (fetchError) throw fetchError;
+      setListings(data || []);
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
+  const handleDeleteListing = async (listingId: string) => {
+    try {
+      const { error } = await supabase
+        .from('listings')
+        .update({ status: 'trashed', trashed_at: new Date().toISOString() })
+        .eq('id', listingId);
+      if (error) throw error;
+      // Refresh listings
+      const { data, error: fetchError } = await supabase.from('listings').select('*').eq('seller_id', user.id).order('created_at', { ascending: false });
+      if (fetchError) throw fetchError;
+      setListings(data || []);
+      setTrashedListings((data || []).filter((l: any) => l.status === 'trashed'));
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
+  const handleRestoreListing = async (listingId: string) => {
+    try {
+      const { error } = await supabase
+        .from('listings')
+        .update({ status: 'active', trashed_at: null })
+        .eq('id', listingId);
+      if (error) throw error;
+      // Refresh listings
+      const { data, error: fetchError } = await supabase.from('listings').select('*').eq('seller_id', user.id).order('created_at', { ascending: false });
+      if (fetchError) throw fetchError;
+      setListings((data || []).filter((l: any) => l.status !== 'trashed'));
+      setTrashedListings((data || []).filter((l: any) => l.status === 'trashed'));
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
+  const handlePermanentDeleteListing = async (listingId: string) => {
+    try {
+      const { error } = await supabase
+        .from('listings')
+        .delete()
+        .eq('id', listingId);
+      if (error) throw error;
+      // Refresh listings
+      const { data, error: fetchError } = await supabase.from('listings').select('*').eq('seller_id', user.id).order('created_at', { ascending: false });
+      if (fetchError) throw fetchError;
+      setListings((data || []).filter((l: any) => l.status !== 'trashed'));
+      setTrashedListings((data || []).filter((l: any) => l.status === 'trashed'));
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-black text-white">Loading...</div>;
   if (!user) return <div className="min-h-screen flex items-center justify-center bg-black text-white">You must be logged in to view your profile.</div>;
 
@@ -116,7 +185,7 @@ const Profile: React.FC = () => {
         ) : listings.length === 0 ? (
           <div className="text-center text-gray-400 py-8">You have no listings yet.</div>
         ) : (
-          <ListingsGrid listings={listings} />
+          <ListingsGrid listings={listings} isOwner={true} onMarkAsSold={handleMarkAsSold} onDelete={handleDeleteListing} />
         )}
       </div>
       <div className="w-full max-w-3xl mt-8">
@@ -141,6 +210,21 @@ const Profile: React.FC = () => {
               </li>
             ))}
           </ul>
+        )}
+      </div>
+      <div className="w-full max-w-3xl mt-8">
+        <h2 className="text-xl font-semibold mb-4">Trashed Listings</h2>
+        {trashedListings.length === 0 ? (
+          <div className="text-center text-gray-400 py-8">No trashed listings.</div>
+        ) : (
+          <ListingsGrid
+            listings={trashedListings}
+            isOwner={true}
+            onMarkAsSold={undefined}
+            onDelete={undefined}
+            onRestore={handleRestoreListing}
+            onPermanentDelete={handlePermanentDeleteListing}
+          />
         )}
       </div>
     </div>

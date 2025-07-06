@@ -9,14 +9,20 @@ interface Listing {
   images?: string[];
   video?: string;
   isJustListed?: boolean;
+  status?: string;
+  sold_at?: string | null;
 }
 
 interface ListingsGridProps {
   listings: Listing[];
   onListingClick?: (id: string) => void;
+  isOwner?: boolean;
+  onMarkAsSold?: (id: string) => void;
+  onDelete?: (id: string) => void;
+  onRestore?: (id: string) => void;
 }
 
-const ListingsGrid: React.FC<ListingsGridProps> = ({ listings, onListingClick }) => {
+const ListingsGrid: React.FC<ListingsGridProps> = ({ listings, onListingClick, isOwner = false, onMarkAsSold, onDelete, onRestore }) => {
   return (
     <div className="grid grid-cols-2 gap-2 px-2 md:gap-4 md:px-4">
       {listings.map((listing) => (
@@ -29,6 +35,12 @@ const ListingsGrid: React.FC<ListingsGridProps> = ({ listings, onListingClick })
           video={listing.video}
           location={listing.location}
           isJustListed={listing.isJustListed}
+          status={listing.status}
+          sold_at={listing.sold_at}
+          isOwner={isOwner}
+          onMarkAsSold={onMarkAsSold ? () => onMarkAsSold(listing.id) : undefined}
+          onDelete={onDelete ? () => onDelete(listing.id) : undefined}
+          onRestore={onRestore ? () => onRestore(listing.id) : undefined}
           onClick={() => onListingClick?.(listing.id)}
         />
       ))}
