@@ -38,7 +38,6 @@ const Header: React.FC = () => {
       <div className="bg-gray-900 border-b border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center space-x-8 h-12">
           <Link to="/sell" className="text-white">Sell</Link>
-          <Link to="/browse" className="text-white">Browse</Link>
           <Link to="/rentals" className="text-white">Rentals</Link>
           <Link to="/jobs" className="text-white">Jobs</Link>
           <Link to="/handyman" className="text-white">Handyman</Link>

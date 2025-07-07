@@ -28,6 +28,8 @@ import Jobs from './pages/Jobs';
 import Handyman from './pages/Handyman';
 import Browse from './pages/Browse';
 import DigitalDetail from './pages/DigitalDetail';
+import Digital from './pages/Digital';
+import SideGigs from './pages/SideGigs';
 
 const queryClient = new QueryClient();
 
@@ -62,6 +64,8 @@ const App = () => (
               <Route path="/handyman" element={<Handyman />} />
               <Route path="/browse" element={<Browse />} />
               <Route path="/digital/:id" element={<DigitalDetail />} />
+              <Route path="/digital" element={<Digital />} />
+              <Route path="/sidegigs" element={<SideGigs />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
