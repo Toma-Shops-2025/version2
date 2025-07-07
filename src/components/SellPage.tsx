@@ -20,14 +20,11 @@ const categories = [
   'Vehicles',
   'Electronics',
   'Furniture',
-  'Clothing',
   'Jewelry',
-  'Kids',
   'Collectibles & Art',
   'Pet Supplies',
   'Health & Beauty',
   'Everything Else',
-  'Rentals',
   'Sports & Outdoors',
   'Home & Garden',
   'Toys & Games',
@@ -35,7 +32,21 @@ const categories = [
   'Musical Instruments',
   'Office Supplies',
   'Hobbies',
-  'Tools'
+  'Tools',
+  'Tickets',
+  'Business Equipment',
+  'Sports Memorabilia',
+  'Motorcycles/Mopeds',
+  'Baby Items/Accessories',
+  'Shoes',
+  '3D Printers/Accessories',
+  'Drones/Planes/Helicopters',
+  'Cell Phones/Accessories',
+  'Real Estate',
+  'Auto Parts',
+  'Menswear',
+  'Womenswear',
+  'Kidswear'
 ];
 
 // Cloudinary upload function

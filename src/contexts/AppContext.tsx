@@ -33,12 +33,6 @@ const AppContext = createContext<AppContextType>(defaultAppContext);
 
 export const useAppContext = () => useContext(AppContext);
 
-declare global {
-  interface Window {
-    OneSignal: any;
-  }
-}
-
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -84,8 +78,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
   }, []);
 
-  // Remove all OneSignal-related code, including OneSignal logic, player ID handling, and references.
-
   const toggleSidebar = () => {
     setSidebarOpen(prev => !prev);
   };
@@ -116,7 +108,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         loading,
       }}
     >
-      {/* Remove all OneSignal-related code, including OneSignal logic, player ID handling, and references. */}
       {children}
     </AppContext.Provider>
   );
