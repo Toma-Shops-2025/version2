@@ -15,7 +15,7 @@ const Header: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
           <div className="flex items-center">
             <h1 className="text-xl font-bold text-gray-900">
-              TomaShops™ <span className="text-teal-600">Video 1st Marketplace</span>
+              TomaShops™ <span className="text-teal-600">Video 1st</span>
             </h1>
           </div>
           <nav className="flex items-center space-x-8">
