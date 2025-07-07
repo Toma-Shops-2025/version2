@@ -21,7 +21,6 @@ const Header: React.FC = () => {
           <nav className="flex items-center space-x-8">
             <Link to="/categories">Categories</Link>
             <Link to="/favorites">Favorites</Link>
-            <Link to="/offers">Offers</Link>
             {user ? (
               <Link to="/account">{user.name || user.email}</Link>
             ) : (
