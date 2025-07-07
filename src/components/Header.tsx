@@ -19,13 +19,9 @@ const Header: React.FC = () => {
             </h1>
           </div>
           <nav className="flex items-center space-x-8">
-            <Link to="/">Home</Link>
             <Link to="/categories">Categories</Link>
             <Link to="/favorites">Favorites</Link>
             <Link to="/offers">Offers</Link>
-            <span className="cursor-pointer" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label="Toggle dark mode">
-              {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-            </span>
             {user ? (
               <Link to="/account">{user.name || user.email}</Link>
             ) : (

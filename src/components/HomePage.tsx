@@ -149,19 +149,22 @@ const HomePage: React.FC = () => {
         <div className="bg-gray-900 text-white px-4 py-3">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-2xl font-bold">Marketplace</h1>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="text-white hover:bg-gray-700"
-              onClick={handleMessagesClick}
-            >
-              <div className="relative">
-                <MessageCircle className="h-8 w-8" />
-                {hasUnreadMessages && (
-                  <span className="absolute top-0 right-0 block h-3 w-3 rounded-full bg-red-500 border-2 border-white" />
-                )}
-              </div>
-            </Button>
+            <div className="flex items-center space-x-4">
+              <Link to="/offers" className="text-white hover:underline">Offers</Link>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-white hover:bg-gray-700"
+                onClick={handleMessagesClick}
+              >
+                <div className="relative">
+                  <MessageCircle className="h-8 w-8" />
+                  {hasUnreadMessages && (
+                    <span className="absolute top-0 right-0 block h-3 w-3 rounded-full bg-red-500 border-2 border-white" />
+                  )}
+                </div>
+              </Button>
+            </div>
           </div>
           <div className="flex items-center space-x-4 mb-4">
             <Button onClick={handleSellClick} className="bg-teal-600 hover:bg-teal-700 text-white font-semibold">Sell</Button>
