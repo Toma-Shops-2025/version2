@@ -12,6 +12,7 @@ import Map from './Map';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { useAppContext } from '@/contexts/AppContext';
 import { useSearchParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const HomePage: React.FC = () => {
   const [selectedListing, setSelectedListing] = useState<string | null>(null);
@@ -162,7 +163,16 @@ const HomePage: React.FC = () => {
               </div>
             </Button>
           </div>
-          {/* Removed Sell, For you, and Local buttons */}
+          <div className="flex items-center space-x-4 mb-4">
+            <Button onClick={handleSellClick} className="bg-teal-600 hover:bg-teal-700 text-white font-semibold">Sell</Button>
+            <div className="flex items-center space-x-4">
+              <Link to="/rentals" className="text-white hover:underline">Rentals</Link>
+              <Link to="/jobs" className="text-white hover:underline">Jobs</Link>
+              <Link to="/handyman" className="text-white hover:underline">Handyman</Link>
+              <Link to="/digital" className="text-white hover:underline">Digital</Link>
+              <Link to="/sidegigs" className="text-white hover:underline">Side Gigs</Link>
+            </div>
+          </div>
         </div>
 
         <div className="px-4 py-4">
