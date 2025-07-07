@@ -161,7 +161,7 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
       });
       if (insertError) throw insertError;
       showToast('Listing created!', 'success');
-      onBack();
+    onBack();
     } catch (err: any) {
       setError(err.message);
       showToast(err.message, 'error');

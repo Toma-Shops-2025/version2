@@ -4,11 +4,14 @@ import { Input } from '@/components/ui/input';
 import { Search, Home, Grid3X3, Heart, Bell, ShoppingCart, User, Plus } from 'lucide-react';
 import { useAppContext } from '@/contexts/AppContext';
 import { Link, useNavigate } from "react-router-dom";
+import { useTheme } from '@/components/theme-provider';
+import { Moon, Sun } from 'lucide-react';
 
 const Header: React.FC = () => {
   const { user, logout } = useAppContext();
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
+  const { theme, setTheme } = useTheme();
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (search.trim()) {
@@ -54,10 +57,28 @@ const Header: React.FC = () => {
                 <span>Offers</span>
               </Button>
             </Link>
+            <Link to="/rentals" className="flex items-center space-x-2">
+              <Button variant="ghost">
+                <span>Rentals</span>
+              </Button>
+            </Link>
+            <Link to="/jobs" className="flex items-center space-x-2">
+              <Button variant="ghost">
+                <span>Jobs</span>
+              </Button>
+            </Link>
+            <Link to="/handyman" className="flex items-center space-x-2">
+              <Button variant="ghost">
+                <span>Handyman</span>
+              </Button>
+            </Link>
           </nav>
 
           {/* User Menu */}
           <div className="flex items-center space-x-4">
+            <Button variant="ghost" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label="Toggle dark mode">
+              {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            </Button>
             {user ? (
               <Link to="/account" className="flex items-center space-x-2 px-3 py-1 rounded hover:bg-gray-100">
                 <span className="font-medium">{user.name || user.email}</span>
@@ -98,6 +119,25 @@ const Header: React.FC = () => {
               <span className="text-xs mt-1">Offers</span>
             </Button>
           </Link>
+          <Link to="/rentals">
+            <Button variant="ghost" size="sm" className="flex flex-col items-center">
+              <span className="text-xs mt-1">Rentals</span>
+            </Button>
+          </Link>
+          <Link to="/jobs">
+            <Button variant="ghost" size="sm" className="flex flex-col items-center">
+              <span className="text-xs mt-1">Jobs</span>
+            </Button>
+          </Link>
+          <Link to="/handyman">
+            <Button variant="ghost" size="sm" className="flex flex-col items-center">
+              <span className="text-xs mt-1">Handyman</span>
+            </Button>
+          </Link>
+          <Button variant="ghost" size="sm" className="flex flex-col items-center" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label="Toggle dark mode">
+            {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            <span className="text-xs mt-1">{theme === 'dark' ? 'Light' : 'Dark'}</span>
+          </Button>
           {!user && (
             <Link to="/login">
               <Button variant="outline" size="sm" className="flex flex-col items-center">

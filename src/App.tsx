@@ -23,6 +23,9 @@ import Sell from './pages/Sell';
 import Account from './pages/Account';
 import AuthPage from './components/AuthPage';
 import { AppProvider } from './contexts/AppContext';
+import Rentals from './pages/Rentals';
+import Jobs from './pages/Jobs';
+import Handyman from './pages/Handyman';
 
 const queryClient = new QueryClient();
 
@@ -52,6 +55,9 @@ const App = () => (
               <Route path="/sell" element={<Sell />} />
               <Route path="/account" element={<Account />} />
               <Route path="/login" element={<AuthPage />} />
+              <Route path="/rentals" element={<Rentals />} />
+              <Route path="/jobs" element={<Jobs />} />
+              <Route path="/handyman" element={<Handyman />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

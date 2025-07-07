@@ -187,7 +187,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
 
       {/* Video */}
       {listing.video && (
-        <div className="relative">
+      <div className="relative">
           <video
             src={listing.video}
             controls
@@ -220,7 +220,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
               <X className="h-5 w-5" />
             </Button>
           </div>
-        </div>
+      </div>
       )}
 
       <div className="p-4">

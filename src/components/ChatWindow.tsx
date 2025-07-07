@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
-import { ArrowLeft, Send } from 'lucide-react';
+import { ArrowLeft, Send, Trash2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
 import { useAppContext } from '@/contexts/AppContext';
@@ -12,6 +12,8 @@ interface Message {
   content: string;
   sender_id: string;
   created_at: string;
+  status?: string;
+  trashed_at?: string | null;
 }
 
 interface ChatWindowProps {
@@ -150,8 +152,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         return;
       }
       if (data && data.length > 0) {
-        setNewMessage('');
-        loadMessages();
+      setNewMessage('');
+      loadMessages();
         toast({
           title: "Message sent",
           description: "Your message was sent successfully.",
@@ -180,6 +182,28 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
     }
   };
 
+  const handleTrashMessage = async (messageId: string) => {
+    try {
+      const { error } = await supabase
+        .from('messages')
+        .update({ status: 'trashed', trashed_at: new Date().toISOString() })
+        .eq('id', messageId);
+      if (error) throw error;
+      loadMessages();
+      toast({
+        title: 'Message deleted',
+        description: 'Your message was moved to trash.',
+        variant: 'default',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: error?.message || 'Failed to delete message',
+        variant: 'destructive',
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       {/* Header */}
@@ -202,7 +226,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         ) : messages.length === 0 ? (
           <div className="text-center text-gray-500">No messages yet. Start the conversation!</div>
         ) : (
-          messages.map((message) => (
+          messages
+            .filter((message) => message.status !== 'trashed')
+            .map((message) => (
             <div
               key={message.id}
               className={`flex ${
@@ -214,17 +240,28 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
                   ? 'bg-blue-600 text-white' 
                   : 'bg-white'
               }`}>
-                <div className="flex flex-col">
-                  <span className="text-xs font-semibold mb-1">
-                    {message.sender_id === currentUserId ? 'You' : otherUserEmail || 'User'}
-                  </span>
-                  <p className="text-sm">{message.content}</p>
-                  <p className={`text-xs mt-1 ${
-                    message.sender_id === currentUserId ? 'text-blue-100' : 'text-gray-500'
-                  }`}>
-                    {new Date(message.created_at).toLocaleTimeString()}
-                  </p>
-                </div>
+                  <div className="flex flex-col">
+                    <span className="text-xs font-semibold mb-1">
+                      {message.sender_id === currentUserId ? 'You' : otherUserEmail || 'User'}
+                    </span>
+                    <div className="flex items-center">
+                      <p className="text-sm mr-2">{message.content}</p>
+                      {message.sender_id === currentUserId && (
+                        <button
+                          className="ml-1 text-white hover:text-red-400"
+                          title="Delete"
+                          onClick={() => handleTrashMessage(message.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
+                <p className={`text-xs mt-1 ${
+                  message.sender_id === currentUserId ? 'text-blue-100' : 'text-gray-500'
+                }`}>
+                  {new Date(message.created_at).toLocaleTimeString()}
+                </p>
+                  </div>
               </Card>
             </div>
           ))
@@ -238,17 +275,17 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
       {/* Input */}
       <div className="bg-white border-t p-4">
         {currentUserId ? (
-          <div className="flex space-x-2">
-            <Input
-              value={newMessage}
+        <div className="flex space-x-2">
+          <Input
+            value={newMessage}
               onChange={handleInputChange}
-              placeholder="Type a message..."
-              onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-            />
+            placeholder="Type a message..."
+            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+          />
             <Button onClick={sendMessage} disabled={!newMessage.trim() || isSending}>
-              <Send className="h-4 w-4" />
-            </Button>
-          </div>
+            <Send className="h-4 w-4" />
+          </Button>
+        </div>
         ) : (
           <div className="text-center text-red-500">
             Please <a href="/login" className="underline text-blue-600">log in</a> to send messages.
