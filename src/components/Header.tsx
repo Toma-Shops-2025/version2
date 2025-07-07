@@ -1,151 +1,49 @@
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Search, Home, Grid3X3, Heart, Bell, ShoppingCart, User, Plus } from 'lucide-react';
-import { useAppContext } from '@/contexts/AppContext';
 import { Link, useNavigate } from "react-router-dom";
+import { useAppContext } from '@/contexts/AppContext';
 import { useTheme } from '@/components/theme-provider';
 import { Moon, Sun } from 'lucide-react';
 
 const Header: React.FC = () => {
-  const { user, logout } = useAppContext();
-  const [search, setSearch] = useState('');
-  const navigate = useNavigate();
+  const { user } = useAppContext();
   const { theme, setTheme } = useTheme();
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (search.trim()) {
-      navigate(`/?search=${encodeURIComponent(search)}`);
-      setSearch('');
-    }
-  };
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
+    <header className="">
+      {/* Top White Area */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
           <div className="flex items-center">
             <h1 className="text-xl font-bold text-gray-900">
               TomaShops™ <span className="text-teal-600">Video 1st Marketplace</span>
             </h1>
           </div>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="flex items-center space-x-2">
-              <Button variant="ghost">
-                <Home className="h-5 w-5" />
-                <span>Home</span>
-              </Button>
-            </Link>
-            <Link to="/categories" className="flex items-center space-x-2">
-              <Button variant="ghost">
-                <Grid3X3 className="h-5 w-5" />
-                <span>Categories</span>
-              </Button>
-            </Link>
-            <Link to="/favorites" className="flex items-center space-x-2">
-              <Button variant="ghost">
-                <Heart className="h-5 w-5" />
-                <span>Favorites</span>
-              </Button>
-            </Link>
-            <Link to="/offers" className="flex items-center space-x-2">
-              <Button variant="ghost">
-                <ShoppingCart className="h-5 w-5" />
-                <span>Offers</span>
-              </Button>
-            </Link>
-            <Link to="/rentals" className="flex items-center space-x-2">
-              <Button variant="ghost">
-                <span>Rentals</span>
-              </Button>
-            </Link>
-            <Link to="/jobs" className="flex items-center space-x-2">
-              <Button variant="ghost">
-                <span>Jobs</span>
-              </Button>
-            </Link>
-            <Link to="/handyman" className="flex items-center space-x-2">
-              <Button variant="ghost">
-                <span>Handyman</span>
-              </Button>
-            </Link>
-          </nav>
-
-          {/* User Menu */}
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label="Toggle dark mode">
-              {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </Button>
+          <nav className="flex items-center space-x-8">
+            <Link to="/">Home</Link>
+            <Link to="/categories">Categories</Link>
+            <Link to="/favorites">Favorites</Link>
+            <Link to="/offers">Offers</Link>
+            <span className="cursor-pointer" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label="Toggle dark mode">
+              {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+            </span>
             {user ? (
-              <Link to="/account" className="flex items-center space-x-2 px-3 py-1 rounded hover:bg-gray-100">
-                <span className="font-medium">{user.name || user.email}</span>
-              </Link>
+              <Link to="/account">{user.name || user.email}</Link>
             ) : (
-              <Link to="/login">
-                <Button variant="outline">Login</Button>
-              </Link>
+              <Link to="/login">Login</Link>
             )}
-          </div>
+          </nav>
         </div>
       </div>
-
-      {/* Mobile Navigation */}
-      <div className="md:hidden border-t border-gray-200">
-        <div className="flex justify-around py-2">
-          <Link to="/">
-            <Button variant="ghost" size="sm" className="flex flex-col items-center">
-              <Home className="h-5 w-5" />
-              <span className="text-xs mt-1">Home</span>
-            </Button>
-          </Link>
-          <Link to="/categories">
-            <Button variant="ghost" size="sm" className="flex flex-col items-center">
-              <Grid3X3 className="h-5 w-5" />
-              <span className="text-xs mt-1">Categories</span>
-            </Button>
-          </Link>
-          <Link to="/favorites">
-            <Button variant="ghost" size="sm" className="flex flex-col items-center">
-              <Heart className="h-5 w-5" />
-              <span className="text-xs mt-1">Favorites</span>
-            </Button>
-          </Link>
-          <Link to="/offers">
-            <Button variant="ghost" size="sm" className="flex flex-col items-center">
-              <ShoppingCart className="h-5 w-5" />
-              <span className="text-xs mt-1">Offers</span>
-            </Button>
-          </Link>
-          <Link to="/rentals">
-            <Button variant="ghost" size="sm" className="flex flex-col items-center">
-              <span className="text-xs mt-1">Rentals</span>
-            </Button>
-          </Link>
-          <Link to="/jobs">
-            <Button variant="ghost" size="sm" className="flex flex-col items-center">
-              <span className="text-xs mt-1">Jobs</span>
-            </Button>
-          </Link>
-          <Link to="/handyman">
-            <Button variant="ghost" size="sm" className="flex flex-col items-center">
-              <span className="text-xs mt-1">Handyman</span>
-            </Button>
-          </Link>
-          <Button variant="ghost" size="sm" className="flex flex-col items-center" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label="Toggle dark mode">
-            {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            <span className="text-xs mt-1">{theme === 'dark' ? 'Light' : 'Dark'}</span>
-          </Button>
-          {!user && (
-            <Link to="/login">
-              <Button variant="outline" size="sm" className="flex flex-col items-center">
-                <User className="h-5 w-5" />
-                <span className="text-xs mt-1">Login</span>
-              </Button>
-            </Link>
-          )}
+      {/* Dark Area Below */}
+      <div className="bg-gray-900 border-b border-gray-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center space-x-8 h-12">
+          <Link to="/sell" className="text-white">Sell</Link>
+          <Link to="/browse" className="text-white">Browse</Link>
+          <Link to="/rentals" className="text-white">Rentals</Link>
+          <Link to="/jobs" className="text-white">Jobs</Link>
+          <Link to="/handyman" className="text-white">Handyman</Link>
+          <Link to="/digital" className="text-white">Digital</Link>
+          <Link to="/sidegigs" className="text-white">Side Gigs</Link>
         </div>
       </div>
     </header>

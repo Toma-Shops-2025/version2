@@ -17,6 +17,7 @@ const Profile: React.FC = () => {
   const [offersLoading, setOffersLoading] = useState(true);
   const [offersError, setOffersError] = useState<string | null>(null);
   const [trashedListings, setTrashedListings] = useState<any[]>([]);
+  const [pendingPurchases, setPendingPurchases] = useState<any[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -57,6 +58,38 @@ const Profile: React.FC = () => {
       }
     };
     fetchOffers();
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchPendingPurchases = async () => {
+      // Get all digital listings by this seller
+      const { data: digitalListings, error: digitalError } = await supabase
+        .from('listings')
+        .select('id, title')
+        .eq('seller_id', user.id)
+        .eq('category', 'digital');
+      if (digitalError) return;
+      const digitalIds = (digitalListings || []).map((l: any) => l.id);
+      if (digitalIds.length === 0) {
+        setPendingPurchases([]);
+        return;
+      }
+      // Get all unconfirmed purchases for these listings
+      const { data: purchases, error: purchasesError } = await supabase
+        .from('purchases')
+        .select('id, listing_id, buyer_id, confirmed, created_at')
+        .in('listing_id', digitalIds)
+        .eq('confirmed', false);
+      if (purchasesError) return;
+      // Attach listing title
+      const purchasesWithTitle = (purchases || []).map((p: any) => ({
+        ...p,
+        title: (digitalListings || []).find((l: any) => l.id === p.listing_id)?.title || ''
+      }));
+      setPendingPurchases(purchasesWithTitle);
+    };
+    fetchPendingPurchases();
   }, [user]);
 
   const handleProfilePicChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -155,6 +188,11 @@ const Profile: React.FC = () => {
     }
   };
 
+  const handleConfirmPurchase = async (purchaseId: string) => {
+    await supabase.from('purchases').update({ confirmed: true }).eq('id', purchaseId);
+    setPendingPurchases(pendingPurchases.filter((p) => p.id !== purchaseId));
+  };
+
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-black text-white">Loading...</div>;
   if (!user) return <div className="min-h-screen flex items-center justify-center bg-black text-white">You must be logged in to view your profile.</div>;
 
@@ -225,6 +263,25 @@ const Profile: React.FC = () => {
             onRestore={handleRestoreListing}
             onPermanentDelete={handlePermanentDeleteListing}
           />
+        )}
+      </div>
+      <div className="w-full max-w-3xl mt-8">
+        <h2 className="text-xl font-semibold mb-4">Digital Product Purchases (Pending Confirmation)</h2>
+        {pendingPurchases.length === 0 ? (
+          <div className="text-center text-gray-400 py-8">No pending digital product purchases.</div>
+        ) : (
+          <ul className="divide-y divide-gray-700">
+            {pendingPurchases.map((purchase) => (
+              <li key={purchase.id} className="py-4 flex flex-col md:flex-row md:items-center md:justify-between">
+                <div>
+                  <div className="font-semibold">Product: <span className="text-yellow-400">{purchase.title}</span></div>
+                  <div className="text-sm text-gray-400">Buyer ID: {purchase.buyer_id}</div>
+                  <div className="text-xs text-gray-500">Requested: {new Date(purchase.created_at).toLocaleString()}</div>
+                </div>
+                <button className="bg-green-600 text-white px-4 py-2 rounded mt-2 md:mt-0" onClick={() => handleConfirmPurchase(purchase.id)}>Confirm</button>
+              </li>
+            ))}
+          </ul>
         )}
       </div>
     </div>

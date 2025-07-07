@@ -26,6 +26,8 @@ import { AppProvider } from './contexts/AppContext';
 import Rentals from './pages/Rentals';
 import Jobs from './pages/Jobs';
 import Handyman from './pages/Handyman';
+import Browse from './pages/Browse';
+import DigitalDetail from './pages/DigitalDetail';
 
 const queryClient = new QueryClient();
 
@@ -58,6 +60,8 @@ const App = () => (
               <Route path="/rentals" element={<Rentals />} />
               <Route path="/jobs" element={<Jobs />} />
               <Route path="/handyman" element={<Handyman />} />
+              <Route path="/browse" element={<Browse />} />
+              <Route path="/digital/:id" element={<DigitalDetail />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
