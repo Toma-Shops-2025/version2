@@ -162,12 +162,7 @@ const HomePage: React.FC = () => {
               </div>
             </Button>
           </div>
-          
-          <div className="flex space-x-6">
-            <Button variant="ghost" className="text-white hover:bg-gray-700" onClick={handleSellClick}>Sell</Button>
-            <Button className={`px-6 ${filter === 'all' ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'text-white hover:bg-gray-700'}`} onClick={() => setFilter('all')}>For you</Button>
-            <Button className={filter === 'local' ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'text-white hover:bg-gray-700'} onClick={() => setFilter('local')}>Local</Button>
-          </div>
+          {/* Removed Sell, For you, and Local buttons */}
         </div>
 
         <div className="px-4 py-4">
