@@ -36,6 +36,7 @@ export default defineConfig(({ mode }) => ({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,png,svg,ico,json}'],
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB limit for precaching
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/.*/, // cache all network requests
