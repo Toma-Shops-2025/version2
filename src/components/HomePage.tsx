@@ -13,6 +13,7 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { useAppContext } from '@/contexts/AppContext';
 import { useSearchParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import UserNavBar from './UserNavBar';
 
 const HomePage: React.FC = () => {
   const [selectedListing, setSelectedListing] = useState<string | null>(null);
@@ -166,6 +167,7 @@ const HomePage: React.FC = () => {
               </Button>
             </div>
           </div>
+          <UserNavBar />
           <div className="flex items-center space-x-4 mb-4">
             <Button onClick={handleSellClick} className="bg-teal-600 hover:bg-teal-700 text-white font-semibold">Sell</Button>
             <div className="flex items-center space-x-4">

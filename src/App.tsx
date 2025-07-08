@@ -30,6 +30,8 @@ import Browse from './pages/Browse';
 import DigitalDetail from './pages/DigitalDetail';
 import Digital from './pages/Digital';
 import SideGigs from './pages/SideGigs';
+import MyListings from './pages/MyListings';
+import MyOrders from './pages/MyOrders';
 
 const queryClient = new QueryClient();
 
@@ -66,6 +68,8 @@ const App = () => (
               <Route path="/digital/:id" element={<DigitalDetail />} />
               <Route path="/digital" element={<Digital />} />
               <Route path="/sidegigs" element={<SideGigs />} />
+              <Route path="/my-listings" element={<MyListings />} />
+              <Route path="/my-orders" element={<MyOrders />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

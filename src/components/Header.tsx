@@ -22,7 +22,11 @@ const Header: React.FC = () => {
             <Link to="/categories">Categories</Link>
             <Link to="/favorites">Favorites</Link>
             {user ? (
-              <Link to="/account">{user.name || user.email}</Link>
+              <>
+                <Link to="/my-listings">My Listings</Link>
+                <Link to="/my-orders">My Orders</Link>
+                <Link to="/account">{user.name || user.email}</Link>
+              </>
             ) : (
               <Link to="/login">Login</Link>
             )}
