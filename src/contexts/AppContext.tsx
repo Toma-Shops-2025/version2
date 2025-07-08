@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from '@/components/ui/use-toast';
-import { supabase, addPlayerIdToUser } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
+import { requestFirebaseNotificationPermission } from '@/lib/fcmToken';
+import { onMessage, messaging } from '@/lib/firebase';
 
 interface User {
   id: string;
@@ -76,6 +78,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       listener?.subscription.unsubscribe();
       console.log('AppContext useEffect: UNMOUNT');
     };
+  }, []);
+
+  // Request FCM permission and save token after login
+  useEffect(() => {
+    if (user) {
+      requestFirebaseNotificationPermission().then(token => {
+        if (token) {
+          supabase
+            .from('users')
+            .update({ fcm_token: token })
+            .eq('id', user.id);
+        }
+      });
+    }
+  }, [user]);
+
+  // Foreground notification handling
+  useEffect(() => {
+    const unsubscribe = onMessage(messaging, (payload) => {
+      toast({
+        title: payload?.notification?.title || 'New Message',
+        description: payload?.notification?.body || '',
+      });
+    });
+    // No unsubscribe needed for onMessage
+    return () => {};
   }, []);
 
   const toggleSidebar = () => {
