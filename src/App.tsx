@@ -32,6 +32,7 @@ import Digital from './pages/Digital';
 import SideGigs from './pages/SideGigs';
 import MyListings from './pages/MyListings';
 import MyOrders from './pages/MyOrders';
+import Chatbot from './components/Chatbot';
 
 const queryClient = new QueryClient();
 
@@ -72,6 +73,7 @@ const App = () => (
               <Route path="/my-orders" element={<MyOrders />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
+            <Chatbot />
           </BrowserRouter>
         </TooltipProvider>
       </QueryClientProvider>
