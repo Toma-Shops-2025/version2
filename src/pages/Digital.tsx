@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAppContext } from '@/contexts/AppContext';
 import { Link } from 'react-router-dom';
+import Map from '@/components/Map';
 
 const DigitalForm = ({ onClose }: { onClose: () => void }) => {
   const { user } = useAppContext();
@@ -136,6 +137,7 @@ const Digital = () => {
           </div>
         )}
       </div>
+      <Map listings={listings} />
       {showForm && <DigitalForm onClose={() => setShowForm(false)} />}
     </div>
   );

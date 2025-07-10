@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAppContext } from '@/contexts/AppContext';
+import Map from '@/components/Map';
 
 const CLOUDINARY_CLOUD_NAME = 'dumnzljgn';
 const CLOUDINARY_UPLOAD_PRESET = 'unsigned_preset';
@@ -218,6 +219,7 @@ const Rentals = () => {
           </div>
         )}
       </div>
+      <Map listings={listings} />
       {showForm && <RentalForm onClose={() => setShowForm(false)} />}
     </div>
   );

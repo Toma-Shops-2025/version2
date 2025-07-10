@@ -144,10 +144,12 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header />
-      
-      <main className="pb-8">
-        <div className="bg-gray-900 text-white px-4 py-3">
+      {/* Sticky Header Area */}
+      <div className="sticky top-0 z-50">
+        <Header />
+        
+        {/* Dark Banner Area - Also Sticky */}
+        <div className="bg-gray-900 text-white px-4 py-3 shadow-lg">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-2xl font-bold">Marketplace</h1>
             <div className="flex items-center space-x-4">
@@ -166,6 +168,14 @@ const HomePage: React.FC = () => {
                 </div>
               </Button>
             </div>
+            <a
+              href="https://www.youtube.com/watch?v=uS_JhdsZpcg"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block mt-2 text-teal-300 hover:underline text-sm text-right"
+            >
+              Watch Demo Video
+            </a>
           </div>
           <UserNavBar />
           <div className="flex items-center space-x-4 mb-4">
@@ -179,7 +189,10 @@ const HomePage: React.FC = () => {
             </div>
           </div>
         </div>
-
+      </div>
+      
+      {/* Scrollable Main Content */}
+      <main className="pb-8">
         <div className="px-4 py-4">
           {filter !== 'all' && (
             <Button variant="secondary" className="mb-4" onClick={() => setFilter('all')}>Back</Button>
@@ -201,19 +214,7 @@ const HomePage: React.FC = () => {
                 listings={searchFilteredListings} 
                 onListingClick={handleListingClick}
               />
-              <div className="my-8">
-                <iframe
-                  width="100%"
-                  height="315"
-                  src="https://www.youtube.com/embed/uS_JhdsZpcg?si=OrIIXCO2IYI2CJ2K"
-                  title="TomaShops How-To Demo"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                  className="rounded-lg shadow"
-                ></iframe>
-              </div>
-              <Map listings={listings} />
+              {/* Map removed from HomePage */}
             </>
           )}
         </div>

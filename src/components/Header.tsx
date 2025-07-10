@@ -9,7 +9,7 @@ const Header: React.FC = () => {
   const { theme, setTheme } = useTheme();
 
   return (
-    <header className="">
+    <header className="sticky top-0 z-50 bg-white shadow-sm">
       {/* Top White Area */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
@@ -26,6 +26,14 @@ const Header: React.FC = () => {
             ) : (
               <Link to="/login">Login</Link>
             )}
+            <a
+              href="https://www.youtube.com/watch?v=uS_JhdsZpcg"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-teal-600 font-semibold hover:underline"
+            >
+              Watch Demo Video
+            </a>
           </nav>
         </div>
       </div>
