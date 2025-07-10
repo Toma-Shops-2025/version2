@@ -14,6 +14,7 @@ import { useAppContext } from '@/contexts/AppContext';
 import { useSearchParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import UserNavBar from './UserNavBar';
+import BottomNavBar from './BottomNavBar';
 
 const HomePage: React.FC = () => {
   const [selectedListing, setSelectedListing] = useState<string | null>(null);
@@ -29,6 +30,7 @@ const HomePage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('search')?.toLowerCase() || '';
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(20);
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -117,6 +119,20 @@ const HomePage: React.FC = () => {
       )
     : filteredListings;
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerWidth < 768 &&
+        window.innerHeight + window.scrollY >= document.body.offsetHeight - 200 &&
+        visibleCount < searchFilteredListings.length
+      ) {
+        setVisibleCount((prev) => Math.min(prev + 20, searchFilteredListings.length));
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [visibleCount, searchFilteredListings.length]);
+
   const handleResend = async () => {
     setResending(true);
     setResent(false);
@@ -142,8 +158,12 @@ const HomePage: React.FC = () => {
     return <ProductDetail listing={currentListing} onBack={handleBackToGrid} />;
   }
 
+  const handleViewMore = () => {
+    setVisibleCount((prev) => Math.min(prev + 20, searchFilteredListings.length));
+  };
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen flex flex-col bg-white">
       {/* Sticky Header Area */}
       <div className="sticky top-0 z-50">
         <Header />
@@ -192,7 +212,7 @@ const HomePage: React.FC = () => {
       </div>
       
       {/* Scrollable Main Content */}
-      <main className="pb-8">
+      <main className="pb-8 flex-1">
         <div className="px-4 py-4">
           {filter !== 'all' && (
             <Button variant="secondary" className="mb-4" onClick={() => setFilter('all')}>Back</Button>
@@ -211,16 +231,27 @@ const HomePage: React.FC = () => {
           ) : (
             <>
               <ListingsGrid 
-                listings={searchFilteredListings} 
+                listings={searchFilteredListings.slice(0, visibleCount)} 
                 onListingClick={handleListingClick}
               />
-              {/* Map removed from HomePage */}
+              {/* View More button for desktop */}
+              {window.innerWidth >= 768 && visibleCount < searchFilteredListings.length && (
+                <div className="flex justify-center my-8">
+                  <Button
+                    onClick={handleViewMore}
+                    className="bg-teal-500 text-white font-bold px-8 py-3 rounded-full text-lg shadow hover:bg-teal-600"
+                  >
+                    View More
+                  </Button>
+                </div>
+              )}
             </>
           )}
         </div>
       </main>
-      
+      {/* Always show Footer on desktop, outside main content */}
       <Footer />
+      <BottomNavBar />
     </div>
   );
 };
