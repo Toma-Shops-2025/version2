@@ -9,18 +9,6 @@ const HowItWorks: React.FC = () => {
       <Button variant="secondary" className="mb-4" onClick={() => navigate(-1)}>Back</Button>
       <h1 className="text-3xl font-bold mb-4">🛍️ How TomaShops™ Works — Buy & Sell with Video Listings</h1>
       <p className="mb-6 text-lg">TomaShops™ is the #1 video-first online marketplace for local and nationwide buying and selling. Our platform lets you post short product videos, connect with buyers or sellers instantly, and complete secure local or shipping-based transactions — all in one place.</p>
-      <div className="mb-8">
-        <iframe
-          width="100%"
-          height="315"
-          src="https://www.youtube.com/embed/uS_JhdsZpcg?si=OrIIXCO2IYI2CJ2K"
-          title="TomaShops How-To Demo"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
-          className="rounded-lg shadow"
-        ></iframe>
-      </div>
       <h2 className="text-2xl font-semibold mt-8 mb-2">📦 Selling on TomaShops™</h2>
       <ol className="list-decimal ml-6 mb-4 space-y-2">
         <li><b>Create a Free Seller Account:</b> Sign up in seconds and start posting listings right away.</li>
