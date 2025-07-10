@@ -37,6 +37,8 @@ const Chatbot: React.FC<ChatbotProps> = ({ className }) => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const recognitionRef = useRef<any>(null);
+  const [isListening, setIsListening] = useState(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -51,6 +53,65 @@ const Chatbot: React.FC<ChatbotProps> = ({ className }) => {
       inputRef.current.focus();
     }
   }, [isOpen]);
+
+  // Always-on Speech-to-Text (user input)
+  useEffect(() => {
+    if (!isOpen) return;
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) return;
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      recognitionRef.current = null;
+    }
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+    recognition.onresult = (event: any) => {
+      for (let i = event.resultIndex; i < event.results.length; ++i) {
+        if (event.results[i].isFinal) {
+          const transcript = event.results[i][0].transcript.trim();
+          if (transcript) {
+            setInputValue(transcript);
+            setTimeout(() => handleSendMessage(), 200);
+          }
+        }
+      }
+    };
+    recognition.onerror = (event: any) => {
+      setIsListening(false);
+    };
+    recognition.onend = () => {
+      setIsListening(false);
+      // Restart listening if chat is open
+      if (isOpen) {
+        recognition.start();
+        setIsListening(true);
+      }
+    };
+    recognition.start();
+    setIsListening(true);
+    recognitionRef.current = recognition;
+    return () => {
+      recognition.stop();
+      setIsListening(false);
+    };
+    // eslint-disable-next-line
+  }, [isOpen]);
+
+  // Always-on Text-to-Speech (bot output)
+  useEffect(() => {
+    if (!isOpen) return;
+    if (!('speechSynthesis' in window)) return;
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage && lastMessage.sender === 'bot') {
+      const utter = new window.SpeechSynthesisUtterance(lastMessage.text);
+      utter.lang = 'en-US';
+      window.speechSynthesis.cancel(); // Stop any previous speech
+      window.speechSynthesis.speak(utter);
+    }
+    // eslint-disable-next-line
+  }, [messages, isOpen]);
 
   // Enhanced bot responses with context awareness
   const getBotResponse = async (userMessage: string): Promise<string> => {
