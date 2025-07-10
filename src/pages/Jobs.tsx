@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAppContext } from '@/contexts/AppContext';
 import Map from '@/components/Map';
+import { Link } from 'react-router-dom';
+import BackButton from '@/components/BackButton';
+import LocationPicker from '@/components/LocationPicker';
 
 const CLOUDINARY_CLOUD_NAME = 'dumnzljgn';
 const CLOUDINARY_UPLOAD_PRESET = 'unsigned_preset';
@@ -29,6 +32,8 @@ const JobForm = ({ onClose }: { onClose: () => void }) => {
   const [description, setDescription] = useState('');
   const [requirements, setRequirements] = useState('');
   const [location, setLocation] = useState('');
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
   const [applicationUrl, setApplicationUrl] = useState('');
   const [deadline, setDeadline] = useState('');
   const [images, setImages] = useState<FileList | null>(null);
@@ -57,6 +62,8 @@ const JobForm = ({ onClose }: { onClose: () => void }) => {
         description,
         requirements,
         location,
+        latitude,
+        longitude,
         application_url: applicationUrl,
         deadline: deadline || null,
         category: 'job',
@@ -101,9 +108,18 @@ const JobForm = ({ onClose }: { onClose: () => void }) => {
           <label className="block mb-1">Requirements</label>
           <textarea className="w-full p-2 border rounded" value={requirements} onChange={e => setRequirements(e.target.value)} />
         </div>
-        <div className="mb-2">
-          <label className="block mb-1">Location</label>
-          <input className="w-full p-2 border rounded" value={location} onChange={e => setLocation(e.target.value)} required />
+        <div className="mb-4">
+          <label className="block mb-1 font-semibold">Location</label>
+          <LocationPicker
+            onChange={({ latitude, longitude, address }) => {
+              setLatitude(latitude);
+              setLongitude(longitude);
+              setLocation(address);
+            }}
+          />
+          {location && (
+            <div className="text-xs text-gray-600 mt-1">Selected: {location}</div>
+          )}
         </div>
         <div className="mb-2">
           <label className="block mb-1">Application URL</label>
@@ -159,6 +175,9 @@ const Jobs = () => {
 
   return (
     <div className="container mx-auto py-8">
+      <div className="sticky top-0 z-40 bg-white dark:bg-gray-900 pb-2">
+        <BackButton />
+      </div>
       <h1 className="text-3xl font-bold mb-4">Job Listings</h1>
       <button className="bg-green-600 text-white px-4 py-2 rounded" onClick={() => setShowForm(true)}>Create New Job Listing</button>
       <div className="mt-8">
@@ -171,25 +190,27 @@ const Jobs = () => {
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {listings.map(listing => (
-              <div key={listing.id} className="bg-white dark:bg-gray-900 rounded-lg shadow p-4">
-                {listing.images && listing.images.length > 0 && (
-                  <img src={listing.images[0]} alt={listing.title} className="w-full h-40 object-cover rounded mb-2" />
-                )}
-                <h2 className="text-xl font-semibold mb-1">{listing.title}</h2>
-                <div className="text-green-700 font-bold mb-1">{listing.company_name}</div>
-                <div className="text-gray-700 mb-1">{listing.location}</div>
-                <div className="text-sm text-gray-500 mb-1">{listing.job_type}</div>
-                <div className="text-sm text-gray-500 mb-1">Salary: {listing.salary || 'N/A'}</div>
-                <div className="text-sm text-gray-500 mb-1">Deadline: {listing.deadline || 'N/A'}</div>
-                <div className="text-sm text-gray-500 mb-1">{listing.requirements}</div>
-                <div className="text-gray-600 mt-2 line-clamp-2">{listing.description}</div>
-                {listing.application_url && (
-                  <a href={listing.application_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline text-sm mt-2 block">Apply Here</a>
-                )}
-                {listing.video && (
-                  <video src={listing.video} controls className="w-full mt-2 rounded" style={{ maxHeight: 120 }} />
-                )}
-              </div>
+              <Link key={listing.id} to={`/jobs/${listing.id}`} className="block">
+                <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-4 hover:ring-2 hover:ring-green-400 transition">
+                  {listing.images && listing.images.length > 0 && (
+                    <img src={listing.images[0]} alt={listing.title} className="w-full h-40 object-cover rounded mb-2" />
+                  )}
+                  <h2 className="text-xl font-semibold mb-1">{listing.title}</h2>
+                  <div className="text-green-700 font-bold mb-1">{listing.company_name}</div>
+                  <div className="text-gray-700 mb-1">{listing.location}</div>
+                  <div className="text-sm text-gray-500 mb-1">{listing.job_type}</div>
+                  <div className="text-sm text-gray-500 mb-1">Salary: {listing.salary || 'N/A'}</div>
+                  <div className="text-sm text-gray-500 mb-1">Deadline: {listing.deadline || 'N/A'}</div>
+                  <div className="text-sm text-gray-500 mb-1">{listing.requirements}</div>
+                  <div className="text-gray-600 mt-2 line-clamp-2">{listing.description}</div>
+                  {listing.application_url && (
+                    <a href={listing.application_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline text-sm mt-2 block">Apply Here</a>
+                  )}
+                  {listing.video && (
+                    <video src={listing.video} controls className="w-full mt-2 rounded" style={{ maxHeight: 120 }} />
+                  )}
+                </div>
+              </Link>
             ))}
           </div>
         )}
