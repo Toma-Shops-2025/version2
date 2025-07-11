@@ -22,6 +22,16 @@ interface ChatbotProps {
   className?: string;
 }
 
+async function askTomaBot(question: string): Promise<string> {
+  const response = await fetch('http://localhost:3001/ask', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ question }),
+  });
+  const data = await response.json();
+  return data.answer;
+}
+
 const Chatbot: React.FC<ChatbotProps> = ({ className }) => {
   const { user, showToast } = useAppContext();
   const [isOpen, setIsOpen] = useState(false);
@@ -147,7 +157,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ className }) => {
     setIsLoading(true);
 
     try {
-      const botResponse = await getBotResponse(userMessage.text);
+      const botResponse = await askTomaBot(userMessage.text);
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
         text: botResponse,

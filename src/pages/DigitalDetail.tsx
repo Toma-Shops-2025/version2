@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useAppContext } from '@/contexts/AppContext';
+import { ArrowLeft } from 'lucide-react';
 
 const DigitalDetail = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const { user } = useAppContext();
   const [listing, setListing] = useState<any>(null);
@@ -83,6 +85,12 @@ const DigitalDetail = () => {
 
   return (
     <div className="container mx-auto py-8">
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center mb-6 text-teal-600 hover:underline font-semibold"
+      >
+        <ArrowLeft className="h-5 w-5 mr-1" /> Back
+      </button>
       <h1 className="text-3xl font-bold mb-4">{listing.title}</h1>
       <div className="mb-2 text-blue-700 font-bold">${listing.price}</div>
       <div className="mb-2 text-gray-700">{listing.location}</div>

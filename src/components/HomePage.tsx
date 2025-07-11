@@ -188,14 +188,6 @@ const HomePage: React.FC = () => {
                 </div>
               </Button>
             </div>
-            <a
-              href="https://www.youtube.com/watch?v=uS_JhdsZpcg"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block mt-2 text-teal-300 hover:underline text-sm text-right"
-            >
-              Watch Demo Video
-            </a>
           </div>
           <UserNavBar />
           <div className="flex items-center space-x-4 mb-4">

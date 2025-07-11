@@ -26,14 +26,6 @@ const Header: React.FC = () => {
             ) : (
               <Link to="/login">Login</Link>
             )}
-            <a
-              href="https://www.youtube.com/watch?v=uS_JhdsZpcg"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-teal-600 font-semibold hover:underline"
-            >
-              Watch Demo Video
-            </a>
           </nav>
         </div>
       </div>
