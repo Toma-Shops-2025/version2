@@ -34,8 +34,7 @@ const HandymanForm = ({ onClose }: { onClose: () => void }) => {
   const [location, setLocation] = useState('');
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
-  const [images, setImages] = useState<FileList | null>(null);
-  const [video, setVideo] = useState<File | null>(null);
+  const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -45,12 +44,7 @@ const HandymanForm = ({ onClose }: { onClose: () => void }) => {
     setError(null);
     try {
       if (!user) throw new Error('You must be logged in to create a handyman listing.');
-      if (!video) throw new Error('A video is required for every handyman listing.');
-      const videoUrl = await uploadToCloudinary(video);
-      let imageUrls: string[] = [];
-      if (images && images.length > 0) {
-        imageUrls = await Promise.all(Array.from(images).map(uploadToCloudinary));
-      }
+      // Remove video requirement and image upload
       const { error: insertError } = await supabase.from('listings').insert({
         seller_id: user.id,
         title,
@@ -62,9 +56,8 @@ const HandymanForm = ({ onClose }: { onClose: () => void }) => {
         location,
         latitude,
         longitude,
-        category: 'handyman',
-        video: videoUrl,
-        images: imageUrls
+        phone: phone || null,
+        category: 'handyman'
       });
       if (insertError) throw insertError;
       onClose();
@@ -119,12 +112,8 @@ const HandymanForm = ({ onClose }: { onClose: () => void }) => {
           )}
         </div>
         <div className="mb-2">
-          <label className="block mb-1">Images</label>
-          <input className="w-full" type="file" multiple onChange={e => setImages(e.target.files)} />
-        </div>
-        <div className="mb-2">
-          <label className="block mb-1">Video</label>
-          <input className="w-full" type="file" accept="video/*" onChange={e => setVideo(e.target.files?.[0] || null)} required />
+          <label className="block mb-1">Phone Number <span className='text-xs text-gray-400'>(optional)</span></label>
+          <input className="w-full p-2 border rounded" value={phone} onChange={e => setPhone(e.target.value)} />
         </div>
         <div className="flex justify-end gap-2 mt-4">
           <button type="button" className="px-4 py-2 rounded bg-gray-200" onClick={onClose} disabled={loading}>Cancel</button>

@@ -26,7 +26,8 @@ async function uploadToCloudinary(file: File) {
 const RentalForm = ({ onClose }: { onClose: () => void }) => {
   const { user } = useAppContext();
   const [title, setTitle] = useState('');
-  const [price, setPrice] = useState('');
+  const [rent, setRent] = useState('');
+  const [deposit, setDeposit] = useState('');
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
   const [latitude, setLatitude] = useState<number | null>(null);
@@ -62,7 +63,8 @@ const RentalForm = ({ onClose }: { onClose: () => void }) => {
       const { error: insertError } = await supabase.from('listings').insert({
         seller_id: user.id,
         title,
-        price: parseFloat(price),
+        rent: parseFloat(rent),
+        deposit: deposit ? parseFloat(deposit) : null,
         category: 'rental',
         description,
         location,
@@ -98,8 +100,12 @@ const RentalForm = ({ onClose }: { onClose: () => void }) => {
           <input className="w-full p-2 border rounded" value={title} onChange={e => setTitle(e.target.value)} required />
         </div>
         <div className="mb-2">
-          <label className="block mb-1">Price</label>
-          <input className="w-full p-2 border rounded" type="number" value={price} onChange={e => setPrice(e.target.value)} required />
+          <label className="block mb-1">Rent</label>
+          <input className="w-full p-2 border rounded" type="number" value={rent} onChange={e => setRent(e.target.value)} required />
+        </div>
+        <div className="mb-2">
+          <label className="block mb-1">Deposit</label>
+          <input className="w-full p-2 border rounded" type="number" value={deposit} onChange={e => setDeposit(e.target.value)} />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Description</label>
@@ -129,7 +135,7 @@ const RentalForm = ({ onClose }: { onClose: () => void }) => {
           </div>
         </div>
         <div className="mb-2">
-          <label className="block mb-1">Square Feet</label>
+          <label className="block mb-1">Square Feet <span className='text-xs text-gray-400'>(optional)</span></label>
           <input className="w-full p-2 border rounded" type="number" value={squareFeet} onChange={e => setSquareFeet(e.target.value)} />
         </div>
         <div className="mb-2">

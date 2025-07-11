@@ -25,7 +25,7 @@ async function uploadToCloudinary(file: File) {
 
 const JobForm = ({ onClose }: { onClose: () => void }) => {
   const { user } = useAppContext();
-  const [title, setTitle] = useState('');
+  const [jobTitle, setJobTitle] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [jobType, setJobType] = useState('');
   const [salary, setSalary] = useState('');
@@ -36,8 +36,6 @@ const JobForm = ({ onClose }: { onClose: () => void }) => {
   const [longitude, setLongitude] = useState<number | null>(null);
   const [applicationUrl, setApplicationUrl] = useState('');
   const [deadline, setDeadline] = useState('');
-  const [images, setImages] = useState<FileList | null>(null);
-  const [video, setVideo] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -47,15 +45,10 @@ const JobForm = ({ onClose }: { onClose: () => void }) => {
     setError(null);
     try {
       if (!user) throw new Error('You must be logged in to create a job listing.');
-      if (!video) throw new Error('A video is required for every job listing.');
-      const videoUrl = await uploadToCloudinary(video);
-      let imageUrls: string[] = [];
-      if (images && images.length > 0) {
-        imageUrls = await Promise.all(Array.from(images).map(uploadToCloudinary));
-      }
+      // Remove video requirement and image upload
       const { error: insertError } = await supabase.from('listings').insert({
         seller_id: user.id,
-        title,
+        title: jobTitle,
         company_name: companyName,
         job_type: jobType,
         salary,
@@ -64,11 +57,9 @@ const JobForm = ({ onClose }: { onClose: () => void }) => {
         location,
         latitude,
         longitude,
-        application_url: applicationUrl,
+        application_url: applicationUrl || null,
         deadline: deadline || null,
-        category: 'job',
-        video: videoUrl,
-        images: imageUrls
+        category: 'job'
       });
       if (insertError) throw insertError;
       onClose();
@@ -85,8 +76,8 @@ const JobForm = ({ onClose }: { onClose: () => void }) => {
         <h2 className="text-2xl font-bold mb-4">Create Job Listing</h2>
         {error && <div className="mb-2 text-red-600">{error}</div>}
         <div className="mb-2">
-          <label className="block mb-1">Title</label>
-          <input className="w-full p-2 border rounded" value={title} onChange={e => setTitle(e.target.value)} required />
+          <label className="block mb-1">Job Title</label>
+          <input className="w-full p-2 border rounded" value={jobTitle} onChange={e => setJobTitle(e.target.value)} required />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Company Name</label>
@@ -122,21 +113,14 @@ const JobForm = ({ onClose }: { onClose: () => void }) => {
           )}
         </div>
         <div className="mb-2">
-          <label className="block mb-1">Application URL</label>
+          <label className="block mb-1">Application URL <span className='text-xs text-gray-400'>(optional)</span></label>
           <input className="w-full p-2 border rounded" value={applicationUrl} onChange={e => setApplicationUrl(e.target.value)} />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Deadline</label>
           <input className="w-full p-2 border rounded" type="date" value={deadline} onChange={e => setDeadline(e.target.value)} />
         </div>
-        <div className="mb-2">
-          <label className="block mb-1">Images</label>
-          <input className="w-full" type="file" multiple onChange={e => setImages(e.target.files)} />
-        </div>
-        <div className="mb-2">
-          <label className="block mb-1">Video</label>
-          <input className="w-full" type="file" accept="video/*" onChange={e => setVideo(e.target.files?.[0] || null)} required />
-        </div>
+        {/* Remove Images and Video upload fields */}
         <div className="flex justify-end gap-2 mt-4">
           <button type="button" className="px-4 py-2 rounded bg-gray-200" onClick={onClose} disabled={loading}>Cancel</button>
           <button type="submit" className="px-4 py-2 rounded bg-green-600 text-white" disabled={loading}>{loading ? 'Submitting...' : 'Submit'}</button>
