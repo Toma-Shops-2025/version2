@@ -1,0 +1,210 @@
+import React, { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
+import { useAppContext } from '@/contexts/AppContext';
+import { Link } from 'react-router-dom';
+import LocationPicker from '@/components/LocationPicker';
+
+const AD_CATEGORIES = [
+  'Dog Walking',
+  'Babysitting',
+  'Lawn Care',
+  'Tutoring',
+  'Odd Jobs',
+  'House Cleaning',
+  'Moving Help',
+  'Personal Training',
+  'Other',
+];
+
+const AdForm = ({ onClose }: { onClose: () => void }) => {
+  const { user } = useAppContext();
+  const [title, setTitle] = useState('');
+  const [category, setCategory] = useState('');
+  const [description, setDescription] = useState('');
+  const [location, setLocation] = useState('');
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
+  const [contactInfo, setContactInfo] = useState('');
+  const [price, setPrice] = useState('');
+  const [images, setImages] = useState<FileList | null>(null);
+  const [video, setVideo] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function uploadToCloudinary(file: File) {
+    const url = `https://api.cloudinary.com/v1_1/dumnzljgn/auto/upload`;
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'unsigned_preset');
+    const res = await fetch(url, { method: 'POST', body: formData });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error?.message || 'Cloudinary upload failed');
+    return data.secure_url;
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      if (!user) throw new Error('You must be logged in to create an ad.');
+      // Upload video if present
+      let videoUrl = '';
+      if (video) videoUrl = await uploadToCloudinary(video);
+      // Upload images if present
+      let imageUrls: string[] = [];
+      if (images && images.length > 0) {
+        imageUrls = await Promise.all(Array.from(images).map(uploadToCloudinary));
+      }
+      const { error: insertError } = await supabase.from('listings').insert({
+        seller_id: user.id,
+        title,
+        category: 'ad',
+        ad_type: category,
+        description,
+        location,
+        latitude,
+        longitude,
+        contact_info: contactInfo || null,
+        price: price ? parseFloat(price) : null,
+        video: videoUrl || null,
+        images: imageUrls,
+      });
+      if (insertError) throw insertError;
+      onClose();
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+      <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg w-full max-w-lg overflow-y-auto max-h-[90vh]">
+        <h2 className="text-2xl font-bold mb-4">Create Ad</h2>
+        {error && <div className="mb-2 text-red-600">{error}</div>}
+        <div className="mb-2">
+          <label className="block mb-1">Title</label>
+          <input className="w-full p-2 border rounded" value={title} onChange={e => setTitle(e.target.value)} required />
+        </div>
+        <div className="mb-2">
+          <label className="block mb-1">Category</label>
+          <select className="w-full p-2 border rounded" value={category} onChange={e => setCategory(e.target.value)} required>
+            <option value="">Select a category</option>
+            {AD_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+          </select>
+        </div>
+        <div className="mb-2">
+          <label className="block mb-1">Description</label>
+          <textarea className="w-full p-2 border rounded" value={description} onChange={e => setDescription(e.target.value)} required />
+        </div>
+        <div className="mb-4">
+          <label className="block mb-1 font-semibold">Location</label>
+          <LocationPicker
+            onChange={({ latitude, longitude, address }) => {
+              setLatitude(latitude);
+              setLongitude(longitude);
+              setLocation(address);
+            }}
+          />
+          {location && (
+            <div className="text-xs text-gray-600 mt-1">Selected: {location}</div>
+          )}
+        </div>
+        <div className="mb-2">
+          <label className="block mb-1">Contact Info <span className='text-xs text-gray-400'>(optional)</span></label>
+          <input className="w-full p-2 border rounded" value={contactInfo} onChange={e => setContactInfo(e.target.value)} />
+        </div>
+        <div className="mb-2">
+          <label className="block mb-1">Price/Rate <span className='text-xs text-gray-400'>(optional)</span></label>
+          <input className="w-full p-2 border rounded" type="number" value={price} onChange={e => setPrice(e.target.value)} />
+        </div>
+        <div className="mb-2">
+          <label className="block mb-1">Images <span className='text-xs text-gray-400'>(optional)</span></label>
+          <input className="w-full" type="file" multiple onChange={e => setImages(e.target.files)} />
+        </div>
+        <div className="mb-2">
+          <label className="block mb-1">Video <span className='text-xs text-gray-400'>(optional)</span></label>
+          <input className="w-full" type="file" accept="video/*" onChange={e => setVideo(e.target.files?.[0] || null)} />
+        </div>
+        <div className="flex justify-end gap-2 mt-4">
+          <button type="button" className="px-4 py-2 rounded bg-gray-200" onClick={onClose} disabled={loading}>Cancel</button>
+          <button type="submit" className="px-4 py-2 rounded bg-blue-600 text-white" disabled={loading}>{loading ? 'Submitting...' : 'Submit'}</button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+const Ads = () => {
+  const [showForm, setShowForm] = useState(false);
+  const [ads, setAds] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchAds = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const { data, error } = await supabase
+          .from('listings')
+          .select('*')
+          .eq('category', 'ad')
+          .order('created_at', { ascending: false });
+        if (error) throw error;
+        setAds(data || []);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAds();
+  }, [showForm]);
+
+  return (
+    <div className="container mx-auto py-8">
+      <h1 className="text-3xl font-bold mb-4">Personal Ads</h1>
+      <button className="bg-blue-600 text-white px-4 py-2 rounded" onClick={() => setShowForm(true)}>Create New Ad</button>
+      <div className="mt-8">
+        {loading ? (
+          <div className="text-gray-500">Loading ads...</div>
+        ) : error ? (
+          <div className="text-red-600">{error}</div>
+        ) : ads.length === 0 ? (
+          <div className="text-gray-500">No ads yet.</div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {ads.map(ad => (
+              <div key={ad.id} className="bg-white dark:bg-gray-900 rounded-lg shadow p-4 hover:ring-2 hover:ring-blue-400 transition">
+                <h2 className="text-xl font-semibold mb-1">{ad.title}</h2>
+                <div className="text-teal-700 font-bold mb-1">{ad.ad_type}</div>
+                <div className="text-gray-700 mb-1">{ad.location}</div>
+                <div className="text-gray-600 mt-2 line-clamp-2">{ad.description}</div>
+                {ad.price && <div className="text-blue-700 font-bold mt-1">${ad.price}</div>}
+                {ad.contact_info && <div className="text-xs text-gray-500 mt-1">Contact: {ad.contact_info}</div>}
+                {ad.images && ad.images.length > 0 && (
+                  <div className="mt-2 flex gap-2 flex-wrap">
+                    {ad.images.map((img: string, idx: number) => (
+                      <img key={idx} src={img} alt="Ad" className="w-20 h-20 object-cover rounded" />
+                    ))}
+                  </div>
+                )}
+                {ad.video && (
+                  <div className="mt-2">
+                    <video src={ad.video} controls className="w-full max-h-40 rounded" />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      {showForm && <AdForm onClose={() => setShowForm(false)} />}
+    </div>
+  );
+};
+
+export default Ads; 

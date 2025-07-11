@@ -29,7 +29,7 @@ import Handyman from './pages/Handyman';
 import Browse from './pages/Browse';
 import DigitalDetail from './pages/DigitalDetail';
 import Digital from './pages/Digital';
-import SideGigs from './pages/SideGigs';
+import Ads from './pages/Ads';
 import MyListings from './pages/MyListings';
 import MyOrders from './pages/MyOrders';
 import Chatbot from './components/Chatbot';
@@ -70,7 +70,7 @@ const App = () => (
               <Route path="/browse" element={<Browse />} />
               <Route path="/digital/:id" element={<DigitalDetail />} />
               <Route path="/digital" element={<Digital />} />
-              <Route path="/sidegigs" element={<SideGigs />} />
+              <Route path="/ads" element={<Ads />} />
               <Route path="/my-listings" element={<MyListings />} />
               <Route path="/my-orders" element={<MyOrders />} />
               <Route path="*" element={<NotFound />} />

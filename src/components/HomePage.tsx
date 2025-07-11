@@ -197,7 +197,7 @@ const HomePage: React.FC = () => {
               <Link to="/jobs" className="text-white hover:underline">Jobs</Link>
               <Link to="/handyman" className="text-white hover:underline">Handyman</Link>
               <Link to="/digital" className="text-white hover:underline">Digital</Link>
-              <Link to="/sidegigs" className="text-white hover:underline">Side Gigs</Link>
+              <Link to="/ads" className="text-white hover:underline">Ads</Link>
             </div>
           </div>
         </div>

@@ -34,12 +34,12 @@ const BottomNavBar: React.FC = () => {
         <span className="text-xs">Listings</span>
       </Link>
       <Link
-        to="/offers"
+        to="/ads"
         className="flex flex-col items-center text-gray-600 hover:text-teal-600 focus:outline-none"
         style={!user ? { opacity: 0.4, pointerEvents: 'none' } : {}}
       >
         <Tag className="h-6 w-6" />
-        <span className="text-xs">Offers</span>
+        <span className="text-xs">Ads</span>
       </Link>
     </nav>
   );
