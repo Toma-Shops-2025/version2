@@ -26,7 +26,7 @@ const BottomNavBar: React.FC = () => {
         <span className="text-xs font-bold">Sell</span>
       </Link>
       <Link
-        to="/mylistings"
+        to="/my-listings"
         className="flex flex-col items-center text-gray-600 hover:text-teal-600 focus:outline-none"
         style={!user ? { opacity: 0.4, pointerEvents: 'none' } : {}}
       >

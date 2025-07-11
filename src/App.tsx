@@ -33,6 +33,7 @@ import SideGigs from './pages/SideGigs';
 import MyListings from './pages/MyListings';
 import MyOrders from './pages/MyOrders';
 import Chatbot from './components/Chatbot';
+import MessagesPage from './components/MessagesPage';
 
 const queryClient = new QueryClient();
 
@@ -60,6 +61,7 @@ const App = () => (
               <Route path="/cart" element={<Cart />} />
               <Route path="/offers" element={<OffersPage />} />
               <Route path="/sell" element={<Sell />} />
+              <Route path="/messages" element={<MessagesPage onBack={() => window.history.back()} />} />
               <Route path="/account" element={<Account />} />
               <Route path="/login" element={<AuthPage />} />
               <Route path="/rentals" element={<Rentals />} />
