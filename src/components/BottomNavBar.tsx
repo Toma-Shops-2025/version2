@@ -13,37 +13,34 @@ const BottomNavBar: React.FC = () => {
         <Home className="h-6 w-6" />
         <span className="text-xs">Home</span>
       </Link>
-      <button
+      <Link
+        to="/messages"
         className="flex flex-col items-center text-gray-600 hover:text-teal-600 focus:outline-none"
-        onClick={() => user && navigate('/messages')}
-        disabled={!user}
         style={!user ? { opacity: 0.4, pointerEvents: 'none' } : {}}
       >
         <MessageCircle className="h-6 w-6" />
         <span className="text-xs">Messages</span>
-      </button>
+      </Link>
       <Link to="/sell" className="flex flex-col items-center text-teal-600">
         <PlusCircle className="h-8 w-8" />
         <span className="text-xs font-bold">Sell</span>
       </Link>
-      <button
+      <Link
+        to="/mylistings"
         className="flex flex-col items-center text-gray-600 hover:text-teal-600 focus:outline-none"
-        onClick={() => user && navigate(`/mylistings`)}
-        disabled={!user}
         style={!user ? { opacity: 0.4, pointerEvents: 'none' } : {}}
       >
         <List className="h-6 w-6" />
         <span className="text-xs">Listings</span>
-      </button>
-      <button
+      </Link>
+      <Link
+        to="/offers"
         className="flex flex-col items-center text-gray-600 hover:text-teal-600 focus:outline-none"
-        onClick={() => user && navigate('/offers')}
-        disabled={!user}
         style={!user ? { opacity: 0.4, pointerEvents: 'none' } : {}}
       >
         <Tag className="h-6 w-6" />
         <span className="text-xs">Offers</span>
-      </button>
+      </Link>
     </nav>
   );
 };

@@ -199,7 +199,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ className }) => {
   };
 
   return (
-    <div className={cn("fixed bottom-4 left-4 z-50", className)}>
+    <div className={cn("fixed bottom-20 left-4 z-50", className)}>
       {/* Chat Toggle Button */}
       <Button
         onClick={() => setIsOpen(!isOpen)}
@@ -217,7 +217,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ className }) => {
             <div className="bg-primary text-primary-foreground p-4 rounded-t-lg">
               <div className="flex items-center gap-3">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src="/tomashops-favicon-v2.png" />
+                  <AvatarImage src="/female-avatar.png" />
                   <AvatarFallback>TB</AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
@@ -243,7 +243,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ className }) => {
                   >
                     {message.sender === 'bot' && (
                       <Avatar className="h-8 w-8 flex-shrink-0">
-                        <AvatarImage src="/tomashops-favicon-v2.png" />
+                        <AvatarImage src="/female-avatar.png" />
                         <AvatarFallback>TB</AvatarFallback>
                       </Avatar>
                     )}
@@ -270,7 +270,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ className }) => {
                 {isLoading && (
                   <div className="flex gap-3 justify-start">
                     <Avatar className="h-8 w-8 flex-shrink-0">
-                      <AvatarImage src="/tomashops-favicon-v2.png" />
+                      <AvatarImage src="/female-avatar.png" />
                       <AvatarFallback>TB</AvatarFallback>
                     </Avatar>
                     <div className="bg-muted rounded-lg p-3">
