@@ -204,9 +204,13 @@ const Chatbot: React.FC<ChatbotProps> = ({ className }) => {
       <Button
         onClick={() => setIsOpen(!isOpen)}
         size="lg"
-        className="h-14 w-14 rounded-full shadow-lg bg-primary hover:bg-primary/90 transition-all duration-200 hover:scale-105"
+        className="h-14 w-24 rounded-full shadow-lg bg-primary hover:bg-primary/90 transition-all duration-200 hover:scale-105 flex items-center justify-center"
       >
-        {isOpen ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
+        {isOpen ? (
+          <X className="h-6 w-6" />
+        ) : (
+          <span className="font-bold text-white text-base">TomaBot</span>
+        )}
       </Button>
 
       {/* Chat Window */}
