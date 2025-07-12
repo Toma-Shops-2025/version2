@@ -19,6 +19,15 @@ interface ListingCardProps {
   onDelete?: () => void;
   onRestore?: () => void;
   onPermanentDelete?: () => void;
+  // Job-specific fields
+  category?: string;
+  company_name?: string;
+  job_type?: string;
+  salary?: string;
+  deadline?: string;
+  requirements?: string;
+  description?: string;
+  application_url?: string;
 }
 
 const ListingCard: React.FC<ListingCardProps> = ({
@@ -36,8 +45,18 @@ const ListingCard: React.FC<ListingCardProps> = ({
   onMarkAsSold,
   onDelete,
   onRestore,
-  onPermanentDelete
+  onPermanentDelete,
+  // Job-specific fields
+  category,
+  company_name,
+  job_type,
+  salary,
+  deadline,
+  requirements,
+  description,
+  application_url
 }) => {
+  const isJob = category === 'job';
   return (
     <Card className="cursor-pointer hover:shadow-md transition-shadow border-0 shadow-sm" onClick={onClick}>
       <div className="relative">
@@ -70,60 +89,83 @@ const ListingCard: React.FC<ListingCardProps> = ({
             SOLD
           </Badge>
         )}
+        {isJob && (
+          <Badge className="absolute top-2 right-2 bg-green-600 text-white text-xs px-2 py-1 shadow-sm">
+            Job
+          </Badge>
+        )}
       </div>
       <CardContent className="p-3">
-        <div className="mb-1">
-          <h3 className="font-bold text-lg text-gray-900">
-            ${price === 0 ? 'Free' : price.toLocaleString()}
-          </h3>
-        </div>
-        <p className="text-gray-700 text-sm mb-2 line-clamp-2 leading-tight">{title}</p>
-        <div className="flex items-center text-gray-500 text-xs mb-2">
-          <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
-          <span className="truncate">{location}</span>
-        </div>
-        {isOwner && status === 'active' && (
-          <button
-            className="mt-2 px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition mr-2"
-            onClick={e => {
-              e.stopPropagation();
-              onMarkAsSold && onMarkAsSold();
-            }}
-          >
-            Mark as Sold
-          </button>
-        )}
-        {isOwner && status !== 'trashed' && (
-          <button
-            className="mt-2 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition"
-            onClick={e => {
-              e.stopPropagation();
-              onDelete && onDelete();
-            }}
-          >
-            Delete
-          </button>
-        )}
-        {isOwner && status === 'trashed' && (
+        {isJob ? (
           <>
-            <button
-              className="mt-2 px-3 py-1 bg-yellow-500 text-black rounded hover:bg-yellow-600 transition mr-2"
-              onClick={e => {
-                e.stopPropagation();
-                onRestore && onRestore();
-              }}
-            >
-              Restore
-            </button>
-            <button
-              className="mt-2 px-3 py-1 bg-red-800 text-white rounded hover:bg-red-900 transition"
-              onClick={e => {
-                e.stopPropagation();
-                onPermanentDelete && onPermanentDelete();
-              }}
-            >
-              Permanently Delete
-            </button>
+            <h3 className="font-bold text-lg text-gray-900 mb-1">{title}</h3>
+            {company_name && <div className="text-green-700 font-bold mb-1">{company_name}</div>}
+            <div className="text-gray-700 mb-1">{location}</div>
+            {job_type && <div className="text-sm text-gray-500 mb-1">{job_type}</div>}
+            <div className="text-sm text-gray-500 mb-1">Salary: {salary || 'N/A'}</div>
+            <div className="text-sm text-gray-500 mb-1">Deadline: {deadline || 'N/A'}</div>
+            {requirements && <div className="text-sm text-gray-500 mb-1">{requirements}</div>}
+            <div className="text-gray-600 mt-2 line-clamp-2">{description}</div>
+            {application_url && (
+              <a href={application_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline text-sm mt-2 block">Apply Here</a>
+            )}
+          </>
+        ) : (
+          <>
+            <div className="mb-1">
+              <h3 className="font-bold text-lg text-gray-900">
+                ${price === 0 ? 'Free' : price.toLocaleString()}
+              </h3>
+            </div>
+            <p className="text-gray-700 text-sm mb-2 line-clamp-2 leading-tight">{title}</p>
+            <div className="flex items-center text-gray-500 text-xs mb-2">
+              <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
+              <span className="truncate">{location}</span>
+            </div>
+            {isOwner && status === 'active' && (
+              <button
+                className="mt-2 px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition mr-2"
+                onClick={e => {
+                  e.stopPropagation();
+                  onMarkAsSold && onMarkAsSold();
+                }}
+              >
+                Mark as Sold
+              </button>
+            )}
+            {isOwner && status !== 'trashed' && (
+              <button
+                className="mt-2 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition"
+                onClick={e => {
+                  e.stopPropagation();
+                  onDelete && onDelete();
+                }}
+              >
+                Delete
+              </button>
+            )}
+            {isOwner && status === 'trashed' && (
+              <>
+                <button
+                  className="mt-2 px-3 py-1 bg-yellow-500 text-black rounded hover:bg-yellow-600 transition mr-2"
+                  onClick={e => {
+                    e.stopPropagation();
+                    onRestore && onRestore();
+                  }}
+                >
+                  Restore
+                </button>
+                <button
+                  className="mt-2 px-3 py-1 bg-red-800 text-white rounded hover:bg-red-900 transition"
+                  onClick={e => {
+                    e.stopPropagation();
+                    onPermanentDelete && onPermanentDelete();
+                  }}
+                >
+                  Permanently Delete
+                </button>
+              </>
+            )}
           </>
         )}
       </CardContent>

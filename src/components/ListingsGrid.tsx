@@ -42,6 +42,15 @@ const ListingsGrid: React.FC<ListingsGridProps> = ({ listings, onListingClick, i
           onDelete={onDelete ? () => onDelete(listing.id) : undefined}
           onRestore={onRestore ? () => onRestore(listing.id) : undefined}
           onClick={() => onListingClick?.(listing.id)}
+          // Pass all job-specific fields
+          category={listing.category}
+          company_name={listing.company_name}
+          job_type={listing.job_type}
+          salary={listing.salary}
+          deadline={listing.deadline}
+          requirements={listing.requirements}
+          description={listing.description}
+          application_url={listing.application_url}
         />
       ))}
     </div>
