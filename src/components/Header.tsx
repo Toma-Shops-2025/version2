@@ -21,11 +21,6 @@ const Header: React.FC = () => {
           <nav className="flex items-center space-x-8">
             <Link to="/categories">Categories</Link>
             <Link to="/favorites">Favorites</Link>
-            {user ? (
-              <Link to="/account">Account</Link>
-            ) : (
-              <Link to="/login">Login</Link>
-            )}
           </nav>
         </div>
       </div>

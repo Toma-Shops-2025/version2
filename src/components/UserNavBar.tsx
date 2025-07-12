@@ -63,7 +63,6 @@ const UserNavBar: React.FC = () => {
           <span className="absolute -top-2 -right-3 bg-red-500 text-white rounded-full text-xs px-2 py-0.5">{unreadCount}</span>
         )}
       </Link>
-      <Link to="/account" className="font-medium text-gray-700 hover:text-teal-600">Account</Link>
     </div>
   );
 };

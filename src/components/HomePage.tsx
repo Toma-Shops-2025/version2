@@ -195,7 +195,6 @@ const HomePage: React.FC = () => {
             <div className="flex items-center space-x-4">
               <Link to="/rentals" className="text-white hover:underline">Rentals</Link>
               <Link to="/jobs" className="text-white hover:underline">Jobs</Link>
-              <Link to="/handyman" className="text-white hover:underline">Handyman</Link>
               <Link to="/digital" className="text-white hover:underline">Digital</Link>
               <Link to="/ads" className="text-white hover:underline">Ads</Link>
             </div>

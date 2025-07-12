@@ -60,7 +60,21 @@ const ListingCard: React.FC<ListingCardProps> = ({
   return (
     <Card className="cursor-pointer hover:shadow-md transition-shadow border-0 shadow-sm" onClick={onClick}>
       <div className="relative">
-        {video ? (
+        {isJob ? (
+          <div className="w-full aspect-square flex flex-col justify-center bg-gray-50 rounded-t-lg p-3">
+            <h2 className="text-xl font-semibold mb-1">{title}</h2>
+            {company_name && <div className="text-green-700 font-bold mb-1">{company_name}</div>}
+            <div className="text-gray-700 mb-1">{location}</div>
+            {job_type && <div className="text-sm text-gray-500 mb-1">{job_type}</div>}
+            <div className="text-sm text-gray-500 mb-1">Salary: {salary || 'N/A'}</div>
+            <div className="text-sm text-gray-500 mb-1">Deadline: {deadline || 'N/A'}</div>
+            {requirements && <div className="text-sm text-gray-500 mb-1">{requirements}</div>}
+            <div className="text-gray-600 mt-2 line-clamp-2">{description}</div>
+            {application_url && (
+              <a href={application_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline text-sm mt-2 block">Apply Here</a>
+            )}
+          </div>
+        ) : video ? (
           <video
             src={video}
             muted
@@ -95,80 +109,64 @@ const ListingCard: React.FC<ListingCardProps> = ({
           </Badge>
         )}
       </div>
-      <CardContent className="p-3">
-        {isJob ? (
-          <>
-            <h2 className="text-xl font-semibold mb-1">{title}</h2>
-            {company_name && <div className="text-green-700 font-bold mb-1">{company_name}</div>}
-            <div className="text-gray-700 mb-1">{location}</div>
-            {job_type && <div className="text-sm text-gray-500 mb-1">{job_type}</div>}
-            <div className="text-sm text-gray-500 mb-1">Salary: {salary || 'N/A'}</div>
-            <div className="text-sm text-gray-500 mb-1">Deadline: {deadline || 'N/A'}</div>
-            {requirements && <div className="text-sm text-gray-500 mb-1">{requirements}</div>}
-            <div className="text-gray-600 mt-2 line-clamp-2">{description}</div>
-            {application_url && (
-              <a href={application_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline text-sm mt-2 block">Apply Here</a>
-            )}
-          </>
-        ) : (
-          <>
-            <div className="mb-1">
-              <h3 className="font-bold text-lg text-gray-900">
-                ${price === 0 ? 'Free' : price.toLocaleString()}
-              </h3>
-            </div>
-            <p className="text-gray-700 text-sm mb-2 line-clamp-2 leading-tight">{title}</p>
-            <div className="flex items-center text-gray-500 text-xs mb-2">
-              <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
-              <span className="truncate">{location}</span>
-            </div>
-            {isOwner && status === 'active' && (
+      {!isJob && (
+        <CardContent className="p-3">
+          <div className="mb-1">
+            <h3 className="font-bold text-lg text-gray-900">
+              ${price === 0 ? 'Free' : price.toLocaleString()}
+            </h3>
+          </div>
+          <p className="text-gray-700 text-sm mb-2 line-clamp-2 leading-tight">{title}</p>
+          <div className="flex items-center text-gray-500 text-xs mb-2">
+            <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
+            <span className="truncate">{location}</span>
+          </div>
+          {isOwner && status === 'active' && (
+            <button
+              className="mt-2 px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition mr-2"
+              onClick={e => {
+                e.stopPropagation();
+                onMarkAsSold && onMarkAsSold();
+              }}
+            >
+              Mark as Sold
+            </button>
+          )}
+          {isOwner && status !== 'trashed' && (
+            <button
+              className="mt-2 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition"
+              onClick={e => {
+                e.stopPropagation();
+                onDelete && onDelete();
+              }}
+            >
+              Delete
+            </button>
+          )}
+          {isOwner && status === 'trashed' && (
+            <>
               <button
-                className="mt-2 px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition mr-2"
+                className="mt-2 px-3 py-1 bg-yellow-500 text-black rounded hover:bg-yellow-600 transition mr-2"
                 onClick={e => {
                   e.stopPropagation();
-                  onMarkAsSold && onMarkAsSold();
+                  onRestore && onRestore();
                 }}
               >
-                Mark as Sold
+                Restore
               </button>
-            )}
-            {isOwner && status !== 'trashed' && (
               <button
-                className="mt-2 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition"
+                className="mt-2 px-3 py-1 bg-red-800 text-white rounded hover:bg-red-900 transition"
                 onClick={e => {
                   e.stopPropagation();
-                  onDelete && onDelete();
+                  onPermanentDelete && onPermanentDelete();
                 }}
               >
-                Delete
+                Permanently Delete
               </button>
-            )}
-            {isOwner && status === 'trashed' && (
-              <>
-                <button
-                  className="mt-2 px-3 py-1 bg-yellow-500 text-black rounded hover:bg-yellow-600 transition mr-2"
-                  onClick={e => {
-                    e.stopPropagation();
-                    onRestore && onRestore();
-                  }}
-                >
-                  Restore
-                </button>
-                <button
-                  className="mt-2 px-3 py-1 bg-red-800 text-white rounded hover:bg-red-900 transition"
-                  onClick={e => {
-                    e.stopPropagation();
-                    onPermanentDelete && onPermanentDelete();
-                  }}
-                >
-                  Permanently Delete
-                </button>
-              </>
-            )}
-          </>
-        )}
-      </CardContent>
+            </>
+          )}
+        </CardContent>
+      )}
     </Card>
   );
 };
