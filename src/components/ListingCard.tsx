@@ -98,7 +98,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
       <CardContent className="p-3">
         {isJob ? (
           <>
-            <h3 className="font-bold text-lg text-gray-900 mb-1">{title}</h3>
+            <h2 className="text-xl font-semibold mb-1">{title}</h2>
             {company_name && <div className="text-green-700 font-bold mb-1">{company_name}</div>}
             <div className="text-gray-700 mb-1">{location}</div>
             {job_type && <div className="text-sm text-gray-500 mb-1">{job_type}</div>}
