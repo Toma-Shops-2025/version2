@@ -78,6 +78,15 @@ const DigitalDetail = () => {
         confirmed: false
       });
       if (insertError) throw insertError;
+      // Notify the seller
+      if (listing && listing.seller_id) {
+        await supabase.from('notifications').insert({
+          user_id: listing.seller_id,
+          type: 'order_requested',
+          message: `You have a new digital order request for '${listing.title}'.`,
+          link: `/digital/${id}`
+        });
+      }
       setIsBuyer(true);
       setConfirmed(false);
     } catch (err: any) {
