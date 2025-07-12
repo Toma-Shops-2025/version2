@@ -32,11 +32,9 @@ interface ListingsGridProps {
 }
 
 const ListingsGrid: React.FC<ListingsGridProps> = ({ listings, onListingClick, isOwner = false, onMarkAsSold, onDelete, onRestore }) => {
-  // Filter out job listings
-  const filteredListings = listings.filter(l => l.category !== 'job');
   return (
     <div className="grid grid-cols-2 gap-2 px-2 md:gap-4 md:px-4">
-      {filteredListings.map((listing) => (
+      {listings.map((listing) => (
         <ListingCard
           key={listing.id}
           id={listing.id}
