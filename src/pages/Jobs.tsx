@@ -35,7 +35,7 @@ const JobForm = ({ onClose }: { onClose: () => void }) => {
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
   const [applicationUrl, setApplicationUrl] = useState('');
-  const [deadline, setDeadline] = useState('');
+  const [contactInfo, setContactInfo] = useState('');
   const [images, setImages] = useState<FileList | null>(null);
   const [video, setVideo] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
@@ -67,7 +67,7 @@ const JobForm = ({ onClose }: { onClose: () => void }) => {
         latitude,
         longitude,
         application_url: applicationUrl || null,
-        deadline: deadline || null,
+        contact_info: contactInfo || null,
         category: 'job',
         images: imageUrls,
         video: videoUrl || null
@@ -128,8 +128,8 @@ const JobForm = ({ onClose }: { onClose: () => void }) => {
           <input className="w-full p-2 border rounded" value={applicationUrl} onChange={e => setApplicationUrl(e.target.value)} />
         </div>
         <div className="mb-2">
-          <label className="block mb-1">Deadline</label>
-          <input className="w-full p-2 border rounded" type="date" value={deadline} onChange={e => setDeadline(e.target.value)} />
+          <label className="block mb-1">Contact Info <span className='text-xs text-gray-400'>(optional)</span></label>
+          <input className="w-full p-2 border rounded" value={contactInfo} onChange={e => setContactInfo(e.target.value)} placeholder="Phone, email, or other" />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Images <span className='text-xs text-gray-400'>(optional)</span></label>
@@ -202,11 +202,13 @@ const Jobs = () => {
                   <div className="text-gray-700 mb-1">{listing.location}</div>
                   <div className="text-sm text-gray-500 mb-1">{listing.job_type}</div>
                   <div className="text-sm text-gray-500 mb-1">Salary: {listing.salary || 'N/A'}</div>
-                  <div className="text-sm text-gray-500 mb-1">Deadline: {listing.deadline || 'N/A'}</div>
                   <div className="text-sm text-gray-500 mb-1">{listing.requirements}</div>
                   <div className="text-gray-600 mt-2 line-clamp-2">{listing.description}</div>
                   {listing.application_url && (
                     <a href={listing.application_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline text-sm mt-2 block">Apply Here</a>
+                  )}
+                  {listing.contact_info && (
+                    <div className="text-xs text-gray-500 mt-1">Contact: {listing.contact_info}</div>
                   )}
                   {listing.video && (
                     <video src={listing.video} controls className="w-full mt-2 rounded" style={{ maxHeight: 120 }} />

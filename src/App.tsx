@@ -34,6 +34,7 @@ import MyOrders from './pages/MyOrders';
 import Chatbot from './components/Chatbot';
 import MessagesPage from './components/MessagesPage';
 import SellerOrders from './pages/SellerOrders';
+import JobDetail from './pages/JobsDetail';
 
 const queryClient = new QueryClient();
 
@@ -66,6 +67,7 @@ const App = () => (
               <Route path="/login" element={<AuthPage />} />
               <Route path="/rentals" element={<Rentals />} />
               <Route path="/jobs" element={<Jobs />} />
+              <Route path="/jobs/:id" element={<JobDetail />} />
               <Route path="/browse" element={<Browse />} />
               <Route path="/digital/:id" element={<DigitalDetail />} />
               <Route path="/digital" element={<Digital />} />
