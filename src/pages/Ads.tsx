@@ -66,7 +66,7 @@ const AdForm = ({ onClose }: { onClose: () => void }) => {
         latitude,
         longitude,
         contact_info: contactInfo || null,
-        price: price ? parseFloat(price) : null,
+        price: price || null,
         video: videoUrl || null,
         images: imageUrls,
       });
@@ -118,7 +118,7 @@ const AdForm = ({ onClose }: { onClose: () => void }) => {
         </div>
         <div className="mb-2">
           <label className="block mb-1">Price/Rate <span className='text-xs text-gray-400'>(optional)</span></label>
-          <input className="w-full p-2 border rounded" type="number" value={price} onChange={e => setPrice(e.target.value)} />
+          <input className="w-full p-2 border rounded" type="text" value={price} onChange={e => setPrice(e.target.value)} />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Images <span className='text-xs text-gray-400'>(optional)</span></label>
