@@ -13,7 +13,7 @@ const DigitalDetail = () => {
   const [error, setError] = useState<string | null>(null);
   const [isBuyer, setIsBuyer] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
-  const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
+  const [downloadUrls, setDownloadUrls] = useState<string[]>([]);
   const [buying, setBuying] = useState(false);
 
   useEffect(() => {
@@ -41,12 +41,20 @@ const DigitalDetail = () => {
           if (purchaseData) {
             setIsBuyer(true);
             setConfirmed(!!purchaseData.confirmed);
-            if (purchaseData.confirmed && listingData.digital_file_url) {
-              // Get signed URL for download
-              const filePath = listingData.digital_file_url.split('/digital-products/')[1];
-              const { data, error: urlError } = await supabase.storage.from('digital-products').createSignedUrl(filePath, 60);
-              if (urlError) throw urlError;
-              setDownloadUrl(data.signedUrl);
+            if (purchaseData.confirmed && Array.isArray(listingData.digital_file_urls) && listingData.digital_file_urls.length > 0) {
+              // Get signed URLs for all files
+              const urls: string[] = [];
+              for (const fileUrl of listingData.digital_file_urls) {
+                // fileUrl is a public URL, get the path after the bucket name
+                const match = fileUrl.match(/digital-products\/(.+)$/);
+                const filePath = match ? match[1] : null;
+                if (filePath) {
+                  const { data, error: urlError } = await supabase.storage.from('digital-products').createSignedUrl(filePath, 60);
+                  if (urlError) throw urlError;
+                  urls.push(data.signedUrl);
+                }
+              }
+              setDownloadUrls(urls);
             }
           }
         }
@@ -97,8 +105,17 @@ const DigitalDetail = () => {
       <div className="mb-4 text-gray-600">{listing.description}</div>
       {isBuyer ? (
         confirmed ? (
-          downloadUrl ? (
-            <a href={downloadUrl} download className="bg-green-600 text-white px-4 py-2 rounded">Download Digital File</a>
+          downloadUrls.length > 0 ? (
+            <div>
+              <div className="mb-2 font-semibold">Download your files:</div>
+              <ul className="mb-4">
+                {downloadUrls.map((url, idx) => (
+                  <li key={idx} className="mb-2">
+                    <a href={url} download className="bg-green-600 text-white px-4 py-2 rounded inline-block">Download File {idx + 1}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ) : (
             <div className="text-green-700">Your purchase is confirmed. Preparing download...</div>
           )
