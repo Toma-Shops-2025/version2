@@ -3,46 +3,61 @@ import { supabase } from '@/lib/supabase';
 import { useAppContext } from '@/contexts/AppContext';
 import { Link } from 'react-router-dom';
 import BackButton from '@/components/BackButton';
-import LocationPicker from '@/components/LocationPicker';
-import Map from '@/components/Map';
 
 const DigitalForm = ({ onClose }: { onClose: () => void }) => {
   const { user } = useAppContext();
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
-  const [location, setLocation] = useState('');
-  const [latitude, setLatitude] = useState<number | null>(null);
-  const [longitude, setLongitude] = useState<number | null>(null);
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const MAX_FILE_SIZE_MB = 50;
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = e.target.files ? Array.from(e.target.files) : [];
+    const tooLarge = selectedFiles.find(f => f.size > MAX_FILE_SIZE_MB * 1024 * 1024);
+    if (tooLarge) {
+      setError(`Each file must be 50MB or less. File "${tooLarge.name}" is too large.`);
+      setFiles([]);
+    } else {
+      setError(null);
+      setFiles(selectedFiles);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    // Check file sizes again before upload
+    const tooLarge = files.find(f => f.size > MAX_FILE_SIZE_MB * 1024 * 1024);
+    if (tooLarge) {
+      setError(`Each file must be 50MB or less. File "${tooLarge.name}" is too large.`);
+      setLoading(false);
+      return;
+    }
     try {
       if (!user) throw new Error('You must be logged in to create a digital product listing.');
-      if (!file) throw new Error('A digital file is required.');
-      // Upload file to Supabase Storage
-      const fileExt = file.name.split('.').pop();
-      const filePath = `digital-products/${user.id}/${Date.now()}-${file.name}`;
-      const { error: uploadError } = await supabase.storage.from('digital-products').upload(filePath, file, { upsert: true });
-      if (uploadError) throw uploadError;
-      const { data } = supabase.storage.from('digital-products').getPublicUrl(filePath);
-      const fileUrl = data?.publicUrl;
-      if (!fileUrl) throw new Error('Failed to get file URL after upload.');
+      if (!files.length) throw new Error('At least one digital file is required.');
+      // Upload files to Supabase Storage
+      const uploadedUrls: string[] = [];
+      for (const file of files) {
+        const filePath = `digital-products/${user.id}/${Date.now()}-${file.name}`;
+        const { error: uploadError } = await supabase.storage.from('digital-products').upload(filePath, file, { upsert: true });
+        if (uploadError) throw uploadError;
+        const { data } = supabase.storage.from('digital-products').getPublicUrl(filePath);
+        const fileUrl = data?.publicUrl;
+        if (!fileUrl) throw new Error('Failed to get file URL after upload.');
+        uploadedUrls.push(fileUrl);
+      }
       const { error: insertError } = await supabase.from('listings').insert({
         seller_id: user.id,
         title,
         price: parseFloat(price),
         category: 'digital',
         description,
-        location,
-        latitude,
-        longitude,
-        digital_file_url: fileUrl
+        digital_file_urls: uploadedUrls // store as array
       });
       if (insertError) throw insertError;
       onClose();
@@ -70,22 +85,16 @@ const DigitalForm = ({ onClose }: { onClose: () => void }) => {
           <label className="block mb-1">Description</label>
           <textarea className="w-full p-2 border rounded" value={description} onChange={e => setDescription(e.target.value)} required />
         </div>
-        <div className="mb-4">
-          <label className="block mb-1 font-semibold">Location</label>
-          <LocationPicker
-            onChange={({ latitude, longitude, address }) => {
-              setLatitude(latitude);
-              setLongitude(longitude);
-              setLocation(address);
-            }}
-          />
-          {location && (
-            <div className="text-xs text-gray-600 mt-1">Selected: {location}</div>
-          )}
-        </div>
         <div className="mb-2">
-          <label className="block mb-1">Digital File</label>
-          <input className="w-full" type="file" onChange={e => setFile(e.target.files?.[0] || null)} required />
+          <label className="block mb-1">Digital File(s)</label>
+          <input className="w-full" type="file" multiple onChange={handleFileChange} required />
+          {files.length > 0 && (
+            <ul className="mt-2 text-xs text-gray-600 list-disc list-inside">
+              {files.map((file, idx) => (
+                <li key={idx}>{file.name}</li>
+              ))}
+            </ul>
+          )}
         </div>
         <div className="flex justify-end gap-2 mt-4">
           <button type="button" className="px-4 py-2 rounded bg-gray-200" onClick={onClose} disabled={loading}>Cancel</button>
@@ -144,10 +153,9 @@ const Digital = () => {
                 <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-4 hover:ring-2 hover:ring-blue-400 transition">
                   <h2 className="text-xl font-semibold mb-1">{listing.title}</h2>
                   <div className="text-blue-700 font-bold mb-1">${listing.price}</div>
-                  <div className="text-gray-700 mb-1">{listing.location}</div>
                   <div className="text-gray-600 mt-2 line-clamp-2">{listing.description}</div>
-                  {listing.digital_file_url && (
-                    <div className="mt-2 text-sm text-green-700">Digital file uploaded</div>
+                  {listing.digital_file_urls && listing.digital_file_urls.length > 0 && (
+                    <div className="mt-2 text-sm text-green-700">{listing.digital_file_urls.length} file(s) uploaded</div>
                   )}
                 </div>
               </Link>
@@ -155,7 +163,6 @@ const Digital = () => {
           </div>
         )}
       </div>
-      <Map listings={listings} />
       {showForm && <DigitalForm onClose={() => setShowForm(false)} />}
     </div>
   );
