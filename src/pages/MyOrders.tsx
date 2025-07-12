@@ -45,8 +45,8 @@ const MyOrders = () => {
               {order.listings.digital_file_urls.map((fileUrl, idx) => {
                 let filePath = fileUrl;
                 if (filePath.startsWith('http')) {
-                  const i = filePath.indexOf('/digital-products/');
-                  if (i !== -1) filePath = filePath.slice(i + 1);
+                  const i = filePath.indexOf('digital-products/');
+                  if (i !== -1) filePath = filePath.slice(i);
                 }
                 return (
                   <button
