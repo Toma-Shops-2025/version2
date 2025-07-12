@@ -11,6 +11,15 @@ interface Listing {
   isJustListed?: boolean;
   status?: string;
   sold_at?: string | null;
+  // Add job-specific fields
+  category?: string;
+  company_name?: string;
+  job_type?: string;
+  salary?: string;
+  deadline?: string;
+  requirements?: string;
+  description?: string;
+  application_url?: string;
 }
 
 interface ListingsGridProps {
@@ -23,9 +32,11 @@ interface ListingsGridProps {
 }
 
 const ListingsGrid: React.FC<ListingsGridProps> = ({ listings, onListingClick, isOwner = false, onMarkAsSold, onDelete, onRestore }) => {
+  // Filter out job listings
+  const filteredListings = listings.filter(l => l.category !== 'job');
   return (
     <div className="grid grid-cols-2 gap-2 px-2 md:gap-4 md:px-4">
-      {listings.map((listing) => (
+      {filteredListings.map((listing) => (
         <ListingCard
           key={listing.id}
           id={listing.id}
