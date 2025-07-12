@@ -20,6 +20,7 @@ const MyOrders = () => {
   }, [user]);
 
   const getDownloadUrl = async (filePath) => {
+    console.log('Attempting to generate signed URL for:', filePath);
     setDownloading(filePath);
     const { data, error } = await supabase
       .storage
@@ -46,7 +47,7 @@ const MyOrders = () => {
                 let filePath = fileUrl;
                 if (filePath.startsWith('http')) {
                   const i = filePath.indexOf('digital-products/');
-                  if (i !== -1) filePath = filePath.slice(i);
+                  if (i !== -1) filePath = filePath.slice(i + 'digital-products/'.length);
                 }
                 return (
                   <button
