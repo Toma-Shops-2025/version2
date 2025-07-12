@@ -9,17 +9,17 @@ const SellerOrders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       const { data } = await supabase
-        .from('orders')
+        .from('purchases')
         .select('*, listings(*)')
-        .eq('seller_id', user.id)
-        .eq('status', 'pending');
+        .eq('confirmed', false)
+        .eq('listings.seller_id', user.id);
       setOrders(data || []);
     };
     fetchOrders();
   }, [user]);
 
   const markAsPaid = async (orderId, buyerId, listingTitle) => {
-    await supabase.from('orders').update({ status: 'paid' }).eq('id', orderId);
+    await supabase.from('purchases').update({ confirmed: true }).eq('id', orderId);
     // Notify the buyer
     await supabase.from('notifications').insert({
       user_id: buyerId,
