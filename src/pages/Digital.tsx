@@ -10,9 +10,22 @@ const DigitalForm = ({ onClose }: { onClose: () => void }) => {
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
   const [files, setFiles] = useState<File[]>([]);
+  const [images, setImages] = useState<FileList | null>(null);
+  const [video, setVideo] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const MAX_FILE_SIZE_MB = 50;
+
+  async function uploadToCloudinary(file: File) {
+    const url = `https://api.cloudinary.com/v1_1/dumnzljgn/auto/upload`;
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'unsigned_preset');
+    const res = await fetch(url, { method: 'POST', body: formData });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error?.message || 'Cloudinary upload failed');
+    return data.secure_url;
+  }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files ? Array.from(e.target.files) : [];
@@ -40,7 +53,7 @@ const DigitalForm = ({ onClose }: { onClose: () => void }) => {
     try {
       if (!user) throw new Error('You must be logged in to create a digital product listing.');
       if (!files.length) throw new Error('At least one digital file is required.');
-      // Upload files to Supabase Storage
+      // Upload digital files to Supabase Storage
       const uploadedUrls: string[] = [];
       for (const file of files) {
         const filePath = `digital-products/${user.id}/${Date.now()}-${file.name}`;
@@ -51,13 +64,23 @@ const DigitalForm = ({ onClose }: { onClose: () => void }) => {
         if (!fileUrl) throw new Error('Failed to get file URL after upload.');
         uploadedUrls.push(fileUrl);
       }
+      // Upload images if present
+      let imageUrls: string[] = [];
+      if (images && images.length > 0) {
+        imageUrls = await Promise.all(Array.from(images).map(uploadToCloudinary));
+      }
+      // Upload video if present
+      let videoUrl = '';
+      if (video) videoUrl = await uploadToCloudinary(video);
       const { error: insertError } = await supabase.from('listings').insert({
         seller_id: user.id,
         title,
         price: parseFloat(price),
         category: 'digital',
         description,
-        digital_file_urls: uploadedUrls // store as array
+        digital_file_urls: uploadedUrls, // store as array
+        images: imageUrls,
+        video: videoUrl || null
       });
       if (insertError) throw insertError;
       onClose();
@@ -95,6 +118,14 @@ const DigitalForm = ({ onClose }: { onClose: () => void }) => {
               ))}
             </ul>
           )}
+        </div>
+        <div className="mb-2">
+          <label className="block mb-1">Images <span className='text-xs text-gray-400'>(optional)</span></label>
+          <input className="w-full" type="file" multiple onChange={e => setImages(e.target.files)} />
+        </div>
+        <div className="mb-2">
+          <label className="block mb-1">Video <span className='text-xs text-gray-400'>(optional)</span></label>
+          <input className="w-full" type="file" accept="video/*" onChange={e => setVideo(e.target.files?.[0] || null)} />
         </div>
         <div className="flex justify-end gap-2 mt-4">
           <button type="button" className="px-4 py-2 rounded bg-gray-200" onClick={onClose} disabled={loading}>Cancel</button>

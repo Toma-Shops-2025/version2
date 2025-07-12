@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { useAppContext } from '@/contexts/AppContext';
 import { Link } from 'react-router-dom';
 import LocationPicker from '@/components/LocationPicker';
+import BackButton from '@/components/BackButton';
 
 const AD_CATEGORIES = [
   'Dog Walking',
@@ -166,6 +167,9 @@ const Ads = () => {
 
   return (
     <div className="container mx-auto py-8">
+      <div className="sticky top-0 z-40 bg-white dark:bg-gray-900 pb-2">
+        <BackButton />
+      </div>
       <h1 className="text-3xl font-bold mb-4">Personal Ads</h1>
       <button className="bg-blue-600 text-white px-4 py-2 rounded" onClick={() => setShowForm(true)}>Create New Ad</button>
       <div className="mt-8">

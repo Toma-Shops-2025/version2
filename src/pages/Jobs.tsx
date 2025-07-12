@@ -36,6 +36,8 @@ const JobForm = ({ onClose }: { onClose: () => void }) => {
   const [longitude, setLongitude] = useState<number | null>(null);
   const [applicationUrl, setApplicationUrl] = useState('');
   const [deadline, setDeadline] = useState('');
+  const [images, setImages] = useState<FileList | null>(null);
+  const [video, setVideo] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -45,7 +47,14 @@ const JobForm = ({ onClose }: { onClose: () => void }) => {
     setError(null);
     try {
       if (!user) throw new Error('You must be logged in to create a job listing.');
-      // Remove video requirement and image upload
+      // Upload video if present
+      let videoUrl = '';
+      if (video) videoUrl = await uploadToCloudinary(video);
+      // Upload images if present
+      let imageUrls: string[] = [];
+      if (images && images.length > 0) {
+        imageUrls = await Promise.all(Array.from(images).map(uploadToCloudinary));
+      }
       const { error: insertError } = await supabase.from('listings').insert({
         seller_id: user.id,
         title: jobTitle,
@@ -59,7 +68,9 @@ const JobForm = ({ onClose }: { onClose: () => void }) => {
         longitude,
         application_url: applicationUrl || null,
         deadline: deadline || null,
-        category: 'job'
+        category: 'job',
+        images: imageUrls,
+        video: videoUrl || null
       });
       if (insertError) throw insertError;
       onClose();
@@ -120,7 +131,14 @@ const JobForm = ({ onClose }: { onClose: () => void }) => {
           <label className="block mb-1">Deadline</label>
           <input className="w-full p-2 border rounded" type="date" value={deadline} onChange={e => setDeadline(e.target.value)} />
         </div>
-        {/* Remove Images and Video upload fields */}
+        <div className="mb-2">
+          <label className="block mb-1">Images <span className='text-xs text-gray-400'>(optional)</span></label>
+          <input className="w-full" type="file" multiple onChange={e => setImages(e.target.files)} />
+        </div>
+        <div className="mb-2">
+          <label className="block mb-1">Video <span className='text-xs text-gray-400'>(optional)</span></label>
+          <input className="w-full" type="file" accept="video/*" onChange={e => setVideo(e.target.files?.[0] || null)} />
+        </div>
         <div className="flex justify-end gap-2 mt-4">
           <button type="button" className="px-4 py-2 rounded bg-gray-200" onClick={onClose} disabled={loading}>Cancel</button>
           <button type="submit" className="px-4 py-2 rounded bg-green-600 text-white" disabled={loading}>{loading ? 'Submitting...' : 'Submit'}</button>
