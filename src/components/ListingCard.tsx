@@ -60,45 +60,77 @@ const ListingCard: React.FC<ListingCardProps> = ({
   return (
     <Card className="cursor-pointer hover:shadow-md transition-shadow border-0 shadow-sm" onClick={onClick}>
       <div className="relative">
-        {(isJob || category === 'rental' || category === 'digital' || category === 'ad') && (
+        {isJob ? (
           <>
-            <Badge className={`absolute top-2 right-2 text-xs px-2 py-1 shadow-sm ${
-              isJob ? 'bg-green-600 text-white' :
-              category === 'rental' ? 'bg-blue-600 text-white' :
-              category === 'digital' ? 'bg-purple-600 text-white' :
-              category === 'ad' ? 'bg-yellow-500 text-black' : ''
-            }`}>
-              {isJob ? 'Job' :
-                category === 'rental' ? 'Rental' :
-                category === 'digital' ? 'Digital' :
-                category === 'ad' ? 'Ad' : ''}
-            </Badge>
+            <Badge className="absolute top-2 right-2 bg-green-600 text-white text-xs px-2 py-1 shadow-sm">Job</Badge>
+            <div className="w-full aspect-square flex flex-col justify-center bg-gray-50 rounded-t-lg p-3">
+              <div className="mb-1">
+                <h3 className="font-bold text-lg text-gray-900">
+                  {salary && !isNaN(Number(salary)) ? `$${Number(salary).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : salary || 'N/A'}
+                </h3>
+              </div>
+              <p className="text-gray-700 text-sm mb-2 line-clamp-2 leading-tight font-bold">{title}</p>
+              <div className="flex items-center text-gray-500 text-xs mb-2">
+                <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
+                <span className="truncate">{location}</span>
+              </div>
+              <div className="text-gray-600 mt-2 line-clamp-2 text-sm">{description}</div>
+            </div>
           </>
-        )}
-        <div className="w-full aspect-square flex flex-col justify-center bg-gray-50 rounded-t-lg p-3">
-          <div className="mb-1">
-            <h3 className="font-bold text-lg text-gray-900">
-              {isJob
-                ? (salary && !isNaN(Number(salary)) ? `$${Number(salary).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : salary || 'N/A')
-                : price === 0 ? 'Free' : `$${price?.toLocaleString?.() ?? price}`}
-            </h3>
-          </div>
-          <p className="text-gray-700 text-sm mb-2 line-clamp-2 leading-tight font-bold">{title}</p>
-          <div className="flex items-center text-gray-500 text-xs mb-2">
-            <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
-            <span className="truncate">{location}</span>
-          </div>
-          <div className="text-gray-600 mt-2 line-clamp-2 text-sm">{description}</div>
-        </div>
-        {isJustListed && (
-          <Badge className="absolute top-2 left-2 bg-white text-gray-800 text-xs px-2 py-1 shadow-sm">
-            Just listed
-          </Badge>
-        )}
-        {status === 'sold' && (
-          <Badge className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 shadow-sm">
-            SOLD
-          </Badge>
+        ) : (
+          <>
+            {video ? (
+              <video
+                src={video}
+                muted
+                playsInline
+                className="w-full aspect-square object-cover rounded-t-lg"
+                style={{ objectFit: 'cover' }}
+              />
+            ) : image ? (
+              <img
+                src={image}
+                alt={title}
+                className="w-full aspect-square object-cover rounded-t-lg"
+              />
+            ) : (
+              <div className="w-full aspect-square flex items-center justify-center bg-gray-100 rounded-t-lg">
+                <span className="text-gray-400 text-4xl">🎬</span>
+              </div>
+            )}
+            {isJustListed && (
+              <Badge className="absolute top-2 left-2 bg-white text-gray-800 text-xs px-2 py-1 shadow-sm">
+                Just listed
+              </Badge>
+            )}
+            {status === 'sold' && (
+              <Badge className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 shadow-sm">
+                SOLD
+              </Badge>
+            )}
+            {category === 'rental' && (
+              <Badge className="absolute top-2 right-2 bg-blue-600 text-white text-xs px-2 py-1 shadow-sm">Rental</Badge>
+            )}
+            {category === 'digital' && (
+              <Badge className="absolute top-2 right-2 bg-purple-600 text-white text-xs px-2 py-1 shadow-sm">Digital</Badge>
+            )}
+            {category === 'ad' && (
+              <Badge className="absolute top-2 right-2 bg-yellow-500 text-black text-xs px-2 py-1 shadow-sm">Ad</Badge>
+            )}
+            <CardContent className="p-3">
+              <div className="mb-1">
+                <h3 className="font-bold text-lg text-gray-900">
+                  {price === 0 ? 'Free' : `$${price?.toLocaleString?.() ?? price}`}
+                </h3>
+              </div>
+              <p className="text-gray-700 text-sm mb-2 line-clamp-2 leading-tight">{title}</p>
+              <div className="flex items-center text-gray-500 text-xs mb-2">
+                <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
+                <span className="truncate">{location}</span>
+              </div>
+              <div className="text-gray-600 mt-2 line-clamp-2 text-sm">{description}</div>
+            </CardContent>
+          </>
         )}
       </div>
       {!isJob && (
