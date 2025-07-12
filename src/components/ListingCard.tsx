@@ -124,19 +124,6 @@ const ListingCard: React.FC<ListingCardProps> = ({
           </div>
           <div className="text-gray-600 mt-2 line-clamp-2 text-sm">{description}</div>
         </CardContent>
-        {/* Buy button for digital products */}
-        {category === 'digital' && (
-          <div className="px-3 pb-2">
-            <Link to={`/digital/${id}`} className="block w-full">
-              <button
-                className="w-full bg-blue-600 text-white px-4 py-2 rounded mt-2 hover:bg-blue-700 transition"
-                onClick={e => e.stopPropagation()}
-              >
-                Buy & Request Access
-              </button>
-            </Link>
-          </div>
-        )}
       </div>
       {/* Owner controls (unchanged) */}
       {isOwner && (
