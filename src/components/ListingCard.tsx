@@ -110,6 +110,21 @@ const ListingCard: React.FC<ListingCardProps> = ({
             Job
           </Badge>
         )}
+        {category === 'rental' && (
+          <Badge className="absolute top-2 right-2 bg-blue-600 text-white text-xs px-2 py-1 shadow-sm">
+            Rental
+          </Badge>
+        )}
+        {category === 'digital' && (
+          <Badge className="absolute top-2 right-2 bg-purple-600 text-white text-xs px-2 py-1 shadow-sm">
+            Digital
+          </Badge>
+        )}
+        {category === 'ad' && (
+          <Badge className="absolute top-2 right-2 bg-yellow-500 text-black text-xs px-2 py-1 shadow-sm">
+            Ad
+          </Badge>
+        )}
       </div>
       {!isJob && (
         <CardContent className="p-3">
