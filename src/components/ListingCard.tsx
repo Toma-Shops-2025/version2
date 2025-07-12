@@ -67,16 +67,16 @@ const ListingCard: React.FC<ListingCardProps> = ({
                 {salary ? `Salary: ${salary}` : 'Salary: N/A'}
               </h3>
             </div>
-            <h2 className="text-xl font-semibold mb-1">{title}</h2>
+            <p className="text-gray-700 text-sm mb-2 line-clamp-2 leading-tight font-bold">{title}</p>
             <div className="flex items-center text-gray-500 text-xs mb-2">
               <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
               <span className="truncate">{location}</span>
             </div>
-            {company_name && <div className="text-green-700 font-bold mb-1">{company_name}</div>}
+            {company_name && <div className="text-green-700 font-bold text-xs mb-1">{company_name}</div>}
             {job_type && <div className="text-sm text-gray-500 mb-1">{job_type}</div>}
             <div className="text-sm text-gray-500 mb-1">Deadline: {deadline || 'N/A'}</div>
             {requirements && <div className="text-sm text-gray-500 mb-1">{requirements}</div>}
-            <div className="text-gray-600 mt-2 line-clamp-2">{description}</div>
+            <div className="text-gray-600 mt-2 line-clamp-2 text-sm">{description}</div>
             {application_url && (
               <a href={application_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline text-sm mt-2 block">Apply Here</a>
             )}
