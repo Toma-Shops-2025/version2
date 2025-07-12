@@ -3,10 +3,17 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAppContext } from '@/contexts/AppContext';
 import { useTheme } from '@/components/theme-provider';
 import { Moon, Sun } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 const Header: React.FC = () => {
   const { user } = useAppContext();
   const { theme, setTheme } = useTheme();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/');
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-white shadow-sm">
@@ -21,6 +28,11 @@ const Header: React.FC = () => {
           <nav className="flex items-center space-x-8">
             <Link to="/categories">Categories</Link>
             <Link to="/favorites">Favorites</Link>
+            {user ? (
+              <button onClick={handleLogout} className="text-gray-700 hover:text-teal-600 font-medium">Logout</button>
+            ) : (
+              <Link to="/login" className="text-gray-700 hover:text-teal-600 font-medium">Login</Link>
+            )}
           </nav>
         </div>
       </div>

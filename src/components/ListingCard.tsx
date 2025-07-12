@@ -63,12 +63,12 @@ const ListingCard: React.FC<ListingCardProps> = ({
         {isJob ? (
           <>
             <div className="w-full aspect-square flex flex-col justify-center bg-gray-50 rounded-t-lg p-3">
+              <p className="text-gray-700 text-sm mb-2 line-clamp-2 leading-tight font-bold">{title}</p>
               <div className="mb-1">
                 <h3 className="font-bold text-lg text-gray-900">
                   {salary ? `Salary: ${salary}` : 'Salary: N/A'}
                 </h3>
               </div>
-              <p className="text-gray-700 text-sm mb-2 line-clamp-2 leading-tight font-bold">{title}</p>
               <div className="flex items-center text-gray-500 text-xs mb-2">
                 <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
                 <span className="truncate">{location}</span>
