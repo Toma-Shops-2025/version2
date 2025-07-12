@@ -61,26 +61,30 @@ const ListingCard: React.FC<ListingCardProps> = ({
     <Card className="cursor-pointer hover:shadow-md transition-shadow border-0 shadow-sm" onClick={onClick}>
       <div className="relative">
         {isJob ? (
-          <div className="w-full aspect-square flex flex-col justify-center bg-gray-50 rounded-t-lg p-3">
-            <div className="mb-1">
-              <h3 className="font-bold text-lg text-gray-900">
-                {salary ? `Salary: ${salary}` : 'Salary: N/A'}
-              </h3>
+          <>
+            <div className="w-full aspect-square flex flex-col justify-center bg-gray-50 rounded-t-lg p-3">
+              <div className="mb-1">
+                <h3 className="font-bold text-lg text-gray-900">
+                  {salary ? `Salary: ${salary}` : 'Salary: N/A'}
+                </h3>
+              </div>
+              <p className="text-gray-700 text-sm mb-2 line-clamp-2 leading-tight font-bold">{title}</p>
+              <div className="flex items-center text-gray-500 text-xs mb-2">
+                <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
+                <span className="truncate">{location}</span>
+              </div>
             </div>
-            <p className="text-gray-700 text-sm mb-2 line-clamp-2 leading-tight font-bold">{title}</p>
-            <div className="flex items-center text-gray-500 text-xs mb-2">
-              <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
-              <span className="truncate">{location}</span>
-            </div>
-            {company_name && <div className="text-green-700 font-bold text-xs mb-1">{company_name}</div>}
-            {job_type && <div className="text-sm text-gray-500 mb-1">{job_type}</div>}
-            <div className="text-sm text-gray-500 mb-1">Deadline: {deadline || 'N/A'}</div>
-            {requirements && <div className="text-sm text-gray-500 mb-1">{requirements}</div>}
-            <div className="text-gray-600 mt-2 line-clamp-2 text-sm">{description}</div>
-            {application_url && (
-              <a href={application_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline text-sm mt-2 block">Apply Here</a>
-            )}
-          </div>
+            <CardContent className="pt-2 pb-3 px-3">
+              {company_name && <div className="text-green-700 font-bold text-xs mb-1">{company_name}</div>}
+              {job_type && <div className="text-sm text-gray-500 mb-1">{job_type}</div>}
+              <div className="text-sm text-gray-500 mb-1">Deadline: {deadline || 'N/A'}</div>
+              {requirements && <div className="text-sm text-gray-500 mb-1">{requirements}</div>}
+              <div className="text-gray-600 mt-2 line-clamp-2 text-sm">{description}</div>
+              {application_url && (
+                <a href={application_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline text-sm mt-2 block">Apply Here</a>
+              )}
+            </CardContent>
+          </>
         ) : video ? (
           <video
             src={video}
