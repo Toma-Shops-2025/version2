@@ -29,7 +29,7 @@ interface Listing {
   latitude?: number;
   longitude?: number;
   category?: string;
-  salary?: number; // Added for job listings
+  salary?: string; // Added for job listings
 }
 
 const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
@@ -44,6 +44,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
   const [reviewRating, setReviewRating] = useState(5);
   const [submittingReview, setSubmittingReview] = useState(false);
   const [hasReviewed, setHasReviewed] = useState(false);
+  const [buying, setBuying] = useState(false);
+  const [buyError, setBuyError] = useState<string | null>(null);
+  const [hasRequested, setHasRequested] = useState(false);
 
   useEffect(() => {
     const fetchFavorite = async () => {
@@ -116,6 +119,21 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
     checkReviewed();
   }, [user, listing.seller_id]);
 
+  useEffect(() => {
+    // Check if user has already requested access for this digital product
+    if (!user || listing.category !== 'digital') return;
+    const checkRequested = async () => {
+      const { data } = await supabase
+        .from('purchases')
+        .select('id')
+        .eq('listing_id', listing.id)
+        .eq('buyer_id', user.id)
+        .single();
+      setHasRequested(!!data);
+    };
+    checkRequested();
+  }, [user, listing]);
+
   const handleFavorite = async () => {
     if (!user) return;
     if (isFavorite && favoriteId) {
@@ -165,6 +183,34 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
         .order('created_at', { ascending: false })
         .limit(5);
       setReviews(data || []);
+    }
+  };
+
+  const handleBuy = async () => {
+    if (!user) return;
+    setBuying(true);
+    setBuyError(null);
+    try {
+      const { error: insertError } = await supabase.from('purchases').insert({
+        listing_id: listing.id,
+        buyer_id: user.id,
+        confirmed: false
+      });
+      if (insertError) throw insertError;
+      // Notify the seller
+      if (listing && listing.seller_id) {
+        await supabase.from('notifications').insert({
+          user_id: listing.seller_id,
+          type: 'order_requested',
+          message: `You have a new digital order request for '${listing.title}'.`,
+          link: `/digital/${listing.id}`
+        });
+      }
+      setHasRequested(true);
+    } catch (err: any) {
+      setBuyError(err.message);
+    } finally {
+      setBuying(false);
     }
   };
 
@@ -251,6 +297,22 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
         <div className="mb-6">
           <h3 className="font-semibold text-gray-900 mb-2">Description</h3>
           <p className="text-gray-700">{listing.description}</p>
+          {/* Buy & Request Access button for digital products */}
+          {listing.category === 'digital' && user && user.id !== listing.seller_id && !hasRequested && (
+            <div className="mt-4">
+              <button
+                className="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                onClick={handleBuy}
+                disabled={buying}
+              >
+                {buying ? 'Processing...' : 'Buy & Request Access'}
+              </button>
+              {buyError && <div className="text-red-600 mt-2">{buyError}</div>}
+            </div>
+          )}
+          {listing.category === 'digital' && user && user.id !== listing.seller_id && hasRequested && (
+            <div className="mt-4 text-yellow-600">You have already requested access. Waiting for seller to confirm.</div>
+          )}
         </div>
 
         <div className="space-y-3">
