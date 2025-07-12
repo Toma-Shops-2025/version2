@@ -84,7 +84,7 @@ const DigitalDetail = () => {
           user_id: listing.seller_id,
           type: 'order_requested',
           message: `You have a new digital order request for '${listing.title}'.`,
-          link: `/digital/${id}`
+          link: `/seller-orders`
         });
       }
       setIsBuyer(true);

@@ -203,7 +203,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
           user_id: listing.seller_id,
           type: 'order_requested',
           message: `You have a new digital order request for '${listing.title}'.`,
-          link: `/digital/${listing.id}`
+          link: `/seller-orders`
         });
       }
       setHasRequested(true);
