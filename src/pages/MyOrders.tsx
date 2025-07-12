@@ -10,9 +10,10 @@ const MyOrders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       const { data } = await supabase
-        .from('orders')
+        .from('purchases')
         .select('*, listings(*)')
-        .eq('buyer_id', user.id);
+        .eq('buyer_id', user.id)
+        .eq('confirmed', true);
       setOrders(data || []);
     };
     fetchOrders();
@@ -20,7 +21,6 @@ const MyOrders = () => {
 
   const getDownloadUrl = async (filePath) => {
     setDownloading(filePath);
-    // filePath should be the storage path, e.g. 'digital-products/userid/filename.pdf'
     const { data, error } = await supabase
       .storage
       .from('digital-products')
@@ -40,22 +40,26 @@ const MyOrders = () => {
       {orders.map(order => (
         <div key={order.id}>
           <span>{order.listings?.title || 'Product'}</span>
-          {order.status === 'paid' && order.listings?.digital_file_url && (
-            <button
-              onClick={() => {
-                let filePath = order.listings.digital_file_url;
+          {Array.isArray(order.listings?.digital_file_urls) && order.listings.digital_file_urls.length > 0 && (
+            <div>
+              {order.listings.digital_file_urls.map((fileUrl, idx) => {
+                let filePath = fileUrl;
                 if (filePath.startsWith('http')) {
-                  const idx = filePath.indexOf('/digital-products/');
-                  if (idx !== -1) filePath = filePath.slice(idx + 1);
+                  const i = filePath.indexOf('/digital-products/');
+                  if (i !== -1) filePath = filePath.slice(i + 1);
                 }
-                getDownloadUrl(filePath);
-              }}
-              disabled={downloading === order.listings?.digital_file_url}
-            >
-              {downloading === order.listings?.digital_file_url ? 'Generating...' : 'Download'}
-            </button>
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => getDownloadUrl(filePath)}
+                    disabled={downloading === filePath}
+                  >
+                    {downloading === filePath ? 'Generating...' : `Download File ${idx + 1}`}
+                  </button>
+                );
+              })}
+            </div>
           )}
-          {order.status === 'pending' && <span>Waiting for seller to release</span>}
         </div>
       ))}
     </div>
