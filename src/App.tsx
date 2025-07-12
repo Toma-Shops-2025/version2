@@ -34,6 +34,7 @@ import MyListings from './pages/MyListings';
 import MyOrders from './pages/MyOrders';
 import Chatbot from './components/Chatbot';
 import MessagesPage from './components/MessagesPage';
+import SellerOrders from './pages/SellerOrders';
 
 const queryClient = new QueryClient();
 
@@ -73,6 +74,7 @@ const App = () => (
               <Route path="/ads" element={<Ads />} />
               <Route path="/my-listings" element={<MyListings />} />
               <Route path="/my-orders" element={<MyOrders />} />
+              <Route path="/seller-orders" element={<SellerOrders />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <Chatbot />

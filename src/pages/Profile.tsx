@@ -198,6 +198,14 @@ const Profile: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center py-8 bg-black text-white">
+      <div className="mb-4">
+        <button
+          className="bg-green-600 text-white px-4 py-2 rounded mr-2"
+          onClick={() => navigate('/seller-orders')}
+        >
+          View Pending Digital Orders
+        </button>
+      </div>
       <div className="bg-gray-900 rounded-lg shadow p-6 w-full max-w-xl flex flex-col items-center mb-8">
         <div className="relative mb-4">
           <img
