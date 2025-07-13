@@ -84,6 +84,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     if (user) {
       requestFirebaseNotificationPermission().then(token => {
+        console.log('FCM TOKEN:', token); // Log the token for debugging
         if (token) {
           supabase
             .from('users')
