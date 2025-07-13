@@ -15,6 +15,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import UserNavBar from './UserNavBar';
 import BottomNavBar from './BottomNavBar';
+import { useUnreadMessagesCount } from '@/hooks/use-unread-messages-count';
 
 const HomePage: React.FC = () => {
   const [selectedListing, setSelectedListing] = useState<string | null>(null);
@@ -31,6 +32,7 @@ const HomePage: React.FC = () => {
   const searchQuery = searchParams.get('search')?.toLowerCase() || '';
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
   const [visibleCount, setVisibleCount] = useState(20);
+  const unreadCount = useUnreadMessagesCount();
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -182,8 +184,10 @@ const HomePage: React.FC = () => {
               >
                 <div className="relative">
                   <MessageCircle className="h-8 w-8" />
-                  {hasUnreadMessages && (
-                    <span className="absolute top-0 right-0 block h-3 w-3 rounded-full bg-red-500 border-2 border-white" />
+                  {user && unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-2 bg-red-500 text-white rounded-full text-xs px-1.5 py-0.5 min-w-[18px] text-center font-bold">
+                      {unreadCount}
+                    </span>
                   )}
                 </div>
               </Button>
