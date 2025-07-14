@@ -89,7 +89,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           supabase
             .from('users')
             .update({ fcm_token: token })
-            .eq('id', user.id);
+            .eq('id', user.id)
+            .then(({ error }) => {
+              if (error) {
+                console.error('Failed to update fcm_token:', error);
+              } else {
+                console.log('fcm_token updated successfully!');
+              }
+            });
         }
       });
     }
