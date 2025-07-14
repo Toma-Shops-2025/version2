@@ -1,36 +1,69 @@
-const fetch = require('node-fetch');
-const { createClient } = require('@supabase/supabase-js');
+import fs from 'fs';
+import path from 'path';
+import { google } from 'googleapis';
+import { createClient } from '@supabase/supabase-js';
+import { fileURLToPath } from 'url';
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
-exports.handler = async function(event, context) {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export default async function handler(event, context) {
   try {
     const { recipientUserId, title, message } = JSON.parse(event.body);
 
-    // Fetch the recipient's OneSignal player IDs from Supabase
+    // Fetch the recipient's FCM token from Supabase
     const { data, error } = await supabase
       .from('users')
-      .select('onesignal_player_ids')
+      .select('fcm_token')
       .eq('id', recipientUserId)
       .single();
 
-    if (error || !data) throw new Error('Could not fetch player IDs');
-    const playerIds = data.onesignal_player_ids || [];
+    if (error || !data || !data.fcm_token) throw new Error('Could not fetch FCM token');
+    const fcmToken = data.fcm_token;
 
-    const ONESIGNAL_APP_ID = process.env.ONESIGNAL_APP_ID;
-    const ONESIGNAL_API_KEY = process.env.ONESIGNAL_API_KEY;
+    // Read the service account JSON from file
+    const serviceAccountPath = path.join(__dirname, 'service-account.json');
+    const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
 
-    const response = await fetch('https://onesignal.com/api/v1/notifications', {
+    // Authenticate with Google APIs
+    const jwtClient = new google.auth.JWT(
+      serviceAccount.client_email,
+      null,
+      serviceAccount.private_key,
+      ['https://www.googleapis.com/auth/firebase.messaging'],
+      null
+    );
+
+    await jwtClient.authorize();
+    const accessToken = jwtClient.credentials.access_token;
+
+    // Get your Firebase project ID from the service account JSON
+    const projectId = serviceAccount.project_id;
+
+    // Dynamically import node-fetch for ESM compatibility
+    const fetch = (await import('node-fetch')).default;
+
+    // Send the push notification using FCM HTTP v1
+    const response = await fetch(`https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`, {
       method: 'POST',
       headers: {
-        'Authorization': `Basic ${ONESIGNAL_API_KEY}`,
+        'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        app_id: ONESIGNAL_APP_ID,
-        headings: { en: title },
-        contents: { en: message },
-        include_player_ids: playerIds
+        message: {
+          token: fcmToken,
+          notification: {
+            title: title,
+            body: message
+          },
+          data: {
+            title: title,
+            body: message
+          }
+        }
       })
     });
 
@@ -45,4 +78,4 @@ exports.handler = async function(event, context) {
       body: JSON.stringify({ error: err.message })
     };
   }
-}; 
+} 
