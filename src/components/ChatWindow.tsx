@@ -154,7 +154,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
       if (data && data.length > 0) {
         // Send push notification to recipient
         try {
-          await fetch('/api/send-fcm-notification', {
+          await fetch('/.netlify/functions/send-notification', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
