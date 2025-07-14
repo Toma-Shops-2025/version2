@@ -23,7 +23,7 @@ interface ChatbotProps {
 }
 
 async function askTomaBot(question: string): Promise<string> {
-  const response = await fetch('http://localhost:3001/ask', {
+  const response = await fetch('http://10.0.2.2:3001/ask', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ question }),
