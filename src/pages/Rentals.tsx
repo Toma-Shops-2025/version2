@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAppContext } from '@/contexts/AppContext';
 import Map from '@/components/Map';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import BackButton from '@/components/BackButton';
 import LocationPicker from '@/components/LocationPicker';
+import ListingsGrid from '@/components/ListingsGrid';
 
 const CLOUDINARY_CLOUD_NAME = 'dumnzljgn';
 const CLOUDINARY_UPLOAD_PRESET = 'unsigned_preset';
@@ -180,6 +181,7 @@ const Rentals = () => {
   const [listings, setListings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -217,21 +219,7 @@ const Rentals = () => {
         ) : listings.length === 0 ? (
           <div className="text-gray-500">No rental listings yet.</div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {listings.map(listing => (
-              <Link key={listing.id} to={`/rentals/${listing.id}`} className="block">
-                <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-4 hover:ring-2 hover:ring-blue-400 transition">
-                  {listing.images && listing.images.length > 0 && (
-                    <img src={listing.images[0]} alt={listing.title} className="w-full h-40 object-cover rounded mb-2" />
-                  )}
-                  <h2 className="text-xl font-semibold mb-1">{listing.title}</h2>
-                  <div className="text-gray-700 mb-1">{listing.location}</div>
-                  <div className="text-blue-700 font-bold mb-1">${listing.price}</div>
-                  <div className="text-gray-600 mt-2 line-clamp-2">{listing.description}</div>
-                </div>
-              </Link>
-            ))}
-          </div>
+          <ListingsGrid listings={listings} onListingClick={id => navigate(`/rentals/${id}`)} />
         )}
       </div>
       <Map listings={listings} />

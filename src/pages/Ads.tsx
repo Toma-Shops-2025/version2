@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAppContext } from '@/contexts/AppContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import LocationPicker from '@/components/LocationPicker';
 import BackButton from '@/components/BackButton';
+import ListingsGrid from '@/components/ListingsGrid';
 
 const AD_CATEGORIES = [
   'Dog Walking',
@@ -143,6 +144,7 @@ const Ads = () => {
   const [ads, setAds] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAds = async () => {
@@ -180,30 +182,7 @@ const Ads = () => {
         ) : ads.length === 0 ? (
           <div className="text-gray-500">No ads yet.</div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {ads.map(ad => (
-              <div key={ad.id} className="bg-white dark:bg-gray-900 rounded-lg shadow p-4 hover:ring-2 hover:ring-blue-400 transition">
-                <h2 className="text-xl font-semibold mb-1">{ad.title}</h2>
-                <div className="text-teal-700 font-bold mb-1">{ad.ad_type}</div>
-                <div className="text-gray-700 mb-1">{ad.location}</div>
-                <div className="text-gray-600 mt-2 line-clamp-2">{ad.description}</div>
-                {ad.price && <div className="text-blue-700 font-bold mt-1">${ad.price}</div>}
-                {ad.contact_info && <div className="text-xs text-gray-500 mt-1">Contact: {ad.contact_info}</div>}
-                {ad.images && ad.images.length > 0 && (
-                  <div className="mt-2 flex gap-2 flex-wrap">
-                    {ad.images.map((img: string, idx: number) => (
-                      <img key={idx} src={img} alt="Ad" className="w-20 h-20 object-cover rounded" />
-                    ))}
-                  </div>
-                )}
-                {ad.video && (
-                  <div className="mt-2">
-                    <video src={ad.video} controls className="w-full max-h-40 rounded" />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+          <ListingsGrid listings={ads} onListingClick={id => navigate(`/ads/${id}`)} />
         )}
       </div>
       {showForm && <AdForm onClose={() => setShowForm(false)} />}
