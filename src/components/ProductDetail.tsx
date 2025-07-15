@@ -47,6 +47,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
   const [buying, setBuying] = useState(false);
   const [buyError, setBuyError] = useState<string | null>(null);
   const [hasRequested, setHasRequested] = useState(false);
+  const [reporting, setReporting] = useState(false);
+  const [reportSuccess, setReportSuccess] = useState(false);
 
   useEffect(() => {
     const fetchFavorite = async () => {
@@ -214,6 +216,29 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
     }
   };
 
+  const handleReport = async () => {
+    if (!user) {
+      alert('You must be logged in to report a listing.');
+      return;
+    }
+    setReporting(true);
+    setReportSuccess(false);
+    try {
+      await supabase.from('reports').insert({
+        reported_item_id: listing.id,
+        reported_by: user.id,
+        reason: 'Inappropriate content',
+        type: 'listing',
+        created_at: new Date().toISOString(),
+      });
+      setReportSuccess(true);
+    } catch (err) {
+      alert('Failed to report listing. Please try again.');
+    } finally {
+      setReporting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <div className="sticky top-0 bg-white border-b z-10">
@@ -330,6 +355,18 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
             />
           )}
         </div>
+        <div className="flex justify-end mb-2">
+          <button
+            className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition text-sm"
+            onClick={handleReport}
+            disabled={reporting}
+          >
+            {reporting ? 'Reporting...' : 'Report Listing'}
+          </button>
+        </div>
+        {reportSuccess && (
+          <div className="text-green-600 text-sm mb-2">Thank you for your report. Our team will review it.</div>
+        )}
       </div>
       {/* New sections */}
       <div className="p-4 space-y-8">
