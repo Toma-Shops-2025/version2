@@ -41,9 +41,26 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   const typingTimeout = useRef<NodeJS.Timeout | null>(null);
   const typingChannel = useRef<any>(null);
   const [isSending, setIsSending] = useState(false);
+  const [isBlocked, setIsBlocked] = useState(false);
 
   useEffect(() => {
+    const checkBlockedStatus = async () => {
+      const otherUserId = await getOtherUserId();
+      if (!currentUserId || !otherUserId) return;
+
+      const { data, error } = await supabase
+        .from('blocks')
+        .select('id')
+        .or(`(blocker_id.eq.${currentUserId},blocked_id.eq.${otherUserId}),(blocker_id.eq.${otherUserId},blocked_id.eq.${currentUserId})`)
+        .limit(1);
+
+      if (data && data.length > 0) {
+        setIsBlocked(true);
+      }
+    };
+
     loadMessages();
+    checkBlockedStatus();
     // Subscribe to new messages in this conversation
     const channel = supabase.channel('messages-realtime')
       .on('postgres_changes', {
@@ -119,16 +136,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   };
 
   const sendMessage = async () => {
-    console.log('Current user object:', user);
-    console.log('Current user ID:', currentUserId);
     if (!newMessage.trim() || !currentUserId) return;
     setIsSending(true);
     try {
       const otherUserId = await getOtherUserId();
       const { data: conv } = await supabase.from('conversations').select('*').eq('id', conversationId).single();
-      console.log('Conversation:', conv);
-      console.log('Current user ID:', currentUserId);
-      console.log('Other user ID:', otherUserId);
       if (!otherUserId) throw new Error('Could not determine receiver');
       const payload = {
         conversation_id: conversationId,
@@ -137,13 +149,11 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         listing_id: conv?.listing_id,
         content: newMessage.trim()
       };
-      console.log('Message payload:', payload); // Debug log
       const { data, error } = await supabase
         .from('messages')
         .insert(payload)
-        .select(); // Get the inserted row(s)
+        .select(); 
       if (error) {
-        console.error('Supabase insert error:', error); // Debug log
         toast({
           title: "Error",
           description: error.message || "Failed to send message",
@@ -152,9 +162,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         return;
       }
       if (data && data.length > 0) {
-        // Send push notification to recipient
         try {
-          await fetch('/.netlify/functions/send-notification', {
+          await fetch('/api/send-fcm-notification', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -174,7 +183,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
           variant: "default"
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Error",
         description: error?.message || "Failed to send message",
@@ -209,7 +218,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         description: 'Your message was moved to trash.',
         variant: 'default',
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: 'Error',
         description: error?.message || 'Failed to delete message',
@@ -220,7 +229,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
-      {/* Header */}
       <div className="bg-white border-b p-4">
         <div className="flex items-center">
           <Button variant="ghost" size="sm" onClick={onBack} className="mr-3">
@@ -233,7 +241,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         </div>
       </div>
 
-      {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {isLoading ? (
           <div className="text-center text-gray-500">Loading messages...</div>
@@ -286,25 +293,28 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input */}
       <div className="bg-white border-t p-4">
-        {currentUserId ? (
-        <div className="flex space-x-2">
-          <Input
-            value={newMessage}
-              onChange={handleInputChange}
-            placeholder="Type a message..."
-            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-          />
-            <Button onClick={sendMessage} disabled={!newMessage.trim() || isSending}>
-            <Send className="h-4 w-4" />
-          </Button>
-        </div>
+        {isBlocked ? (
+          <div className="text-center text-gray-500 text-sm">
+            You can no longer reply to this conversation.
+          </div>
         ) : (
-          <div className="text-center text-red-500">
-            Please <a href="/login" className="underline text-blue-600">log in</a> to send messages.
+          <div className="flex items-center space-x-3">
+            <Input
+              type="text"
+              placeholder="Type a message..."
+              className="flex-1"
+              value={newMessage}
+              onChange={handleInputChange}
+              onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+              disabled={isSending}
+            />
+            <Button onClick={sendMessage} disabled={!newMessage.trim() || isSending}>
+              <Send className="h-5 w-5" />
+            </Button>
           </div>
         )}
+        {isOtherTyping && <p className="text-xs text-gray-500 italic mt-1">typing...</p>}
       </div>
     </div>
   );

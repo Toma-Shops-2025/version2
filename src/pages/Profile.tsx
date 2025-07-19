@@ -5,10 +5,27 @@ import ListingsGrid from '@/components/ListingsGrid';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { useParams } from 'react-router-dom';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import Reviews from '@/components/Reviews';
 
 const Profile: React.FC = () => {
-  const { user, loading } = useAppContext();
-  console.log('Profile user:', user); // Debug log
+  const { userId } = useParams<{ userId: string }>();
+  const { user: currentUser, loading: currentUserLoading } = useAppContext();
+  const [profileUser, setProfileUser] = useState<any>(null);
+  const [profileLoading, setProfileLoading] = useState(true);
   const [listings, setListings] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [profilePic, setProfilePic] = useState<string | null>(null);
@@ -18,16 +35,57 @@ const Profile: React.FC = () => {
   const [offersError, setOffersError] = useState<string | null>(null);
   const [trashedListings, setTrashedListings] = useState<any[]>([]);
   const [pendingPurchases, setPendingPurchases] = useState<any[]>([]);
+  const [reportReason, setReportReason] = useState('');
+  const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) {
+    const fetchProfileUser = async () => {
+      setProfileLoading(true);
+      const targetUserId = userId || currentUser?.id;
+      if (!targetUserId) {
+        setProfileLoading(false);
+        return;
+      }
+
+      const { data, error } = await supabase.from('users').select('*').eq('id', targetUserId).single();
+      if (error) {
+        setError('Profile not found.');
+      } else {
+        setProfileUser(data);
+      }
+      setProfileLoading(false);
+    };
+
+    if (!currentUserLoading) {
+      fetchProfileUser();
+    }
+  }, [userId, currentUser, currentUserLoading]);
+
+  const handleBlockUser = async () => {
+    if (!currentUser || !profileUser) return;
+
+    const { error } = await supabase.from('blocks').insert({
+      blocker_id: currentUser.id,
+      blocked_id: profileUser.id,
+    });
+
+    if (error) {
+      console.error('Error blocking user:', error);
+      alert('Failed to block user. They may already be blocked.');
+    } else {
+      alert('User blocked successfully.');
+    }
+  };
+
+  useEffect(() => {
+    if (!profileUser) {
       return;
     }
     const fetchListings = async () => {
       setError(null);
       try {
-        const { data, error } = await supabase.from('listings').select('*').eq('seller_id', user.id).order('created_at', { ascending: false });
+        const { data, error } = await supabase.from('listings').select('*').eq('seller_id', profileUser.id).order('created_at', { ascending: false });
         if (error) throw error;
         setListings((data || []).filter((l: any) => l.status !== 'trashed'));
         setTrashedListings((data || []).filter((l: any) => l.status === 'trashed'));
@@ -36,10 +94,10 @@ const Profile: React.FC = () => {
       }
     };
     fetchListings();
-  }, [user]);
+  }, [profileUser]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!profileUser) return;
     const fetchOffers = async () => {
       setOffersLoading(true);
       setOffersError(null);
@@ -47,7 +105,7 @@ const Profile: React.FC = () => {
         const { data, error } = await supabase
           .from('offers')
           .select('*')
-          .eq('seller_id', user.id)
+          .eq('seller_id', profileUser.id)
           .order('created_at', { ascending: false });
         if (error) throw error;
         setOffers(data || []);
@@ -58,16 +116,16 @@ const Profile: React.FC = () => {
       }
     };
     fetchOffers();
-  }, [user]);
+  }, [profileUser]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!profileUser) return;
     const fetchPendingPurchases = async () => {
       // Get all digital listings by this seller
       const { data: digitalListings, error: digitalError } = await supabase
         .from('listings')
         .select('id, title')
-        .eq('seller_id', user.id)
+        .eq('seller_id', profileUser.id)
         .eq('category', 'digital');
       if (digitalError) return;
       const digitalIds = (digitalListings || []).map((l: any) => l.id);
@@ -90,14 +148,33 @@ const Profile: React.FC = () => {
       setPendingPurchases(purchasesWithTitle);
     };
     fetchPendingPurchases();
-  }, [user]);
+  }, [profileUser]);
+
+  const handleReportUser = async () => {
+    if (!currentUser || !profileUser || !reportReason) return;
+
+    const { error } = await supabase.from('reports').insert({
+      reported_by: currentUser.id,
+      reported_user_id: profileUser.id,
+      reason: reportReason,
+    });
+
+    if (error) {
+      console.error('Error reporting user:', error);
+      alert('Failed to submit report.');
+    } else {
+      alert('Report submitted successfully.');
+      setIsReportDialogOpen(false);
+      setReportReason('');
+    }
+  };
 
   const handleProfilePicChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !user) return;
+    if (!file || !currentUser) return;
     setUploading(true);
     const fileExt = file.name.split('.').pop();
-    const filePath = `profile-pics/${user.id}.${fileExt}`;
+    const filePath = `profile-pics/${currentUser.id}.${fileExt}`;
     const { error: uploadError } = await supabase.storage.from('avatars').upload(filePath, file, { upsert: true });
     if (uploadError) {
       setError('Failed to upload profile picture');
@@ -110,16 +187,15 @@ const Profile: React.FC = () => {
   };
 
   useEffect(() => {
-    // Load profile pic if exists
-    if (!user) return;
-    const filePath = `profile-pics/${user.id}.png`;
+    if (!profileUser) return;
+    const filePath = `profile-pics/${profileUser.id}.png`;
     const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
     if (data && data.publicUrl && !data.publicUrl.endsWith('/')) {
       setProfilePic(data.publicUrl);
     } else {
       setProfilePic(null);
     }
-  }, [user]);
+  }, [profileUser]);
 
   const handleMarkAsSold = async (listingId: string) => {
     try {
@@ -128,8 +204,7 @@ const Profile: React.FC = () => {
         .update({ status: 'sold', sold_at: new Date().toISOString() })
         .eq('id', listingId);
       if (error) throw error;
-      // Refresh listings
-      const { data, error: fetchError } = await supabase.from('listings').select('*').eq('seller_id', user.id).order('created_at', { ascending: false });
+      const { data, error: fetchError } = await supabase.from('listings').select('*').eq('seller_id', profileUser.id).order('created_at', { ascending: false });
       if (fetchError) throw fetchError;
       setListings(data || []);
     } catch (err: any) {
@@ -144,8 +219,7 @@ const Profile: React.FC = () => {
         .update({ status: 'trashed', trashed_at: new Date().toISOString() })
         .eq('id', listingId);
       if (error) throw error;
-      // Refresh listings
-      const { data, error: fetchError } = await supabase.from('listings').select('*').eq('seller_id', user.id).order('created_at', { ascending: false });
+      const { data, error: fetchError } = await supabase.from('listings').select('*').eq('seller_id', profileUser.id).order('created_at', { ascending: false });
       if (fetchError) throw fetchError;
       setListings(data || []);
       setTrashedListings((data || []).filter((l: any) => l.status === 'trashed'));
@@ -161,8 +235,7 @@ const Profile: React.FC = () => {
         .update({ status: 'active', trashed_at: null })
         .eq('id', listingId);
       if (error) throw error;
-      // Refresh listings
-      const { data, error: fetchError } = await supabase.from('listings').select('*').eq('seller_id', user.id).order('created_at', { ascending: false });
+      const { data, error: fetchError } = await supabase.from('listings').select('*').eq('seller_id', profileUser.id).order('created_at', { ascending: false });
       if (fetchError) throw fetchError;
       setListings((data || []).filter((l: any) => l.status !== 'trashed'));
       setTrashedListings((data || []).filter((l: any) => l.status === 'trashed'));
@@ -178,8 +251,7 @@ const Profile: React.FC = () => {
         .delete()
         .eq('id', listingId);
       if (error) throw error;
-      // Refresh listings
-      const { data, error: fetchError } = await supabase.from('listings').select('*').eq('seller_id', user.id).order('created_at', { ascending: false });
+      const { data, error: fetchError } = await supabase.from('listings').select('*').eq('seller_id', profileUser.id).order('created_at', { ascending: false });
       if (fetchError) throw fetchError;
       setListings((data || []).filter((l: any) => l.status !== 'trashed'));
       setTrashedListings((data || []).filter((l: any) => l.status === 'trashed'));
@@ -193,19 +265,13 @@ const Profile: React.FC = () => {
     setPendingPurchases(pendingPurchases.filter((p) => p.id !== purchaseId));
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center bg-black text-white">Loading...</div>;
-  if (!user) return <div className="min-h-screen flex items-center justify-center bg-black text-white">You must be logged in to view your profile.</div>;
+  if (profileLoading || currentUserLoading) return <div className="min-h-screen flex items-center justify-center bg-black text-white">Loading...</div>;
+  if (!profileUser) return <div className="min-h-screen flex items-center justify-center bg-black text-white">Profile not found or you must be logged in.</div>;
+
+  const isOwnProfile = currentUser && profileUser.id === currentUser.id;
 
   return (
     <div className="min-h-screen flex flex-col items-center py-8 bg-black text-white">
-      <div className="mb-4">
-        <button
-          className="bg-green-600 text-white px-4 py-2 rounded mr-2"
-          onClick={() => navigate('/seller-orders')}
-        >
-          View Pending Digital Orders
-        </button>
-      </div>
       <div className="bg-gray-900 rounded-lg shadow p-6 w-full max-w-xl flex flex-col items-center mb-8">
         <div className="relative mb-4">
           <img
@@ -214,84 +280,137 @@ const Profile: React.FC = () => {
             className="w-28 h-28 rounded-full object-cover border-4 border-yellow-400 bg-gray-800"
             onError={e => (e.currentTarget.src = '/placeholder.svg')}
           />
-          <label className="absolute bottom-0 right-0 bg-yellow-400 text-black rounded-full p-2 cursor-pointer hover:bg-yellow-300 transition">
-            <input type="file" accept="image/*" className="hidden" onChange={handleProfilePicChange} disabled={uploading} />
-            <span className="text-xs font-bold">Edit</span>
-          </label>
+          {isOwnProfile && (
+            <label className="absolute bottom-0 right-0 bg-yellow-400 text-black rounded-full p-2 cursor-pointer hover:bg-yellow-300 transition">
+              <input type="file" accept="image/*" className="hidden" onChange={handleProfilePicChange} disabled={uploading} />
+              <span className="text-xs font-bold">Edit</span>
+            </label>
+          )}
         </div>
-        <h1 className="text-2xl font-bold mb-1">{user.name || user.email}</h1>
-        <p className="text-gray-400 mb-2">{user.email}</p>
-        <p className="text-gray-500 text-sm mb-2">User ID: {user.id}</p>
+        <h1 className="text-2xl font-bold mb-1">{profileUser.name || profileUser.email}</h1>
+        <p className="text-gray-400 mb-2">{profileUser.email}</p>
+        <p className="text-gray-500 text-sm mb-2">User ID: {profileUser.id}</p>
         <Button variant="secondary" onClick={() => navigate(-1)} className="mt-2">Back</Button>
+        <div className="flex gap-2 mt-4">
+          {!isOwnProfile && currentUser && (
+            <>
+              <Dialog open={isReportDialogOpen} onOpenChange={setIsReportDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" onClick={() => setIsReportDialogOpen(true)}>Report User</Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Report User</DialogTitle>
+                  </DialogHeader>
+                  <Textarea
+                    placeholder="Please provide a reason for your report..."
+                    value={reportReason}
+                    onChange={(e) => setReportReason(e.target.value)}
+                  />
+                  <Button onClick={handleReportUser}>Submit Report</Button>
+                </DialogContent>
+              </Dialog>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive">Block User</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action will prevent this user from contacting you. You will not see their messages or listings. This can be undone later if needed.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleBlockUser}>Continue</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </>
+          )}
+        </div>
       </div>
       <div className="w-full max-w-3xl">
-        <h2 className="text-xl font-semibold mb-4">Your Listings</h2>
+        <h2 className="text-xl font-semibold mb-4">Listings</h2>
         {error ? (
           <div className="text-center text-red-500 py-8">{error}</div>
         ) : listings.length === 0 ? (
-          <div className="text-center text-gray-400 py-8">You have no listings yet.</div>
+          <div className="text-center text-gray-400 py-8">This user has no listings yet.</div>
         ) : (
-          <ListingsGrid listings={listings} isOwner={true} onMarkAsSold={handleMarkAsSold} onDelete={handleDeleteListing} />
+          <ListingsGrid listings={listings} isOwner={isOwnProfile} onMarkAsSold={handleMarkAsSold} onDelete={handleDeleteListing} />
         )}
       </div>
       <div className="w-full max-w-3xl mt-8">
-        <h2 className="text-xl font-semibold mb-4">Offers Received</h2>
-        {offersLoading ? (
-          <div className="text-center text-gray-400 py-8">Loading offers...</div>
-        ) : offersError ? (
-          <div className="text-center text-red-500 py-8">{offersError}</div>
-        ) : offers.length === 0 ? (
-          <div className="text-center text-gray-400 py-8">You have no offers yet.</div>
-        ) : (
-          <ul className="divide-y divide-gray-700">
-            {offers.map((offer) => (
-              <li key={offer.id} className="py-4 flex flex-col md:flex-row md:items-center md:justify-between">
-                <div>
-                  <div className="font-semibold">Offer Amount: <span className="text-yellow-400">${offer.amount}</span></div>
-                  <div className="text-sm text-gray-400">From User ID: {offer.buyer_id}</div>
-                  <div className="text-sm text-gray-400">Listing ID: {offer.listing_id}</div>
-                  <div className="text-xs text-gray-500">{new Date(offer.created_at).toLocaleString()}</div>
-                </div>
-                {/* You can add Accept/Reject buttons here if needed */}
-              </li>
-            ))}
-          </ul>
-        )}
+        <Reviews sellerId={profileUser.id} />
       </div>
-      <div className="w-full max-w-3xl mt-8">
-        <h2 className="text-xl font-semibold mb-4">Trashed Listings</h2>
-        {trashedListings.length === 0 ? (
-          <div className="text-center text-gray-400 py-8">No trashed listings.</div>
-        ) : (
-          <ListingsGrid
-            listings={trashedListings}
-            isOwner={true}
-            onMarkAsSold={undefined}
-            onDelete={undefined}
-            onRestore={handleRestoreListing}
-            onPermanentDelete={handlePermanentDeleteListing}
-          />
-        )}
-      </div>
-      <div className="w-full max-w-3xl mt-8">
-        <h2 className="text-xl font-semibold mb-4">Digital Product Purchases (Pending Confirmation)</h2>
-        {pendingPurchases.length === 0 ? (
-          <div className="text-center text-gray-400 py-8">No pending digital product purchases.</div>
-        ) : (
-          <ul className="divide-y divide-gray-700">
-            {pendingPurchases.map((purchase) => (
-              <li key={purchase.id} className="py-4 flex flex-col md:flex-row md:items-center md:justify-between">
-                <div>
-                  <div className="font-semibold">Product: <span className="text-yellow-400">{purchase.title}</span></div>
-                  <div className="text-sm text-gray-400">Buyer ID: {purchase.buyer_id}</div>
-                  <div className="text-xs text-gray-500">Requested: {new Date(purchase.created_at).toLocaleString()}</div>
-                </div>
-                <button className="bg-green-600 text-white px-4 py-2 rounded mt-2 md:mt-0" onClick={() => handleConfirmPurchase(purchase.id)}>Confirm</button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      {isOwnProfile && (
+        <>
+          <div className="w-full max-w-3xl mt-8">
+            <h2 className="text-xl font-semibold mb-4">Offers Received</h2>
+            {offersLoading ? (
+              <div className="text-center text-gray-400 py-8">Loading offers...</div>
+            ) : offersError ? (
+              <div className="text-center text-red-500 py-8">{offersError}</div>
+            ) : offers.length === 0 ? (
+              <div className="text-center text-gray-400 py-8">You have no offers yet.</div>
+            ) : (
+              <ul className="divide-y divide-gray-700">
+                {offers.map((offer) => (
+                  <li key={offer.id} className="py-4 flex flex-col md:flex-row md:items-center md:justify-between">
+                    <div>
+                      <div className="font-semibold">Offer Amount: <span className="text-yellow-400">${offer.amount}</span></div>
+                      <div className="text-sm text-gray-400">From User ID: {offer.buyer_id}</div>
+                      <div className="text-sm text-gray-400">Listing ID: {offer.listing_id}</div>
+                      <div className="text-xs text-gray-500">{new Date(offer.created_at).toLocaleString()}</div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          <div className="w-full max-w-3xl mt-8">
+            <h2 className="text-xl font-semibold mb-4">Pending Digital Purchases</h2>
+            {pendingPurchases.length === 0 ? (
+              <div className="text-center text-gray-400 py-8">No pending purchases to confirm.</div>
+            ) : (
+              <ul className="divide-y divide-gray-700">
+                {pendingPurchases.map((purchase) => (
+                  <li key={purchase.id} className="py-4 flex flex-col md:flex-row md:items-center md:justify-between">
+                    <div>
+                      <div className="font-semibold">{purchase.title}</div>
+                      <div className="text-sm text-gray-400">Buyer ID: {purchase.buyer_id}</div>
+                      <div className="text-xs text-gray-500">{new Date(purchase.created_at).toLocaleString()}</div>
+                    </div>
+                    <Button onClick={() => handleConfirmPurchase(purchase.id)}>Confirm Purchase</Button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          <div className="w-full max-w-3xl mt-8">
+            <h2 className="text-xl font-semibold mb-4">Trashed Listings</h2>
+            {trashedListings.length === 0 ? (
+              <div className="text-center text-gray-400 py-8">You have no trashed listings.</div>
+            ) : (
+              <ul className="divide-y divide-gray-700">
+                {trashedListings.map((listing) => (
+                  <li key={listing.id} className="py-4 flex flex-col md:flex-row md:items-center md:justify-between">
+                    <div>
+                      <div className="font-semibold">{listing.title}</div>
+                      <div className="text-sm text-gray-400">Trashed on: {new Date(listing.trashed_at).toLocaleDateString()}</div>
+                    </div>
+                    <div className="flex gap-2 mt-2 md:mt-0">
+                      <Button variant="outline" onClick={() => handleRestoreListing(listing.id)}>Restore</Button>
+                      <Button variant="destructive" onClick={() => handlePermanentDeleteListing(listing.id)}>Delete Permanently</Button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 };

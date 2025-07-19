@@ -41,22 +41,57 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
   const [lastMessages, setLastMessages] = useState<Record<string, { content: string; created_at: string }>>({});
 
   useEffect(() => {
-    loadConversations();
-  }, []);
+    if (currentUserId) {
+      loadConversations();
+    }
+  }, [currentUserId]);
 
   const loadConversations = async () => {
+    if (!currentUserId) return;
     try {
-      if (!currentUserId) throw new Error('Not logged in');
+      // First, get a list of users that the current user has blocked
+      const { data: blockedUsers, error: blockedError } = await supabase
+        .from('blocks')
+        .select('blocked_id')
+        .eq('blocker_id', currentUserId);
+
+      if (blockedError) throw blockedError;
+      const blockedUserIds = blockedUsers.map(b => b.blocked_id);
+
+      // Also get a list of users who have blocked the current user
+      const { data: usersWhoBlockedMe, error: blockedMeError } = await supabase
+        .from('blocks')
+        .select('blocker_id')
+        .eq('blocked_id', currentUserId);
+      
+      if (blockedMeError) throw blockedMeError;
+      const usersWhoBlockedMeIds = usersWhoBlockedMe.map(b => b.blocker_id);
+
+      const allBlockedIds = [...new Set([...blockedUserIds, ...usersWhoBlockedMeIds])];
+
       const { data, error } = await supabase
         .from('conversations')
         .select('*')
         .or(`buyer_id.eq.${currentUserId},seller_id.eq.${currentUserId}`)
+        .not('buyer_id', 'in', `(${allBlockedIds.join(',')})`)
+        .not('seller_id', 'in', `(${allBlockedIds.join(',')})`)
         .order('created_at', { ascending: false });
       if (error) throw error;
-      setConversations(data || []);
-      // Fetch user emails and listing titles
-      const userIds = Array.from(new Set((data || []).flatMap((c: any) => [c.buyer_id, c.seller_id])));
-      const listingIds = Array.from(new Set((data || []).map((c: any) => c.listing_id)));
+      
+      const filteredData = (data || []).filter(c => 
+        !allBlockedIds.includes(c.buyer_id) && !allBlockedIds.includes(c.seller_id)
+      );
+      
+      setConversations(filteredData);
+      
+      if (!filteredData || filteredData.length === 0) {
+        setIsLoading(false);
+        return;
+      }
+      
+      const userIds = Array.from(new Set(filteredData.flatMap((c: any) => [c.buyer_id, c.seller_id])));
+      const listingIds = Array.from(new Set(filteredData.map((c: any) => c.listing_id)));
+      
       if (userIds.length > 0) {
         const { data: users } = await supabase.from('users').select('id, email').in('id', userIds);
         if (users) {
@@ -65,6 +100,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
           setUsersById(map);
         }
       }
+      
       if (listingIds.length > 0) {
         const { data: listings } = await supabase.from('listings').select('id, title').in('id', listingIds);
         if (listings) {
@@ -73,9 +109,9 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
           setListingsById(map);
         }
       }
-      // Fetch last message for each conversation
-      if (data && data.length > 0) {
-        const convIds = data.map((c: any) => c.id);
+      
+      if (filteredData.length > 0) {
+        const convIds = filteredData.map((c: any) => c.id);
         const { data: messages } = await supabase
           .from('messages')
           .select('id, conversation_id, content, created_at')

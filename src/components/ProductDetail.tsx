@@ -3,13 +3,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, MapPin, Heart, Share, X, Star } from 'lucide-react';
-// import { Listing } from '@/data/mockListings';
 import MessageButton from './MessageButton';
 import OfferButton from './OfferButton';
 import Map from './Map';
 import { supabase } from '@/lib/supabase';
 import { useAppContext } from '@/contexts/AppContext';
 import ListingsGrid from './ListingsGrid';
+import { Link } from 'react-router-dom';
 
 interface ProductDetailProps {
   listing: Listing;
@@ -29,7 +29,6 @@ interface Listing {
   latitude?: number;
   longitude?: number;
   category?: string;
-  salary?: string; // Added for job listings
 }
 
 const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
@@ -39,16 +38,13 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
   const [modalImg, setModalImg] = useState<string | null>(null);
   const [similarListings, setSimilarListings] = useState<Listing[]>([]);
   const [sellerListings, setSellerListings] = useState<Listing[]>([]);
-  const [reviews, setReviews] = useState<any[]>([]); // Adjust type if you have a reviews table
+  const [reviews, setReviews] = useState<any[]>([]);
   const [reviewComment, setReviewComment] = useState('');
   const [reviewRating, setReviewRating] = useState(5);
   const [submittingReview, setSubmittingReview] = useState(false);
   const [hasReviewed, setHasReviewed] = useState(false);
-  const [buying, setBuying] = useState(false);
-  const [buyError, setBuyError] = useState<string | null>(null);
-  const [hasRequested, setHasRequested] = useState(false);
-  const [reporting, setReporting] = useState(false);
-  const [reportSuccess, setReportSuccess] = useState(false);
+  const [sellerName, setSellerName] = useState('');
+  const [hasPurchased, setHasPurchased] = useState(false);
 
   useEffect(() => {
     const fetchFavorite = async () => {
@@ -71,7 +67,29 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
   }, [user, listing.id]);
 
   useEffect(() => {
-    // Fetch similar listings
+    const checkPurchase = async () => {
+      if (!user || !listing.id) return;
+      const { data } = await supabase
+        .from('purchases')
+        .select('id')
+        .eq('buyer_id', user.id)
+        .eq('listing_id', listing.id)
+        .single();
+      setHasPurchased(!!data);
+    };
+
+    const fetchSellerName = async () => {
+      if (!listing.seller_id) return;
+      const { data, error } = await supabase
+        .from('users')
+        .select('name, email')
+        .eq('id', listing.seller_id)
+        .single();
+      if (data) {
+        setSellerName(data.name || data.email);
+      }
+    };
+
     const fetchSimilar = async () => {
       const { data } = await supabase
         .from('listings')
@@ -81,7 +99,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
         .limit(6);
       setSimilarListings(data || []);
     };
-    // Fetch other listings from this seller
+    
     const fetchSellerListings = async () => {
       const { data } = await supabase
         .from('listings')
@@ -91,7 +109,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
         .limit(6);
       setSellerListings(data || []);
     };
-    // Fetch seller reviews (if reviews table exists)
+    
     const fetchReviews = async () => {
       const { data } = await supabase
         .from('reviews')
@@ -101,40 +119,26 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
         .limit(5);
       setReviews(data || []);
     };
+    checkPurchase();
+    fetchSellerName();
     fetchSimilar();
     fetchSellerListings();
     fetchReviews();
-  }, [listing]);
+  }, [listing, user]);
 
   useEffect(() => {
-    // Check if user has already reviewed this seller
-    if (!user || !listing.seller_id) return;
+    if (!user || !listing.seller_id || !listing.id) return;
     const checkReviewed = async () => {
       const { data } = await supabase
         .from('reviews')
         .select('id')
-        .eq('seller_id', listing.seller_id)
+        .eq('listing_id', listing.id)
         .eq('reviewer_id', user.id)
         .single();
       setHasReviewed(!!data);
     };
     checkReviewed();
-  }, [user, listing.seller_id]);
-
-  useEffect(() => {
-    // Check if user has already requested access for this digital product
-    if (!user || listing.category !== 'digital') return;
-    const checkRequested = async () => {
-      const { data } = await supabase
-        .from('purchases')
-        .select('id')
-        .eq('listing_id', listing.id)
-        .eq('buyer_id', user.id)
-        .single();
-      setHasRequested(!!data);
-    };
-    checkRequested();
-  }, [user, listing]);
+  }, [user, listing.seller_id, listing.id]);
 
   const handleFavorite = async () => {
     if (!user) return;
@@ -163,12 +167,12 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
 
   const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !listing.seller_id) return;
+    if (!user || !listing.seller_id || !listing.id) return;
     setSubmittingReview(true);
     const { error } = await supabase.from('reviews').insert({
       seller_id: listing.seller_id,
+      listing_id: listing.id,
       reviewer_id: user.id,
-      reviewer_name: user.name || user.email,
       comment: reviewComment,
       rating: reviewRating,
     });
@@ -177,7 +181,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
       setReviewComment('');
       setReviewRating(5);
       setHasReviewed(true);
-      // Refresh reviews
       const { data } = await supabase
         .from('reviews')
         .select('*')
@@ -185,57 +188,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
         .order('created_at', { ascending: false })
         .limit(5);
       setReviews(data || []);
-    }
-  };
-
-  const handleBuy = async () => {
-    if (!user) return;
-    setBuying(true);
-    setBuyError(null);
-    try {
-      const { error: insertError } = await supabase.from('purchases').insert({
-        listing_id: listing.id,
-        buyer_id: user.id,
-        confirmed: false
-      });
-      if (insertError) throw insertError;
-      // Notify the seller
-      if (listing && listing.seller_id) {
-        await supabase.from('notifications').insert({
-          user_id: listing.seller_id,
-          type: 'order_requested',
-          message: `You have a new digital order request for '${listing.title}'.`,
-          link: `/seller-orders`
-        });
-      }
-      setHasRequested(true);
-    } catch (err: any) {
-      setBuyError(err.message);
-    } finally {
-      setBuying(false);
-    }
-  };
-
-  const handleReport = async () => {
-    if (!user) {
-      alert('You must be logged in to report a listing.');
-      return;
-    }
-    setReporting(true);
-    setReportSuccess(false);
-    try {
-      await supabase.from('reports').insert({
-        reported_item_id: listing.id,
-        reported_by: user.id,
-        reason: 'Inappropriate content',
-        type: 'listing',
-        created_at: new Date().toISOString(),
-      });
-      setReportSuccess(true);
-    } catch (err) {
-      alert('Failed to report listing. Please try again.');
-    } finally {
-      setReporting(false);
     }
   };
 
@@ -257,33 +209,20 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
         </div>
       </div>
 
-      {/* Video */}
       {listing.video && (
-      <div className="relative">
-          <video
-            src={listing.video}
-            controls
-            className="w-full aspect-video object-cover"
-          />
+        <div className="relative">
+          <video src={listing.video} controls className="w-full aspect-video object-cover" />
         </div>
       )}
 
-      {/* Photo Gallery */}
       {listing.images && listing.images.length > 0 && (
         <div className="flex flex-wrap gap-2 justify-center p-2">
           {listing.images.map((img: string, idx: number) => (
-            <img
-              key={idx}
-              src={img}
-              alt={`Photo ${idx + 1}`}
-              className="h-32 w-32 object-cover rounded cursor-pointer"
-              onClick={() => setModalImg(img)}
-            />
+            <img key={idx} src={img} alt={`Photo ${idx + 1}`} className="h-32 w-32 object-cover rounded cursor-pointer" onClick={() => setModalImg(img)} />
           ))}
         </div>
       )}
 
-      {/* Modal for enlarged photo */}
       {modalImg && (
         <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
           <div className="relative">
@@ -292,16 +231,12 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
               <X className="h-5 w-5" />
             </Button>
           </div>
-      </div>
+        </div>
       )}
 
       <div className="p-4">
         <div className="mb-4">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            {listing.category === 'job'
-              ? (listing.salary ? `Salary: ${listing.salary}` : 'Salary: N/A')
-              : `$${listing.price === 0 ? 'Free' : listing.price.toLocaleString()}`}
-          </h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">${listing.price === 0 ? 'Free' : listing.price.toLocaleString()}</h1>
           <h2 className="text-lg text-gray-700 mb-3">{listing.title}</h2>
           <div className="flex items-center text-gray-500 text-sm mb-4">
             <MapPin className="h-4 w-4 mr-1" />
@@ -309,136 +244,86 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
           </div>
           {listing.latitude && listing.longitude && (
             <div className="mb-6">
-              <Map
-                listings={[{ id: listing.id, title: listing.title, latitude: listing.latitude, longitude: listing.longitude }]}
-                lat={listing.latitude}
-                lng={listing.longitude}
-                zoom={13}
-              />
+              <Map listings={[{ id: listing.id, title: listing.title, latitude: listing.latitude, longitude: listing.longitude }]} lat={listing.latitude} lng={listing.longitude} zoom={13} />
             </div>
           )}
         </div>
 
-        <div className="mb-6">
+        <div className="mb-6 border-t pt-6">
           <h3 className="font-semibold text-gray-900 mb-2">Description</h3>
           <p className="text-gray-700">{listing.description}</p>
-          {/* Buy & Request Access button for digital products */}
-          {listing.category === 'digital' && user && user.id !== listing.seller_id && !hasRequested && (
-            <div className="mt-4">
-              <button
-                className="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
-                onClick={handleBuy}
-                disabled={buying}
-              >
-                {buying ? 'Processing...' : 'Buy & Request Access'}
-              </button>
-              {buyError && <div className="text-red-600 mt-2">{buyError}</div>}
-            </div>
+        </div>
+
+        {hasPurchased && !hasReviewed && (
+          <div className="mb-6 border-t pt-6">
+            <h3 className="font-semibold text-gray-900 mb-2">Leave a Review</h3>
+            <form onSubmit={handleReviewSubmit}>
+              <div className="flex items-center mb-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star key={star} className={`w-6 h-6 cursor-pointer ${reviewRating >= star ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} onClick={() => setReviewRating(star)} />
+                ))}
+              </div>
+              <textarea className="w-full border rounded p-2" rows={3} placeholder="Share your experience..." value={reviewComment} onChange={(e) => setReviewComment(e.target.value)} required />
+              <Button type="submit" disabled={submittingReview} className="mt-2">
+                {submittingReview ? 'Submitting...' : 'Submit Review'}
+              </Button>
+            </form>
+          </div>
+        )}
+
+        {listing.seller_id && (
+          <div className="mb-6 border-t pt-6">
+            <h3 className="font-semibold text-gray-900 mb-2">About the Seller</h3>
+            <Link to={`/profile/${listing.seller_id}`} className="text-blue-500 hover:underline">
+              View {sellerName}'s Profile
+            </Link>
+          </div>
+        )}
+
+        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+          <MessageButton listingId={listing.id} sellerId={listing.seller_id} listingTitle={listing.title} />
+          {listing.price > 0 && (
+            <OfferButton listingId={listing.id} sellerId={listing.seller_id} currentPrice={listing.price} listingTitle={listing.title} />
           )}
-          {listing.category === 'digital' && user && user.id !== listing.seller_id && hasRequested && (
-            <div className="mt-4 text-yellow-600">You have already requested access. Waiting for seller to confirm.</div>
+        </div>
+      </div>
+      
+      <div className="p-4 space-y-8 bg-gray-100">
+        <div>
+          <h3 className="text-lg font-semibold mb-2">Seller Reviews</h3>
+          {reviews.length === 0 ? (
+            <p className="text-sm text-gray-500">No reviews for this seller yet.</p>
+          ) : (
+            <div className="space-y-4">
+              {reviews.map((review: any) => (
+                <div key={review.id} className="border-b pb-2">
+                  <div className="flex items-center mb-1">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star key={i} className={`w-4 h-4 ${i < review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} />
+                    ))}
+                  </div>
+                  <p className="text-sm">{review.comment}</p>
+                </div>
+              ))}
+            </div>
           )}
         </div>
 
-        <div className="space-y-3">
-          <MessageButton 
-            listingId={listing.id}
-            sellerId={listing.seller_id}
-            listingTitle={listing.title}
-          />
-          {listing.price > 0 && (
-            <OfferButton 
-              listingId={listing.id}
-              sellerId={listing.seller_id}
-              currentPrice={listing.price}
-              listingTitle={listing.title}
-            />
-          )}
-        </div>
-        <div className="flex justify-end mb-2">
-          <button
-            className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition text-sm"
-            onClick={handleReport}
-            disabled={reporting}
-          >
-            {reporting ? 'Reporting...' : 'Report Listing'}
-          </button>
-        </div>
-        {reportSuccess && (
-          <div className="text-green-600 text-sm mb-2">Thank you for your report. Our team will review it.</div>
-        )}
-      </div>
-      {/* New sections */}
-      <div className="p-4 space-y-8">
-        {/* Similar Listings */}
         <div>
-          <h3 className="text-lg font-semibold mb-2">Similar Listings</h3>
-          {similarListings.length === 0 ? (
-            <div className="text-gray-500">No similar listings found.</div>
-          ) : (
-            <ListingsGrid listings={similarListings} />
-          )}
-        </div>
-        {/* Other Listings from This Seller */}
-        <div>
-          <h3 className="text-lg font-semibold mb-2">Other Listings from This Seller</h3>
+          <h3 className="text-lg font-semibold mb-2">More from this Seller</h3>
           {sellerListings.length === 0 ? (
             <div className="text-gray-500">No other listings from this seller.</div>
           ) : (
             <ListingsGrid listings={sellerListings} />
           )}
         </div>
-        {/* Seller Reviews */}
+
         <div>
-          <h3 className="text-lg font-semibold mb-2">Seller Reviews</h3>
-          {/* Review submission form */}
-          {user && user.id !== listing.seller_id && !hasReviewed && (
-            <form onSubmit={handleReviewSubmit} className="mb-6 bg-gray-50 rounded p-4">
-              <div className="mb-2 flex items-center gap-2">
-                <span className="font-semibold">Your Rating:</span>
-                {[1,2,3,4,5].map((star) => (
-                  <button
-                    type="button"
-                    key={star}
-                    onClick={() => setReviewRating(star)}
-                    className={star <= reviewRating ? 'text-yellow-500' : 'text-gray-300'}
-                  >
-                    <Star className="inline h-5 w-5" fill={star <= reviewRating ? '#facc15' : 'none'} />
-                  </button>
-                ))}
-              </div>
-              <textarea
-                className="w-full border rounded p-2 mb-2"
-                rows={3}
-                placeholder="Write your review..."
-                value={reviewComment}
-                onChange={e => setReviewComment(e.target.value)}
-                required
-              />
-              <Button type="submit" disabled={submittingReview || !reviewComment.trim()}>
-                {submittingReview ? 'Submitting...' : 'Submit Review'}
-              </Button>
-            </form>
-          )}
-          {reviews.length === 0 ? (
-            <div className="text-gray-500">No reviews for this seller yet.</div>
+          <h3 className="text-lg font-semibold mb-2">Similar Listings</h3>
+          {similarListings.length === 0 ? (
+            <div className="text-gray-500">No similar listings found.</div>
           ) : (
-            <div className="space-y-4">
-              {reviews.map((review, idx) => (
-                <div key={idx} className="bg-gray-100 rounded p-3 text-gray-800">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="font-semibold">{review.reviewer_name || 'User'}</span>
-                    <span className="flex gap-1">
-                      {[1,2,3,4,5].map((star) => (
-                        <Star key={star} className="h-4 w-4" fill={star <= review.rating ? '#facc15' : 'none'} stroke="#facc15" />
-                      ))}
-                    </span>
-                  </div>
-                  <div className="text-sm">{review.comment}</div>
-                  <div className="text-xs text-gray-500">{new Date(review.created_at).toLocaleString()}</div>
-                </div>
-              ))}
-            </div>
+            <ListingsGrid listings={similarListings} />
           )}
         </div>
       </div>
