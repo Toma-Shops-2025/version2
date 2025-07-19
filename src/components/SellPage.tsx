@@ -178,31 +178,37 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
       videoZipper.progress((percent: number) => {
         setCompressionProgress(Math.round(percent));
       });
-      await videoZipper.compress(videoFile);
-      const compressedBlob = videoZipper.getBlob();
-      const compressedFile = new File([compressedBlob], videoFile.name, { type: compressedBlob.type });
-      setCompressionProgress(100);
 
-      // Upload compressed video and photos
-      const videoUrl = await uploadToCloudinary(compressedFile);
-      const imageUrls = await Promise.all(photoFiles.map(uploadToCloudinary));
-      
-      const { error: insertError } = await supabase.from('listings').insert({
-        seller_id: user.id,
-        title,
-        price: parseFloat(price),
-        category,
-        description,
-        location: locationName,
-        latitude,
-        longitude,
-        location_name: locationName,
-        video: videoUrl,
-        images: imageUrls
-      });
-      if (insertError) throw insertError;
-      showToast('Listing created!', 'success');
-      onBack();
+      // Ensure videoFile exists before proceeding
+      if (videoFile) {
+        await videoZipper.compress(videoFile);
+        const compressedBlob = videoZipper.getBlob();
+        const compressedFile = new File([compressedBlob], videoFile.name, { type: compressedBlob.type });
+        setCompressionProgress(100);
+
+        // Upload compressed video and photos
+        const videoUrl = await uploadToCloudinary(compressedFile);
+        const imageUrls = await Promise.all(photoFiles.map(uploadToCloudinary));
+        
+        const { error: insertError } = await supabase.from('listings').insert({
+          seller_id: user.id,
+          title,
+          price: parseFloat(price),
+          category,
+          description,
+          location: locationName,
+          latitude,
+          longitude,
+          location_name: locationName,
+          video: videoUrl,
+          images: imageUrls
+        });
+        if (insertError) throw insertError;
+        showToast('Listing created!', 'success');
+        onBack();
+      } else {
+        throw new Error("No video file selected.");
+      }
     } catch (err: any) {
       setError(err.message);
       showToast(err.message, 'error');
