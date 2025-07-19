@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">TomaShops</string>
-    <string name="title_activity_main">TomaShops</string>
-    <string name="package_name">com.tomashops.app</string>
-    <string name="custom_url_scheme">com.tomashops.app</string>
+    <string name="app_name">TomaShops Video1stMarketplace</string>
+    <string name="title_activity_main">TomaShops Video1stMarketplace</string>
+    <string name="package_name">com.tomashops.videoapp</string>
+    <string name="custom_url_scheme">com.tomashops.videoapp</string>
 </resources>

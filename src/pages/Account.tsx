@@ -23,6 +23,10 @@ const Account: React.FC = () => {
         <h1 className="text-2xl font-bold mb-1">Account</h1>
         <p className="text-gray-400 mb-2">{user.email}</p>
         <p className="text-gray-500 text-sm mb-2">User ID: {user.id}</p>
+        <div className="w-full border-t border-gray-700 my-4" />
+        <Button variant="link" onClick={() => navigate('/delete-account')} className="text-red-500 hover:text-red-400">
+          Delete My Account
+        </Button>
         <Button variant="destructive" onClick={async () => { setLoggingOut(true); await logout(); }} className="mt-4">Logout</Button>
       </div>
     </div>

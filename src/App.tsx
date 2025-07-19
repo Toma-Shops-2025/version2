@@ -37,6 +37,7 @@ import SellerOrders from './pages/SellerOrders';
 import JobDetail from './pages/JobsDetail';
 import RentalDetail from './pages/RentalDetail';
 import AdDetail from './pages/AdDetail';
+import DeleteAccountPage from './pages/DeleteAccount';
 
 const queryClient = new QueryClient();
 
@@ -79,6 +80,7 @@ const App = () => (
               <Route path="/seller-orders" element={<SellerOrders />} />
               <Route path="/rentals/:id" element={<RentalDetail />} />
               <Route path="/ads/:id" element={<AdDetail />} />
+              <Route path="/delete-account" element={<DeleteAccountPage onBack={() => window.history.back()} />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <Chatbot />
