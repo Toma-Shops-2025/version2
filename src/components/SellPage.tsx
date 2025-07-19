@@ -11,6 +11,7 @@ import Map from './Map';
 import mapboxgl from 'mapbox-gl';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
+import VideoZipper from 'video-zipper';
 
 interface SellPageProps {
   onBack: () => void;
@@ -100,6 +101,7 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
   const [latitude, setLatitude] = useState<number | null>(38.2527); // Default Louisville
   const [longitude, setLongitude] = useState<number | null>(-85.7585);
   const [locationName, setLocationName] = useState<string>('Louisville, Kentucky');
+  const [compressionProgress, setCompressionProgress] = useState<number | null>(null);
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const geocoderRef = useRef<any>(null);
@@ -168,9 +170,23 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
     try {
       if (!user) throw new Error('You must be logged in to create a listing.');
       if (!videoFile) throw new Error('A video is required for every listing.');
-      // Insert listing
-      const videoUrl = await uploadToCloudinary(videoFile);
+
+      // Compress the video before uploading
+      setCompressionProgress(0);
+      const videoZipper = new VideoZipper({ quality: 'medium' });
+      await videoZipper.load();
+      videoZipper.progress((percent: number) => {
+        setCompressionProgress(Math.round(percent));
+      });
+      await videoZipper.compress(videoFile);
+      const compressedBlob = videoZipper.getBlob();
+      const compressedFile = new File([compressedBlob], videoFile.name, { type: compressedBlob.type });
+      setCompressionProgress(100);
+
+      // Upload compressed video and photos
+      const videoUrl = await uploadToCloudinary(compressedFile);
       const imageUrls = await Promise.all(photoFiles.map(uploadToCloudinary));
+      
       const { error: insertError } = await supabase.from('listings').insert({
         seller_id: user.id,
         title,
@@ -192,6 +208,7 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
       showToast(err.message, 'error');
     } finally {
       setLoading(false);
+      setCompressionProgress(null);
     }
   };
 
@@ -319,7 +336,7 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
           {/* Submit */}
           <div className="pt-4">
             <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={loading}>
-              {loading ? 'Posting...' : 'Post listing'}
+              {loading ? (compressionProgress !== null ? `Compressing: ${compressionProgress}%` : 'Uploading...') : 'Post listing'}
             </Button>
             {error && <div className="text-red-500 text-center mt-2">{error}</div>}
           </div>
