@@ -30,7 +30,11 @@ const BottomNavBar: React.FC = () => {
         </div>
         <span className="text-xs">Messages</span>
       </Link>
-      <Link to="/sell" className="flex flex-col items-center text-teal-600">
+      <Link 
+        to="/sell" 
+        className="flex flex-col items-center text-teal-600"
+        style={!user ? { opacity: 0.4, pointerEvents: 'none' } : {}}
+      >
         <PlusCircle className="h-8 w-8" />
         <span className="text-xs font-bold">Sell</span>
       </Link>

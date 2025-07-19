@@ -32,6 +32,7 @@ const categories = [
   'Auto Parts',
   'Menswear',
   'Womenswear',
+  'Workout/Exercise Equipment',
   'Kidswear'
 ];
 

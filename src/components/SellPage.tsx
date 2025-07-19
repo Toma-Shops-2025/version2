@@ -46,6 +46,7 @@ const categories = [
   'Auto Parts',
   'Menswear',
   'Womenswear',
+  'Workout/Exercise Equipment',
   'Kidswear'
 ];
 
@@ -58,13 +59,26 @@ async function uploadToCloudinary(file: File) {
   const formData = new FormData();
   formData.append('file', file);
   formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-  const res = await fetch(url, {
-    method: 'POST',
-    body: formData,
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error?.message || 'Cloudinary upload failed');
-  return data.secure_url;
+  
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      body: formData,
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error?.message || `Cloudinary upload failed with status: ${res.status}`);
+    }
+    const data = await res.json();
+    return data.secure_url;
+  } catch (error) {
+    console.error('Cloudinary upload error:', error);
+    // Provide a more user-friendly message for network errors
+    if (error instanceof TypeError && error.message === 'Failed to fetch') {
+      throw new Error('Upload failed. Please check your network connection and try again.');
+    }
+    throw error; // Re-throw other errors
+  }
 }
 
 const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
@@ -172,7 +186,7 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
       });
       if (insertError) throw insertError;
       showToast('Listing created!', 'success');
-    onBack();
+      onBack();
     } catch (err: any) {
       setError(err.message);
       showToast(err.message, 'error');

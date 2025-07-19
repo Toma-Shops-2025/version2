@@ -19,7 +19,7 @@ import Favorites from './pages/Favorites';
 import Notifications from './pages/Notifications';
 import Cart from './pages/Cart';
 import OffersPage from './pages/OffersPage';
-import Sell from './pages/Sell';
+import SellPage from './components/SellPage';
 import Account from './pages/Account';
 import AuthPage from './components/AuthPage';
 import { AppProvider } from './contexts/AppContext';
@@ -63,7 +63,7 @@ const App = () => (
               <Route path="/notifications" element={<Notifications />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/offers" element={<OffersPage />} />
-              <Route path="/sell" element={<Sell />} />
+              <Route path="/sell" element={<SellPage onBack={() => window.history.back()} />} />
               <Route path="/messages" element={<MessagesPage onBack={() => window.history.back()} />} />
               <Route path="/account" element={<Account />} />
               <Route path="/login" element={<AuthPage />} />
