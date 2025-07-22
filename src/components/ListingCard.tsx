@@ -69,12 +69,15 @@ const ListingCard: React.FC<ListingCardProps> = ({
             playsInline
             className="w-full aspect-square object-cover rounded-t-lg"
             style={{ objectFit: 'cover' }}
+            crossOrigin="anonymous"
+            poster={image}
           />
         ) : image ? (
           <img
             src={image}
             alt={title}
             className="w-full aspect-square object-cover rounded-t-lg"
+            crossOrigin="anonymous"
           />
         ) : (
           <div className="w-full aspect-square flex items-center justify-center bg-gray-100 rounded-t-lg">
