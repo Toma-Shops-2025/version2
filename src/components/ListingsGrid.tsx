@@ -33,7 +33,7 @@ interface ListingsGridProps {
 
 const ListingsGrid: React.FC<ListingsGridProps> = ({ listings, onListingClick, isOwner = false, onMarkAsSold, onDelete, onRestore }) => {
   return (
-    <div className="grid grid-cols-2 gap-2 px-2 md:gap-4 md:px-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-4 px-2 md:px-4">
       {listings.map((listing) => (
         <ListingCard
           key={listing.id}
