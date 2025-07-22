@@ -4,6 +4,22 @@ import { useAppContext } from '@/contexts/AppContext';
 import { Link } from 'react-router-dom';
 import BackButton from '@/components/BackButton';
 
+async function uploadToSupabase(file: File, folder: string = ''): Promise<string> {
+  const fileExt = file.name.split('.').pop();
+  const filePath = `${folder}/${Date.now()}_${file.name}`;
+  const { data, error } = await supabase.storage
+    .from('uploads')
+    .upload(filePath, file, {
+      cacheControl: '3600',
+      upsert: false,
+      contentType: file.type,
+    });
+  if (error) throw new Error(error.message);
+  const { data: publicUrlData } = supabase.storage.from('uploads').getPublicUrl(filePath);
+  if (!publicUrlData?.publicUrl) throw new Error('Failed to get public URL');
+  return publicUrlData.publicUrl;
+}
+
 const DigitalForm = ({ onClose }: { onClose: () => void }) => {
   const { user } = useAppContext();
   const [title, setTitle] = useState('');
@@ -15,17 +31,6 @@ const DigitalForm = ({ onClose }: { onClose: () => void }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const MAX_FILE_SIZE_MB = 50;
-
-  async function uploadToCloudinary(file: File) {
-    const url = `https://api.cloudinary.com/v1_1/dumnzljgn/auto/upload`;
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', 'unsigned_preset');
-    const res = await fetch(url, { method: 'POST', body: formData });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error?.message || 'Cloudinary upload failed');
-    return data.secure_url;
-  }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files ? Array.from(e.target.files) : [];
@@ -67,11 +72,11 @@ const DigitalForm = ({ onClose }: { onClose: () => void }) => {
       // Upload images if present
       let imageUrls: string[] = [];
       if (images && images.length > 0) {
-        imageUrls = await Promise.all(Array.from(images).map(uploadToCloudinary));
+        imageUrls = await Promise.all(Array.from(images).map(file => uploadToSupabase(file, 'images')));
       }
       // Upload video if present
       let videoUrl = '';
-      if (video) videoUrl = await uploadToCloudinary(video);
+      if (video) videoUrl = await uploadToSupabase(video, 'videos');
       const { error: insertError } = await supabase.from('listings').insert({
         seller_id: user.id,
         title,

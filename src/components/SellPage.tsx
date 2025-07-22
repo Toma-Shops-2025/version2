@@ -51,35 +51,20 @@ const categories = [
   'Kidswear'
 ];
 
-// Cloudinary upload function
-const CLOUDINARY_CLOUD_NAME = 'dumnzljgn';
-const CLOUDINARY_UPLOAD_PRESET = 'unsigned_preset';
-
-async function uploadToCloudinary(file: File) {
-  const url = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-  
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      body: formData,
+async function uploadToSupabase(file: File, folder: string = ''): Promise<string> {
+  const fileExt = file.name.split('.').pop();
+  const filePath = `${folder}/${Date.now()}_${file.name}`;
+  const { data, error } = await supabase.storage
+    .from('uploads')
+    .upload(filePath, file, {
+      cacheControl: '3600',
+      upsert: false,
+      contentType: file.type,
     });
-    if (!res.ok) {
-      const data = await res.json();
-      throw new Error(data.error?.message || `Cloudinary upload failed with status: ${res.status}`);
-    }
-    const data = await res.json();
-    return data.secure_url;
-  } catch (error) {
-    console.error('Cloudinary upload error:', error);
-    // Provide a more user-friendly message for network errors
-    if (error instanceof TypeError && error.message === 'Failed to fetch') {
-      throw new Error('Upload failed. Please check your network connection and try again.');
-    }
-    throw error; // Re-throw other errors
-  }
+  if (error) throw new Error(error.message);
+  const { data: publicUrlData } = supabase.storage.from('uploads').getPublicUrl(filePath);
+  if (!publicUrlData?.publicUrl) throw new Error('Failed to get public URL');
+  return publicUrlData.publicUrl;
 }
 
 const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
@@ -187,8 +172,8 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
         setCompressionProgress(100);
 
         // Upload compressed video and photos
-        const videoUrl = await uploadToCloudinary(compressedFile);
-        const imageUrls = await Promise.all(photoFiles.map(uploadToCloudinary));
+        const videoUrl = await uploadToSupabase(compressedFile, 'videos');
+        const imageUrls = await Promise.all(photoFiles.map(file => uploadToSupabase(file, 'images')));
         
         const { error: insertError } = await supabase.from('listings').insert({
           seller_id: user.id,
