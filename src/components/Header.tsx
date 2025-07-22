@@ -25,6 +25,35 @@ const Header: React.FC = () => {
               TomaShops™ <span className="text-teal-600">Video 1st</span>
             </h1>
           </div>
+          {/* Simple Search Bar */}
+          <form
+            onSubmit={e => {
+              e.preventDefault();
+              const form = e.target as HTMLFormElement;
+              const input = form.elements.namedItem('search') as HTMLInputElement;
+              if (input && input.value.trim()) {
+                navigate(`/?search=${encodeURIComponent(input.value.trim())}`);
+              } else {
+                navigate('/');
+              }
+            }}
+            className="flex items-center mr-4"
+            style={{ flex: 1, maxWidth: 400 }}
+          >
+            <input
+              type="text"
+              name="search"
+              placeholder="Search TomaShops..."
+              className="border border-gray-300 rounded-l px-3 py-1 w-full focus:outline-none focus:ring-2 focus:ring-teal-500"
+              defaultValue={window.location.search.match(/search=([^&]+)/)?.[1] ? decodeURIComponent(window.location.search.match(/search=([^&]+)/)![1]) : ''}
+            />
+            <button
+              type="submit"
+              className="bg-teal-600 text-white px-4 py-1 rounded-r hover:bg-teal-700"
+            >
+              Search
+            </button>
+          </form>
           <nav className="flex items-center space-x-8">
             <Link to="/categories">Categories</Link>
             <Link to="/favorites">Favorites</Link>
