@@ -211,14 +211,14 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
 
       {listing.video && (
         <div className="relative">
-          <video src={listing.video} controls className="w-full aspect-video object-cover" />
+          <video src={listing.video} controls className="w-full aspect-video object-cover" crossOrigin="anonymous" />
         </div>
       )}
 
       {listing.images && listing.images.length > 0 && (
         <div className="flex flex-wrap gap-2 justify-center p-2">
           {listing.images.map((img: string, idx: number) => (
-            <img key={idx} src={img} alt={`Photo ${idx + 1}`} className="h-32 w-32 object-cover rounded cursor-pointer" onClick={() => setModalImg(img)} />
+            <img key={idx} src={img} alt={`Photo ${idx + 1}`} className="h-32 w-32 object-cover rounded cursor-pointer" onClick={() => setModalImg(img)} crossOrigin="anonymous" />
           ))}
         </div>
       )}
@@ -226,7 +226,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
       {modalImg && (
         <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
           <div className="relative">
-            <img src={modalImg} alt="Enlarged" className="max-h-[80vh] max-w-[90vw] rounded shadow-lg" />
+            <img src={modalImg} alt="Enlarged" className="max-h-[80vh] max-w-[90vw] rounded shadow-lg" crossOrigin="anonymous" />
             <Button variant="secondary" className="absolute top-2 right-2" onClick={() => setModalImg(null)}>
               <X className="h-5 w-5" />
             </Button>

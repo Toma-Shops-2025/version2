@@ -228,7 +228,7 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
             <CardContent>
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                 {videoPreview ? (
-                  <video src={videoPreview} controls className="mx-auto mb-4 max-h-48 object-contain" />
+                  <video src={videoPreview} controls className="mx-auto mb-4 max-h-48 object-contain" crossOrigin="anonymous" />
                 ) : (
                   <Camera className="h-12 w-12 mx-auto text-gray-400 mb-4" />
                 )}
@@ -248,7 +248,7 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
                 <div className="flex flex-wrap gap-2 justify-center mb-2">
                   {photoPreviews.map((src, idx) => (
                     <div key={idx} className="relative inline-block">
-                      <img src={src} alt={`Photo ${idx + 1}`} className="h-20 w-20 object-cover rounded" />
+                      <img src={src} alt={`Photo ${idx + 1}`} className="h-20 w-20 object-cover rounded" crossOrigin="anonymous" />
                       <button type="button" onClick={() => removePhoto(idx)} className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-1 text-xs">✕</button>
                     </div>
                   ))}

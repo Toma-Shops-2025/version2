@@ -171,7 +171,7 @@ const Handyman = () => {
               <Link key={listing.id} to={`/handyman/${listing.id}`} className="block">
                 <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-4 hover:ring-2 hover:ring-yellow-400 transition">
                   {listing.images && listing.images.length > 0 && (
-                    <img src={listing.images[0]} alt={listing.title} className="w-full h-40 object-cover rounded mb-2" />
+                    <img src={listing.images[0]} alt={listing.title} className="w-full h-40 object-cover rounded mb-2" crossOrigin="anonymous" />
                   )}
                   <h2 className="text-xl font-semibold mb-1">{listing.title}</h2>
                   <div className="text-yellow-700 font-bold mb-1">{listing.service_type}</div>
@@ -181,7 +181,7 @@ const Handyman = () => {
                   <div className="text-sm text-gray-500 mb-1">{listing.certified ? 'Certified' : 'Not Certified'}</div>
                   <div className="text-gray-600 mt-2 line-clamp-2">{listing.description}</div>
                   {listing.video && (
-                    <video src={listing.video} controls className="w-full mt-2 rounded" style={{ maxHeight: 120 }} />
+                    <video src={listing.video} controls className="w-full mt-2 rounded" style={{ maxHeight: 120 }} crossOrigin="anonymous" />
                   )}
                 </div>
               </Link>

@@ -34,10 +34,10 @@ const RentalDetail = () => {
       <div className="mb-2">Price: ${listing.price}</div>
       <div className="mb-2">Description: {listing.description}</div>
       {listing.images && listing.images.length > 0 && (
-        <img src={listing.images[0]} alt={listing.title} className="w-full max-w-md rounded mb-4" />
+        <img src={listing.images[0]} alt={listing.title} className="w-full max-w-md rounded mb-4" crossOrigin="anonymous" />
       )}
       {listing.video && (
-        <video src={listing.video} controls className="w-full max-w-md rounded mb-4" />
+        <video src={listing.video} controls className="w-full max-w-md rounded mb-4" crossOrigin="anonymous" />
       )}
     </div>
   );

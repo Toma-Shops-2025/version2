@@ -56,13 +56,13 @@ const JobDetail = () => {
       {listing.images && listing.images.length > 0 && (
         <div className="mt-4 flex gap-2 flex-wrap">
           {listing.images.map((img: string, idx: number) => (
-            <img key={idx} src={img} alt="Job" className="w-32 h-32 object-cover rounded" />
+            <img key={idx} src={img} alt="Job" className="w-32 h-32 object-cover rounded" crossOrigin="anonymous" />
           ))}
         </div>
       )}
       {listing.video && (
         <div className="mt-4">
-          <video src={listing.video} controls className="w-full max-h-60 rounded" />
+          <video src={listing.video} controls className="w-full max-h-60 rounded" crossOrigin="anonymous" />
         </div>
       )}
     </div>

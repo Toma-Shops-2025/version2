@@ -35,10 +35,10 @@ const AdDetail = () => {
       <div className="mb-2">Price: {ad.price ? `$${ad.price}` : 'N/A'}</div>
       <div className="mb-2">Description: {ad.description}</div>
       {ad.images && ad.images.length > 0 && (
-        <img src={ad.images[0]} alt={ad.title} className="w-full max-w-md rounded mb-4" />
+        <img src={ad.images[0]} alt={ad.title} className="w-full max-w-md rounded mb-4" crossOrigin="anonymous" />
       )}
       {ad.video && (
-        <video src={ad.video} controls className="w-full max-w-md rounded mb-4" />
+        <video src={ad.video} controls className="w-full max-w-md rounded mb-4" crossOrigin="anonymous" />
       )}
       {ad.contact_info && <div className="mb-2">Contact: {ad.contact_info}</div>}
     </div>

@@ -51,14 +51,14 @@ const Browse = () => {
             {listings.map(listing => (
               <div key={listing.id} className="bg-white dark:bg-gray-900 rounded-lg shadow p-4">
                 {listing.images && listing.images.length > 0 && (
-                  <img src={listing.images[0]} alt={listing.title} className="w-full h-40 object-cover rounded mb-2" />
+                  <img src={listing.images[0]} alt={listing.title} className="w-full h-40 object-cover rounded mb-2" crossOrigin="anonymous" />
                 )}
                 <h2 className="text-xl font-semibold mb-1">{listing.title}</h2>
                 <div className="text-blue-700 font-bold mb-1">${listing.price}</div>
                 <div className="text-gray-700 mb-1">{listing.location}</div>
                 <div className="text-gray-600 mt-2 line-clamp-2">{listing.description}</div>
                 {listing.video && (
-                  <video src={listing.video} controls className="w-full mt-2 rounded" style={{ maxHeight: 120 }} />
+                  <video src={listing.video} controls className="w-full mt-2 rounded" style={{ maxHeight: 120 }} crossOrigin="anonymous" />
                 )}
               </div>
             ))}

@@ -194,7 +194,7 @@ const Jobs = () => {
               <Link key={listing.id} to={`/jobs/${listing.id}`} className="block">
                 <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-4 hover:ring-2 hover:ring-green-400 transition">
                   {listing.images && listing.images.length > 0 && (
-                    <img src={listing.images[0]} alt={listing.title} className="w-full h-40 object-cover rounded mb-2" />
+                    <img src={listing.images[0]} alt={listing.title} className="w-full h-40 object-cover rounded mb-2" crossOrigin="anonymous" />
                   )}
                   <h2 className="text-xl font-semibold mb-1">{listing.title}</h2>
                   <div className="text-green-700 font-bold mb-1">{listing.company_name}</div>
@@ -210,7 +210,7 @@ const Jobs = () => {
                     <div className="text-xs text-gray-500 mt-1">Contact: {listing.contact_info}</div>
                   )}
                   {listing.video && (
-                    <video src={listing.video} controls className="w-full mt-2 rounded" style={{ maxHeight: 120 }} />
+                    <video src={listing.video} controls className="w-full mt-2 rounded" style={{ maxHeight: 120 }} crossOrigin="anonymous" />
                   )}
                 </div>
               </Link>
