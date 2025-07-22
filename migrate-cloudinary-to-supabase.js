@@ -3,6 +3,8 @@ import fetch from 'node-fetch';
 import fs from 'fs-extra';
 import path from 'path';
 import { createClient } from '@supabase/supabase-js';
+import { fileURLToPath } from 'url';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const cloudinary = cloudinaryModule.v2;
 
@@ -11,6 +13,11 @@ cloudinary.config({
   api_key: '638214249426658',
   api_secret: '3AZ8ZAVDx-z5L4sYBfnys5JNDa8'
 });
+
+const SUPABASE_URL = 'https://hfhnslaprxowdxvyhpco.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhmaG5zbGFwcnhvd2R4dnlocGNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEzMDQzOTcsImV4cCI6MjA2Njg4MDM5N30._zRZW21nqWFFpYO9_BmAghUz05V2-m6jKKaILeaV-MA';
+const BUCKET = 'uploads';
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 process.on('unhandledRejection', error => {
   console.error('Unhandled promise rejection:', error);
@@ -30,7 +37,36 @@ async function migrateResources(resourceType) {
     });
     console.log(`Fetched ${result.resources.length} ${resourceType}s from Cloudinary`);
     for (const resource of result.resources) {
-      // ... existing code ...
+      const ext = resource.format;
+      const publicId = resource.public_id;
+      const fileName = `${publicId}.${ext}`;
+      const localPath = path.join(__dirname, 'downloads', fileName);
+
+      // Download file
+      await fs.ensureDir(path.dirname(localPath));
+      const res = await fetch(resource.secure_url);
+      const fileStream = fs.createWriteStream(localPath);
+      await new Promise((resolve, reject) => {
+        res.body.pipe(fileStream);
+        res.body.on('error', reject);
+        fileStream.on('finish', resolve);
+      });
+
+      // Upload to Supabase
+      console.log(`Uploading ${fileName} to Supabase...`);
+      const fileBuffer = await fs.readFile(localPath);
+      const { error } = await supabase
+        .storage
+        .from(BUCKET)
+        .upload(fileName, fileBuffer, {
+          upsert: true,
+          contentType: resourceType === 'video' ? `video/${ext}` : `image/${ext}`
+        });
+      if (error) {
+        console.error(`Failed to upload ${fileName}:`, error.message);
+      } else {
+        console.log(`Uploaded: ${fileName}`);
+      }
     }
     nextCursor = result.next_cursor;
   } while (nextCursor);
