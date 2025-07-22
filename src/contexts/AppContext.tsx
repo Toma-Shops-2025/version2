@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from '@/components/ui/use-toast';
 import { supabase } from '@/lib/supabase';
-import { requestFirebaseNotificationPermission } from '@/lib/fcmToken';
+// import { requestFirebaseNotificationPermission } from '@/lib/fcmToken';
 import { onMessage, messaging } from '@/lib/firebase';
 
 interface User {
@@ -81,26 +81,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, []);
 
   // Request FCM permission and save token after login
-  useEffect(() => {
-    if (user) {
-      requestFirebaseNotificationPermission().then(token => {
-        console.log('FCM TOKEN:', token); // Log the token for debugging
-        if (token) {
-          supabase
-            .from('users')
-            .update({ fcm_token: token })
-            .eq('id', user.id)
-            .then(({ error }) => {
-              if (error) {
-                console.error('Failed to update fcm_token:', error);
-              } else {
-                console.log('fcm_token updated successfully!');
-              }
-            });
-        }
-      });
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (user) {
+  //     requestFirebaseNotificationPermission().then(token => {
+  //       console.log('FCM TOKEN:', token); // Log the token for debugging
+  //       if (token) {
+  //         supabase
+  //           .from('users')
+  //           .update({ fcm_token: token })
+  //           .eq('id', user.id)
+  //           .then(({ error }) => {
+  //             if (error) {
+  //               console.error('Failed to update fcm_token:', error);
+  //             } else {
+  //               console.log('fcm_token updated successfully!');
+  //             }
+  //           });
+  //       }
+  //     });
+  //   }
+  // }, [user]);
 
   // Foreground notification handling
   useEffect(() => {

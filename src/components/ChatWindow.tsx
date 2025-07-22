@@ -163,15 +163,15 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
       }
       if (data && data.length > 0) {
         try {
-          await fetch('/api/send-fcm-notification', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              recipientUserId: otherUserId,
-              title: `New Message from ${user?.name || user?.email || 'TomaShops User'}`,
-              message: newMessage.length > 50 ? newMessage.slice(0, 50) + '...' : newMessage
-            })
-          });
+          // await fetch('/api/send-fcm-notification', {
+          //   method: 'POST',
+          //   headers: { 'Content-Type': 'application/json' },
+          //   body: JSON.stringify({
+          //     recipientUserId: otherUserId,
+          //     title: `New Message from ${user?.name || user?.email || 'TomaShops User'}`,
+          //     message: newMessage.length > 50 ? newMessage.slice(0, 50) + '...' : newMessage
+          //   })
+          // });
         } catch (err) {
           console.error('Failed to send push notification:', err);
         }
