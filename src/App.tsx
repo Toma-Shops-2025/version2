@@ -31,7 +31,6 @@ import Digital from './pages/Digital';
 import Ads from './pages/Ads';
 import MyListings from './pages/MyListings';
 import MyOrders from './pages/MyOrders';
-import Chatbot from './components/Chatbot';
 import MessagesPage from './components/MessagesPage';
 import SellerOrders from './pages/SellerOrders';
 import JobDetail from './pages/JobsDetail';
@@ -83,8 +82,10 @@ const App = () => (
               <Route path="/delete-account" element={<DeleteAccountPage onBack={() => window.history.back()} />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
-            <Chatbot />
           </BrowserRouter>
+          {/* ElevenLabs Convai Chatbot Widget */}
+          <elevenlabs-convai agent-id="agent_1001k0zc5x5nessbgvjsh7kjtpw3"></elevenlabs-convai>
+          <script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
         </TooltipProvider>
       </QueryClientProvider>
     </ThemeProvider>
