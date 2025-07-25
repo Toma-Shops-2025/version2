@@ -55,8 +55,6 @@ const Header: React.FC = () => {
             </button>
           </form>
           <nav className="flex items-center space-x-8">
-            <Link to="/categories">Categories</Link>
-            <Link to="/favorites">Favorites</Link>
             {user ? (
               <button onClick={handleLogout} className="text-gray-700 hover:text-teal-600 font-medium">Logout</button>
             ) : (

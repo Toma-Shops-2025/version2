@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Home, MessageCircle, PlusCircle, List, Tag } from 'lucide-react';
+import { Home, MessageCircle, PlusCircle, List, Tag, Heart, Grid } from 'lucide-react';
 import { useAppContext } from '@/contexts/AppContext';
 import { useUnreadMessagesCount } from '@/hooks/use-unread-messages-count';
 
@@ -53,6 +53,14 @@ const BottomNavBar: React.FC = () => {
       >
         <Tag className="h-6 w-6" />
         <span className="text-xs">Ads</span>
+      </Link>
+      <Link to="/categories" className="flex flex-col items-center text-gray-600 hover:text-teal-600">
+        <Grid className="h-6 w-6" />
+        <span className="text-xs">Categories</span>
+      </Link>
+      <Link to="/favorites" className="flex flex-col items-center text-gray-600 hover:text-teal-600">
+        <Heart className="h-6 w-6" />
+        <span className="text-xs">Favorites</span>
       </Link>
     </nav>
   );
