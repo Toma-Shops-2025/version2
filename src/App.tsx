@@ -37,59 +37,82 @@ import JobDetail from './pages/JobsDetail';
 import RentalDetail from './pages/RentalDetail';
 import AdDetail from './pages/AdDetail';
 import DeleteAccountPage from './pages/DeleteAccount';
+import React, { useEffect } from 'react';
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <AppProvider>
-    <ThemeProvider defaultTheme="light">
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/how-it-works" element={<HowItWorks />} />
-              <Route path="/why-tomashops" element={<WhyTomaShops />} />
-              <Route path="/safety" element={<Safety />} />
-              <Route path="/shipping" element={<Shipping />} />
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="/terms" element={<Terms />} />
-              <Route path="/faq" element={<Faq />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/categories" element={<Categories />} />
-              <Route path="/favorites" element={<Favorites />} />
-              <Route path="/notifications" element={<Notifications />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/offers" element={<OffersPage />} />
-              <Route path="/sell" element={<SellPage onBack={() => window.history.back()} />} />
-              <Route path="/messages" element={<MessagesPage onBack={() => window.history.back()} />} />
-              <Route path="/account" element={<Account />} />
-              <Route path="/login" element={<AuthPage />} />
-              <Route path="/rentals" element={<Rentals />} />
-              <Route path="/jobs" element={<Jobs />} />
-              <Route path="/jobs/:id" element={<JobDetail />} />
-              <Route path="/browse" element={<Browse />} />
-              <Route path="/digital/:id" element={<DigitalDetail />} />
-              <Route path="/digital" element={<Digital />} />
-              <Route path="/ads" element={<Ads />} />
-              <Route path="/my-listings" element={<MyListings />} />
-              <Route path="/my-orders" element={<MyOrders />} />
-              <Route path="/seller-orders" element={<SellerOrders />} />
-              <Route path="/rentals/:id" element={<RentalDetail />} />
-              <Route path="/ads/:id" element={<AdDetail />} />
-              <Route path="/delete-account" element={<DeleteAccountPage onBack={() => window.history.back()} />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-          {/* ElevenLabs Convai Chatbot Widget */}
-          <elevenlabs-convai agent-id="agent_1001k0zc5x5nessbgvjsh7kjtpw3"></elevenlabs-convai>
-          <script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
-        </TooltipProvider>
-      </QueryClientProvider>
-    </ThemeProvider>
-  </AppProvider>
-);
+const App = () => {
+  useEffect(() => {
+    // Inject the ElevenLabs Convai script only once
+    if (!document.getElementById('elevenlabs-convai-script')) {
+      const script = document.createElement('script');
+      script.src = 'https://unpkg.com/@elevenlabs/convai-widget-embed';
+      script.async = true;
+      script.type = 'text/javascript';
+      script.id = 'elevenlabs-convai-script';
+      document.body.appendChild(script);
+    }
+    // Inject the widget element if not present
+    if (!document.getElementById('elevenlabs-convai-widget')) {
+      const widget = document.createElement('elevenlabs-convai');
+      widget.setAttribute('agent-id', 'agent_1001k0zc5x5nessbgvjsh7kjtpw3');
+      widget.id = 'elevenlabs-convai-widget';
+      widget.style.position = 'fixed';
+      widget.style.bottom = '24px';
+      widget.style.left = '24px';
+      widget.style.zIndex = '9999';
+      document.body.appendChild(widget);
+    }
+  }, []);
+
+  return (
+    <AppProvider>
+      <ThemeProvider defaultTheme="light">
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/how-it-works" element={<HowItWorks />} />
+                <Route path="/why-tomashops" element={<WhyTomaShops />} />
+                <Route path="/safety" element={<Safety />} />
+                <Route path="/shipping" element={<Shipping />} />
+                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/faq" element={<Faq />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/categories" element={<Categories />} />
+                <Route path="/favorites" element={<Favorites />} />
+                <Route path="/notifications" element={<Notifications />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/offers" element={<OffersPage />} />
+                <Route path="/sell" element={<SellPage onBack={() => window.history.back()} />} />
+                <Route path="/messages" element={<MessagesPage onBack={() => window.history.back()} />} />
+                <Route path="/account" element={<Account />} />
+                <Route path="/login" element={<AuthPage />} />
+                <Route path="/rentals" element={<Rentals />} />
+                <Route path="/jobs" element={<Jobs />} />
+                <Route path="/jobs/:id" element={<JobDetail />} />
+                <Route path="/browse" element={<Browse />} />
+                <Route path="/digital/:id" element={<DigitalDetail />} />
+                <Route path="/digital" element={<Digital />} />
+                <Route path="/ads" element={<Ads />} />
+                <Route path="/my-listings" element={<MyListings />} />
+                <Route path="/my-orders" element={<MyOrders />} />
+                <Route path="/seller-orders" element={<SellerOrders />} />
+                <Route path="/rentals/:id" element={<RentalDetail />} />
+                <Route path="/ads/:id" element={<AdDetail />} />
+                <Route path="/delete-account" element={<DeleteAccountPage onBack={() => window.history.back()} />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
+    </AppProvider>
+  );
+};
 
 export default App;
