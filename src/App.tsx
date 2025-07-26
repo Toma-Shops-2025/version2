@@ -60,8 +60,11 @@ const App = () => {
       widget.id = 'elevenlabs-convai-widget';
       widget.style.position = 'fixed';
       widget.style.bottom = '24px';
-      widget.style.left = '24px';
+      widget.style.right = '24px';
       widget.style.zIndex = '9999';
+      // Add custom styling for the chat bubble with photo
+      widget.style.setProperty('--convai-widget-avatar', 'url("/favicon.png")');
+      widget.style.setProperty('--convai-widget-avatar-size', '40px');
       document.body.appendChild(widget);
     }
   }, []);
