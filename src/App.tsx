@@ -37,6 +37,7 @@ import JobDetail from './pages/JobsDetail';
 import RentalDetail from './pages/RentalDetail';
 import AdDetail from './pages/AdDetail';
 import DeleteAccountPage from './pages/DeleteAccount';
+import SuggestionBox from './pages/SuggestionBox';
 import React, { useEffect } from 'react';
 
 const queryClient = new QueryClient();
@@ -105,6 +106,7 @@ const App = () => {
                 <Route path="/rentals/:id" element={<RentalDetail />} />
                 <Route path="/ads/:id" element={<AdDetail />} />
                 <Route path="/delete-account" element={<DeleteAccountPage onBack={() => window.history.back()} />} />
+                <Route path="/suggestion-box" element={<SuggestionBox />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
