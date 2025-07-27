@@ -42,8 +42,38 @@ const SuggestionBox: React.FC = () => {
         return;
       }
 
-      // Send email notification (you can implement this with a backend service)
-      // For now, we'll just show success message
+      // Send email notification via edge function
+      try {
+        const { data: { supabaseUrl } } = await supabase.auth.getSession();
+        const edgeFunctionUrl = `${supabaseUrl}/functions/v1/send-suggestion-email`;
+        
+        const emailResponse = await fetch(edgeFunctionUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${supabase.supabaseKey}`,
+          },
+          body: JSON.stringify({
+            suggestion: {
+              name: name.trim(),
+              email: email.trim(),
+              suggestion: suggestion.trim(),
+              category,
+              created_at: new Date().toISOString(),
+              status: 'pending'
+            }
+          })
+        });
+
+        if (!emailResponse.ok) {
+          console.error('Email notification failed:', await emailResponse.text());
+          // Don't show error to user since suggestion was saved successfully
+        }
+      } catch (emailError) {
+        console.error('Email notification error:', emailError);
+        // Don't show error to user since suggestion was saved successfully
+      }
+
       toast.success('Thank you for your suggestion! We\'ll review it and get back to you.');
       
       // Reset form
