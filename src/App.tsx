@@ -63,7 +63,7 @@ const App = () => {
       widget.style.right = '24px';
       widget.style.zIndex = '9999';
       // Add custom styling for the chat bubble with photo
-      widget.style.setProperty('--convai-widget-avatar', 'url("/favicon.png")');
+      widget.style.setProperty('--convai-widget-avatar', 'url("/tomabot-avatar.png")');
       widget.style.setProperty('--convai-widget-avatar-size', '40px');
       document.body.appendChild(widget);
     }
