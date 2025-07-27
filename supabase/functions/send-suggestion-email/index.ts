@@ -19,48 +19,16 @@ serve(async (req) => {
       throw new Error('No suggestion data provided')
     }
 
-    // Create email content
-    const emailContent = `
-New Suggestion Submitted on TomaShops
-
-Name: ${suggestion.name}
-Email: ${suggestion.email}
-Category: ${suggestion.category}
-Status: ${suggestion.status}
-
-Suggestion:
-${suggestion.suggestion}
-
-Submitted: ${new Date(suggestion.created_at).toLocaleString()}
-
----
-This email was sent automatically from the TomaShops Suggestion Box.
-    `.trim()
-
-    // For now, we'll log the email content and you can set up email forwarding
-    // You can replace this with your preferred email service
-    console.log('=== SUGGESTION EMAIL ===')
-    console.log(emailContent)
-    console.log('=== END SUGGESTION EMAIL ===')
-
-    // TODO: Replace with your preferred email service
-    // Options:
-    // 1. EmailJS (free tier available)
-    // 2. SendGrid (free tier available)
-    // 3. Mailgun (free tier available)
-    // 4. Resend (developer-friendly)
-    
-    // Example with EmailJS (you'll need to set this up):
-    /*
+    // Send email using EmailJS
     const emailResponse = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        service_id: 'YOUR_EMAILJS_SERVICE_ID',
-        template_id: 'YOUR_EMAILJS_TEMPLATE_ID',
-        user_id: 'YOUR_EMAILJS_USER_ID',
+        service_id: 'service_TSsuggestions',
+        template_id: 'template_TSsuggestions',
+        user_id: '2YEmCiVYT3oyjXb-Z',
         template_params: {
           to_email: 'tomashopsinfo@gmail.com',
           from_name: suggestion.name,
@@ -71,12 +39,16 @@ This email was sent automatically from the TomaShops Suggestion Box.
         }
       })
     })
-    */
+
+    if (!emailResponse.ok) {
+      console.error('Email sending failed:', await emailResponse.text())
+      throw new Error('Failed to send email notification')
+    }
 
     return new Response(
       JSON.stringify({ 
         success: true, 
-        message: 'Suggestion submitted successfully. Email notification logged.' 
+        message: 'Suggestion submitted and email notification sent successfully!' 
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
