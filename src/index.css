@@ -130,3 +130,45 @@
 .markdown-preview ol {
   @apply my-4 ml-6;
 }
+
+/* TomaBot Avatar Styles */
+elevenlabs-convai {
+  --convai-widget-avatar: url("/tomabot-avatar.png") !important;
+  --convai-widget-avatar-size: 40px !important;
+  --convai-widget-avatar-border-radius: 50% !important;
+  --convai-widget-avatar-border: 2px solid #ffffff !important;
+  --convai-widget-avatar-box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+}
+
+/* Ensure the avatar image loads properly */
+elevenlabs-convai::part(avatar) {
+  background-image: url("/tomabot-avatar.png") !important;
+  background-size: cover !important;
+  background-position: center !important;
+  border-radius: 50% !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+}
+
+/* Force avatar display with more specific selectors */
+elevenlabs-convai [data-avatar],
+elevenlabs-convai .avatar,
+elevenlabs-convai img[src*="avatar"] {
+  background-image: url("/tomabot-avatar.png") !important;
+  background-size: cover !important;
+  background-position: center !important;
+  border-radius: 50% !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+  width: 40px !important;
+  height: 40px !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Hide default avatar if it exists */
+elevenlabs-convai [data-avatar]:not([style*="tomabot-avatar"]),
+elevenlabs-convai .avatar:not([style*="tomabot-avatar"]) {
+  display: none !important;
+}

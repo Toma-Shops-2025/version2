@@ -44,6 +44,17 @@ const queryClient = new QueryClient();
 
 const App = () => {
   useEffect(() => {
+    // Global error handler for Video.js and other errors
+    const handleGlobalError = (event: ErrorEvent) => {
+      if (event.message.includes('videojs') || event.message.includes('Invalid target')) {
+        console.warn('Video.js error suppressed:', event.message);
+        event.preventDefault();
+        return false;
+      }
+    };
+
+    window.addEventListener('error', handleGlobalError);
+    
     // Inject the ElevenLabs Convai script only once
     if (!document.getElementById('elevenlabs-convai-script')) {
       const script = document.createElement('script');
@@ -51,23 +62,59 @@ const App = () => {
       script.async = true;
       script.type = 'text/javascript';
       script.id = 'elevenlabs-convai-script';
+      
+      // Add error handling for script loading
+      script.onerror = () => {
+        console.error('❌ Failed to load ElevenLabs Convai script');
+      };
+      
+      script.onload = () => {
+        console.log('✅ ElevenLabs Convai script loaded successfully');
+        // Initialize widget after script loads
+        initializeWidget();
+      };
+      
       document.body.appendChild(script);
+    } else {
+      // Script already exists, initialize widget
+      initializeWidget();
     }
-    // Inject the widget element if not present
-    if (!document.getElementById('elevenlabs-convai-widget')) {
-      const widget = document.createElement('elevenlabs-convai');
-      widget.setAttribute('agent-id', 'agent_8601k16170epe0tr29btacdc5428');
-      widget.id = 'elevenlabs-convai-widget';
-      widget.style.position = 'fixed';
-      widget.style.bottom = '24px';
-      widget.style.right = '24px';
-      widget.style.zIndex = '9999';
-      // Add custom styling for the chat bubble with photo
-      widget.style.setProperty('--convai-widget-avatar', 'url("/tomabot-avatar.png")');
-      widget.style.setProperty('--convai-widget-avatar-size', '40px');
-      widget.style.setProperty('--convai-widget-position', 'bottom-right');
-      document.body.appendChild(widget);
+    
+    function initializeWidget() {
+      // Inject the widget element if not present
+      if (!document.getElementById('elevenlabs-convai-widget')) {
+        const widget = document.createElement('elevenlabs-convai');
+        widget.setAttribute('agent-id', 'agent_8601k16170epe0tr29btacdc5428');
+        widget.id = 'elevenlabs-convai-widget';
+        widget.style.position = 'fixed';
+        widget.style.bottom = '24px';
+        widget.style.right = '24px';
+        widget.style.zIndex = '9999';
+        // Add custom styling for the chat bubble with photo
+        widget.style.setProperty('--convai-widget-avatar', 'url("/tomabot-avatar.png")');
+        widget.style.setProperty('--convai-widget-avatar-size', '40px');
+        widget.style.setProperty('--convai-widget-position', 'bottom-right');
+        widget.style.setProperty('--convai-widget-avatar-border-radius', '50%');
+        widget.style.setProperty('--convai-widget-avatar-border', '2px solid #ffffff');
+        widget.style.setProperty('--convai-widget-avatar-box-shadow', '0 2px 8px rgba(0,0,0,0.1)');
+        
+        // Test if the avatar image is accessible
+        const testImage = new Image();
+        testImage.onload = () => {
+          console.log('✅ TomaBot avatar loaded successfully');
+        };
+        testImage.onerror = () => {
+          console.error('❌ TomaBot avatar failed to load. Check if /tomabot-avatar.png exists in public folder');
+        };
+        testImage.src = '/tomabot-avatar.png';
+        
+        document.body.appendChild(widget);
+      }
     }
+    
+    return () => {
+      window.removeEventListener('error', handleGlobalError);
+    };
   }, []);
 
   return (
