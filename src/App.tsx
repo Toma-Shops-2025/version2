@@ -69,7 +69,6 @@ const App = () => {
       document.body.appendChild(widget);
     }
   }, []);
-
   return (
     <AppProvider>
       <ThemeProvider defaultTheme="light">
