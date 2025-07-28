@@ -197,11 +197,21 @@ const HomePage: React.FC = () => {
           <div className="flex items-center space-x-4 mb-4">
             <Button onClick={handleSellClick} className="bg-teal-600 hover:bg-teal-700 text-white font-semibold">Sell</Button>
             <div className="flex items-center space-x-4">
-              <Link to="/rentals" className="text-cyan-400 hover:text-cyan-300">Rentals</Link>
-              <Link to="/jobs" className="text-cyan-400 hover:text-cyan-300">Jobs</Link>
-              <Link to="/digital" className="text-cyan-400 hover:text-cyan-300">Digital</Link>
-              <Link to="/ads" className="text-cyan-400 hover:text-cyan-300">Ads</Link>
+              <Link to="/rentals" className="text-white hover:underline">Rentals</Link>
+              <Link to="/jobs" className="text-white hover:underline">Jobs</Link>
+              <Link to="/digital" className="text-white hover:underline">Digital</Link>
+              <Link to="/ads" className="text-white hover:underline">Ads</Link>
             </div>
+          </div>
+          
+          {/* Add back My Listings, My Orders, and Notifications in turquoise */}
+          <div className="flex items-center space-x-6 mt-4">
+            <Link to="/my-listings" className="text-cyan-400 hover:text-cyan-300 font-medium">My Listings</Link>
+            <Link to="/my-orders" className="text-cyan-400 hover:text-cyan-300 font-medium">My Orders</Link>
+            <Link to="/notifications" className="text-cyan-400 hover:text-cyan-300 font-medium relative">
+              Notifications
+              {/* Add notification count if needed */}
+            </Link>
           </div>
         </div>
       </div>
