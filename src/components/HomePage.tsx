@@ -175,11 +175,11 @@ const HomePage: React.FC = () => {
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-2xl font-bold text-teal-400">Marketplace</h1>
             <div className="flex items-center space-x-4">
-              <Link to="/offers" className="text-white hover:underline">Offers</Link>
+              <Link to="/offers" className="text-cyan-400 hover:text-cyan-300">Offers</Link>
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="text-white hover:bg-gray-700"
+                className="text-cyan-400 hover:bg-gray-700"
                 onClick={handleMessagesClick}
               >
                 <div className="relative">
@@ -193,14 +193,14 @@ const HomePage: React.FC = () => {
               </Button>
             </div>
           </div>
-          <UserNavBar />
+
           <div className="flex items-center space-x-4 mb-4">
             <Button onClick={handleSellClick} className="bg-teal-600 hover:bg-teal-700 text-white font-semibold">Sell</Button>
             <div className="flex items-center space-x-4">
-              <Link to="/rentals" className="text-white hover:underline">Rentals</Link>
-              <Link to="/jobs" className="text-white hover:underline">Jobs</Link>
-              <Link to="/digital" className="text-white hover:underline">Digital</Link>
-              <Link to="/ads" className="text-white hover:underline">Ads</Link>
+              <Link to="/rentals" className="text-cyan-400 hover:text-cyan-300">Rentals</Link>
+              <Link to="/jobs" className="text-cyan-400 hover:text-cyan-300">Jobs</Link>
+              <Link to="/digital" className="text-cyan-400 hover:text-cyan-300">Digital</Link>
+              <Link to="/ads" className="text-cyan-400 hover:text-cyan-300">Ads</Link>
             </div>
           </div>
         </div>
