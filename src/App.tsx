@@ -99,11 +99,17 @@ const App = () => {
         widget.style.setProperty('--convai-widget-avatar-border', '2px solid #ffffff');
         widget.style.setProperty('--convai-widget-avatar-box-shadow', '0 2px 8px rgba(0,0,0,0.1)');
         
+        // Force avatar to show by setting it as background
+        widget.style.backgroundImage = 'url("/tomabot-avatar.png")';
+        widget.style.backgroundSize = '40px';
+        widget.style.backgroundPosition = 'center';
+        widget.style.backgroundRepeat = 'no-repeat';
+        
         // Custom styling to override default text
-        widget.style.setProperty('--convai-widget-title', 'Chat with TomaBot');
-        widget.style.setProperty('--convai-widget-subtitle', 'Your AI Assistant');
-        widget.style.setProperty('--convai-widget-button-text', 'Chat Now');
-        widget.style.setProperty('--convai-widget-button-hover-text', 'Start Chat');
+        widget.style.setProperty('--convai-widget-title', 'TomaBot');
+        widget.style.setProperty('--convai-widget-subtitle', 'AI Assistant');
+        widget.style.setProperty('--convai-widget-button-text', 'TomaBot');
+        widget.style.setProperty('--convai-widget-button-hover-text', 'TomaBot');
         
         // Test if the avatar image is accessible
         const testImage = new Image();
@@ -125,10 +131,10 @@ const App = () => {
     }
     
     function customizeWidgetText() {
-      // Find and replace any "Start a call" text with "Chat with TomaBot"
+      // Find and replace any "Start a call" text with "TomaBot"
       const widget = document.getElementById('elevenlabs-convai-widget');
       if (widget) {
-        // Replace text content
+        // Replace text content more aggressively
         const walker = document.createTreeWalker(
           widget,
           NodeFilter.SHOW_TEXT
@@ -136,22 +142,66 @@ const App = () => {
         
         let node;
         while (node = walker.nextNode()) {
-          if (node.textContent && node.textContent.includes('Start a call')) {
-            node.textContent = node.textContent.replace('Start a call', 'Chat with TomaBot');
-          }
-          if (node.textContent && node.textContent.includes('call to TomaBot')) {
-            node.textContent = node.textContent.replace('call to TomaBot', 'with TomaBot');
+          if (node.textContent) {
+            // Replace various forms of the text
+            node.textContent = node.textContent
+              .replace(/Start a call/g, 'TomaBot')
+              .replace(/call to TomaBot/g, 'TomaBot')
+              .replace(/Start a call to TomaBot/g, 'TomaBot');
           }
         }
         
         // Also try to find and replace button text
-        const buttons = widget.querySelectorAll('button, [role="button"]');
+        const buttons = widget.querySelectorAll('button, [role="button"], .widget-button, .call-button');
         buttons.forEach(button => {
-          if (button.textContent && button.textContent.includes('Start a call')) {
-            button.textContent = button.textContent.replace('Start a call', 'Chat with TomaBot');
+          if (button.textContent) {
+            button.textContent = button.textContent
+              .replace(/Start a call/g, 'TomaBot')
+              .replace(/call to TomaBot/g, 'TomaBot')
+              .replace(/Start a call to TomaBot/g, 'TomaBot');
           }
+          
+          // Also replace any span elements inside buttons
+          const spans = button.querySelectorAll('span');
+          spans.forEach(span => {
+            if (span.textContent) {
+              span.textContent = span.textContent
+                .replace(/Start a call/g, 'TomaBot')
+                .replace(/call to TomaBot/g, 'TomaBot')
+                .replace(/Start a call to TomaBot/g, 'TomaBot');
+            }
+          });
+        });
+        
+        // Force avatar to show
+        const avatarElements = widget.querySelectorAll('img, [class*="avatar"], [class*="profile"]');
+        avatarElements.forEach(avatar => {
+          if (avatar.tagName === 'IMG') {
+            (avatar as HTMLImageElement).src = '/tomabot-avatar.png';
+            (avatar as HTMLElement).style.display = 'block';
+            (avatar as HTMLElement).style.visibility = 'visible';
+          }
+          (avatar as HTMLElement).style.backgroundImage = 'url("/tomabot-avatar.png")';
+          (avatar as HTMLElement).style.backgroundSize = 'cover';
+          (avatar as HTMLElement).style.backgroundPosition = 'center';
         });
       }
+      
+      // Run again after a delay to catch any dynamically loaded content
+      setTimeout(() => {
+        const widget = document.getElementById('elevenlabs-convai-widget');
+        if (widget) {
+          const allElements = widget.querySelectorAll('*');
+          allElements.forEach(element => {
+            if (element.textContent) {
+              element.textContent = element.textContent
+                .replace(/Start a call/g, 'TomaBot')
+                .replace(/call to TomaBot/g, 'TomaBot')
+                .replace(/Start a call to TomaBot/g, 'TomaBot');
+            }
+          });
+        }
+      }, 2000);
     }
     
     return () => {

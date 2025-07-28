@@ -1,42 +1,73 @@
 /* Custom styling for TomaBot widget */
 
-/* Override default widget text */
-elevenlabs-convai::part(widget-title) {
-  content: "Chat with TomaBot" !important;
+/* Force hide the default "Start a call" text */
+elevenlabs-convai * {
+  font-family: inherit !important;
 }
 
-elevenlabs-convai::part(widget-subtitle) {
-  content: "Your AI Assistant" !important;
+/* Target specific elements that might contain "Start a call" */
+elevenlabs-convai button,
+elevenlabs-convai [role="button"],
+elevenlabs-convai .widget-button,
+elevenlabs-convai .call-button {
+  position: relative !important;
 }
 
-elevenlabs-convai::part(widget-button) {
-  content: "Chat Now" !important;
+/* Replace text content using ::before pseudo-element */
+elevenlabs-convai button::before,
+elevenlabs-convai [role="button"]::before,
+elevenlabs-convai .widget-button::before,
+elevenlabs-convai .call-button::before {
+  content: "TomaBot" !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 1000 !important;
+  background: transparent !important;
+  color: white !important;
+  font-weight: bold !important;
+  pointer-events: none !important;
 }
 
-/* Hide or replace "Start a call" text */
-elevenlabs-convai::part(call-button) {
-  display: none !important;
+/* Hide the original text */
+elevenlabs-convai button span,
+elevenlabs-convai [role="button"] span,
+elevenlabs-convai .widget-button span,
+elevenlabs-convai .call-button span {
+  visibility: hidden !important;
+  opacity: 0 !important;
 }
 
-/* Alternative: Replace the text content */
-elevenlabs-convai::part(call-button)::before {
-  content: "Chat with TomaBot" !important;
-}
-
-/* Custom styling for the chat bubble */
+/* Ensure avatar shows properly */
 elevenlabs-convai {
-  --convai-widget-title: "Chat with TomaBot" !important;
-  --convai-widget-subtitle: "Your AI Assistant" !important;
-  --convai-widget-button-text: "Chat Now" !important;
-  --convai-widget-button-hover-text: "Start Chat" !important;
+  --convai-widget-avatar: url("/tomabot-avatar.png") !important;
+  --convai-widget-avatar-size: 40px !important;
+  --convai-widget-avatar-border-radius: 50% !important;
+  --convai-widget-avatar-border: 2px solid #ffffff !important;
+  --convai-widget-avatar-box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
 }
 
-/* Override any default call-related text */
-elevenlabs-convai *[data-text*="call"] {
-  display: none !important;
+/* Force avatar visibility */
+elevenlabs-convai img[src*="avatar"],
+elevenlabs-convai .avatar,
+elevenlabs-convai [class*="avatar"] {
+  background-image: url("/tomabot-avatar.png") !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
 }
 
-/* Custom tooltip text */
-elevenlabs-convai::part(tooltip) {
-  content: "Chat with TomaBot" !important;
+/* Additional targeting for text replacement */
+elevenlabs-convai *:contains("Start a call"),
+elevenlabs-convai *:contains("call to TomaBot") {
+  font-size: 0 !important;
+}
+
+elevenlabs-convai *:contains("Start a call")::after,
+elevenlabs-convai *:contains("call to TomaBot")::after {
+  content: "TomaBot" !important;
+  font-size: 14px !important;
+  font-weight: bold !important;
+  color: white !important;
 } 
