@@ -104,6 +104,13 @@ const App = () => {
         widget.style.backgroundSize = '40px';
         widget.style.backgroundPosition = 'center';
         widget.style.backgroundRepeat = 'no-repeat';
+        widget.style.borderRadius = '50%';
+        widget.style.width = '40px';
+        widget.style.height = '40px';
+        widget.style.position = 'fixed';
+        widget.style.bottom = '24px';
+        widget.style.right = '24px';
+        widget.style.zIndex = '9999';
         
         // Custom styling to override default text
         widget.style.setProperty('--convai-widget-title', 'TomaBot');
@@ -173,8 +180,8 @@ const App = () => {
           });
         });
         
-        // Force avatar to show
-        const avatarElements = widget.querySelectorAll('img, [class*="avatar"], [class*="profile"]');
+        // Force avatar to show in correct position
+        const avatarElements = widget.querySelectorAll('img, [class*="avatar"], [class*="profile"], [class*="user-image"]');
         avatarElements.forEach(avatar => {
           if (avatar.tagName === 'IMG') {
             (avatar as HTMLImageElement).src = '/tomabot-avatar.png';
@@ -184,7 +191,20 @@ const App = () => {
           (avatar as HTMLElement).style.backgroundImage = 'url("/tomabot-avatar.png")';
           (avatar as HTMLElement).style.backgroundSize = 'cover';
           (avatar as HTMLElement).style.backgroundPosition = 'center';
+          (avatar as HTMLElement).style.borderRadius = '50%';
+          (avatar as HTMLElement).style.width = '40px';
+          (avatar as HTMLElement).style.height = '40px';
+          (avatar as HTMLElement).style.position = 'relative';
         });
+        
+        // Also ensure the widget itself is positioned correctly
+        widget.style.position = 'fixed';
+        widget.style.bottom = '24px';
+        widget.style.right = '24px';
+        widget.style.zIndex = '9999';
+        widget.style.borderRadius = '50%';
+        widget.style.width = '40px';
+        widget.style.height = '40px';
       }
       
       // Run again after a delay to catch any dynamically loaded content
