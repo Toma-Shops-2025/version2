@@ -8,7 +8,7 @@ const Privacy: React.FC = () => {
     <div className="max-w-2xl mx-auto py-8 px-4">
       <Button variant="secondary" className="mb-4" onClick={() => navigate(-1)}>Back</Button>
       <h1 className="text-3xl font-bold mb-4">🛡️ Privacy Policy</h1>
-      <p className="mb-4 text-lg">Effective Date: [Insert Date]</p>
+      <p className="mb-4 text-lg">Effective Date: January 1, 2025</p>
       <p className="mb-4">TomaShops™ respects your privacy. This policy outlines how we collect, use, and protect your information.</p>
       <h2 className="text-2xl font-semibold mt-8 mb-2">What We Collect:</h2>
       <ul className="list-disc ml-6 mb-4 space-y-1">

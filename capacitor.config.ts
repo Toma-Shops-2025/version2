@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.tomashops.app',
+  appId: 'com.tomashops.videoapp',
   appName: 'TomaShops',
   webDir: 'dist',
   server: {
