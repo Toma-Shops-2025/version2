@@ -67,15 +67,12 @@ elevenlabs-convai [class*="user-image"] {
   position: relative !important;
 }
 
-/* Make sure the widget itself has the avatar as background */
+/* Ensure widget stays in correct position */
 elevenlabs-convai {
-  background-image: url("/tomabot-avatar.png") !important;
-  background-size: 40px !important;
-  background-position: center !important;
-  background-repeat: no-repeat !important;
-  border-radius: 50% !important;
-  width: 40px !important;
-  height: 40px !important;
+  position: fixed !important;
+  bottom: 24px !important;
+  right: 24px !important;
+  z-index: 9999 !important;
 }
 
 /* Additional targeting for text replacement */

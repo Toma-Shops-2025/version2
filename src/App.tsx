@@ -99,19 +99,6 @@ const App = () => {
         widget.style.setProperty('--convai-widget-avatar-border', '2px solid #ffffff');
         widget.style.setProperty('--convai-widget-avatar-box-shadow', '0 2px 8px rgba(0,0,0,0.1)');
         
-        // Force avatar to show by setting it as background
-        widget.style.backgroundImage = 'url("/tomabot-avatar.png")';
-        widget.style.backgroundSize = '40px';
-        widget.style.backgroundPosition = 'center';
-        widget.style.backgroundRepeat = 'no-repeat';
-        widget.style.borderRadius = '50%';
-        widget.style.width = '40px';
-        widget.style.height = '40px';
-        widget.style.position = 'fixed';
-        widget.style.bottom = '24px';
-        widget.style.right = '24px';
-        widget.style.zIndex = '9999';
-        
         // Custom styling to override default text
         widget.style.setProperty('--convai-widget-title', 'TomaBot');
         widget.style.setProperty('--convai-widget-subtitle', 'AI Assistant');
@@ -197,14 +184,11 @@ const App = () => {
           (avatar as HTMLElement).style.position = 'relative';
         });
         
-        // Also ensure the widget itself is positioned correctly
+        // Ensure widget stays in correct position
         widget.style.position = 'fixed';
         widget.style.bottom = '24px';
         widget.style.right = '24px';
         widget.style.zIndex = '9999';
-        widget.style.borderRadius = '50%';
-        widget.style.width = '40px';
-        widget.style.height = '40px';
       }
       
       // Run again after a delay to catch any dynamically loaded content
