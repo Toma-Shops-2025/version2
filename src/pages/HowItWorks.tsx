@@ -7,7 +7,14 @@ const HowItWorks: React.FC = () => {
   return (
     <div className="max-w-2xl mx-auto py-8 px-4">
       <Button variant="secondary" className="mb-4" onClick={() => navigate(-1)}>Back</Button>
-      <h1 className="text-3xl font-bold mb-4">🛍️ How TomaShops™ Works — Buy & Sell with Video Listings</h1>
+      <div className="flex items-center gap-4 mb-6">
+        <img 
+          src="/tomabot-avatar.png" 
+          alt="TomaBot AI Assistant" 
+          className="w-12 h-12 rounded-full border-2 border-blue-200 shadow-lg"
+        />
+        <h1 className="text-3xl font-bold">🛍️ How TomaShops™ Works — Buy & Sell with Video Listings</h1>
+      </div>
       <p className="mb-6 text-lg">TomaShops™ is the #1 video-first online marketplace for local and nationwide buying and selling. Our platform lets you post short product videos, connect with buyers or sellers instantly, and complete secure local or shipping-based transactions — all in one place.</p>
       <h2 className="text-2xl font-semibold mt-8 mb-2">📦 Selling on TomaShops™</h2>
       <ol className="list-decimal ml-6 mb-4 space-y-2">

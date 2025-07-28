@@ -7,7 +7,14 @@ const Safety: React.FC = () => {
   return (
     <div className="max-w-2xl mx-auto py-8 px-4">
       <Button variant="secondary" className="mb-4" onClick={() => navigate(-1)}>Back</Button>
-      <h1 className="text-3xl font-bold mb-4">🔐 Safety Measures</h1>
+      <div className="flex items-center gap-4 mb-6">
+        <img 
+          src="/tomabot-avatar.png" 
+          alt="TomaBot AI Assistant" 
+          className="w-12 h-12 rounded-full border-2 border-blue-200 shadow-lg"
+        />
+        <h1 className="text-3xl font-bold">🔐 Safety Measures</h1>
+      </div>
       <p className="mb-4 text-lg">Your safety comes first. TomaShops™ was built with community trust in mind.</p>
       <ul className="list-disc ml-6 mb-4 space-y-2">
         <li><b>Video Listings Required:</b> Every item must have a video, reducing scams and increasing transparency.</li>

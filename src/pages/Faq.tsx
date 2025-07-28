@@ -7,7 +7,15 @@ const Faq: React.FC = () => {
   return (
     <div className="max-w-2xl mx-auto py-8 px-4">
       <Button variant="secondary" className="mb-4" onClick={() => navigate(-1)}>Back</Button>
-      <h1 className="text-3xl font-bold mb-4">❓ Frequently Asked Questions (FAQ)</h1>
+      <div className="flex items-center gap-4 mb-6">
+        <img 
+          src="/tomabot-avatar.png" 
+          alt="TomaBot AI Assistant" 
+          className="w-12 h-12 rounded-full border-2 border-blue-200 shadow-lg"
+        />
+        <h1 className="text-3xl font-bold">❓ Frequently Asked Questions (FAQ)</h1>
+      </div>
+      <p className="mb-4 text-gray-600">Need more help? Chat with TomaBot using the chat bubble in the bottom right corner! 🤖</p>
       <ul className="mb-4 space-y-4">
         <li><b>📹 Do I have to post a video to list an item?</b><br />Yes. Every product listed on TomaShops™ must include a short video to increase trust and visibility.</li>
         <li><b>🛍️ Can I sell items locally?</b><br />Absolutely! Buyers and sellers can meet locally to exchange items, just like OfferUp or Facebook Marketplace.</li>

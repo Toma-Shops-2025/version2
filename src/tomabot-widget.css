@@ -1,0 +1,42 @@
+/* Custom styling for TomaBot widget */
+
+/* Override default widget text */
+elevenlabs-convai::part(widget-title) {
+  content: "Chat with TomaBot" !important;
+}
+
+elevenlabs-convai::part(widget-subtitle) {
+  content: "Your AI Assistant" !important;
+}
+
+elevenlabs-convai::part(widget-button) {
+  content: "Chat Now" !important;
+}
+
+/* Hide or replace "Start a call" text */
+elevenlabs-convai::part(call-button) {
+  display: none !important;
+}
+
+/* Alternative: Replace the text content */
+elevenlabs-convai::part(call-button)::before {
+  content: "Chat with TomaBot" !important;
+}
+
+/* Custom styling for the chat bubble */
+elevenlabs-convai {
+  --convai-widget-title: "Chat with TomaBot" !important;
+  --convai-widget-subtitle: "Your AI Assistant" !important;
+  --convai-widget-button-text: "Chat Now" !important;
+  --convai-widget-button-hover-text: "Start Chat" !important;
+}
+
+/* Override any default call-related text */
+elevenlabs-convai *[data-text*="call"] {
+  display: none !important;
+}
+
+/* Custom tooltip text */
+elevenlabs-convai::part(tooltip) {
+  content: "Chat with TomaBot" !important;
+} 

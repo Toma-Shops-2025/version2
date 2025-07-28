@@ -19,12 +19,33 @@ const Contact: React.FC = () => {
   return (
     <div className="max-w-2xl mx-auto py-8 px-4">
       <Button variant="secondary" className="mb-4" onClick={() => navigate(-1)}>Back</Button>
-      <h1 className="text-3xl font-bold mb-4">📞 Contact Us</h1>
-      <p className="mb-2">Have questions or need help? We're here 24/7.</p>
-      <div className="mb-4">
-        <b>TomaShops™ Support</b><br />
-        <span>📧 Email: <a href="mailto:support@tomashops.com" className="text-blue-600 underline">support@tomashops.com</a></span><br />
-        <span>📞 Phone: 954-TOMASHOPS<br /><small>(954) 866-2746</small></span>
+      <div className="flex items-center gap-4 mb-6">
+        <img 
+          src="/tomabot-avatar.png" 
+          alt="TomaBot AI Assistant" 
+          className="w-16 h-16 rounded-full border-2 border-blue-200 shadow-lg"
+        />
+        <div>
+          <h1 className="text-3xl font-bold">📞 Contact Us</h1>
+          <p className="text-gray-600">Meet TomaBot, your AI assistant! 👋</p>
+        </div>
+      </div>
+      <p className="mb-4">Have questions or need help? TomaBot and our support team are here 24/7.</p>
+      <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+        <div className="flex items-center gap-3 mb-2">
+          <img 
+            src="/tomabot-avatar.png" 
+            alt="TomaBot" 
+            className="w-8 h-8 rounded-full"
+          />
+          <b className="text-blue-800">TomaBot AI Assistant</b>
+        </div>
+        <p className="text-sm text-blue-700 mb-2">💬 Chat with me anytime using the chat bubble in the bottom right corner!</p>
+        <div className="text-sm">
+          <b>TomaShops™ Support</b><br />
+          <span>📧 Email: <a href="mailto:support@tomashops.com" className="text-blue-600 underline">support@tomashops.com</a></span><br />
+          <span>📞 Phone: 954-TOMASHOPS<br /><small>(954) 866-2746</small></span>
+        </div>
       </div>
       <hr className="my-6" />
       <h2 className="text-xl font-semibold mb-2">Contact Form:</h2>

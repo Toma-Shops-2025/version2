@@ -39,6 +39,7 @@ import AdDetail from './pages/AdDetail';
 import DeleteAccountPage from './pages/DeleteAccount';
 import SuggestionBox from './pages/SuggestionBox';
 import React, { useEffect } from 'react';
+import './tomabot-widget.css';
 
 const queryClient = new QueryClient();
 
@@ -98,6 +99,12 @@ const App = () => {
         widget.style.setProperty('--convai-widget-avatar-border', '2px solid #ffffff');
         widget.style.setProperty('--convai-widget-avatar-box-shadow', '0 2px 8px rgba(0,0,0,0.1)');
         
+        // Custom styling to override default text
+        widget.style.setProperty('--convai-widget-title', 'Chat with TomaBot');
+        widget.style.setProperty('--convai-widget-subtitle', 'Your AI Assistant');
+        widget.style.setProperty('--convai-widget-button-text', 'Chat Now');
+        widget.style.setProperty('--convai-widget-button-hover-text', 'Start Chat');
+        
         // Test if the avatar image is accessible
         const testImage = new Image();
         testImage.onload = () => {
@@ -109,6 +116,41 @@ const App = () => {
         testImage.src = '/tomabot-avatar.png';
         
         document.body.appendChild(widget);
+        
+        // Wait for widget to load and then customize text
+        setTimeout(() => {
+          customizeWidgetText();
+        }, 1000);
+      }
+    }
+    
+    function customizeWidgetText() {
+      // Find and replace any "Start a call" text with "Chat with TomaBot"
+      const widget = document.getElementById('elevenlabs-convai-widget');
+      if (widget) {
+        // Replace text content
+        const walker = document.createTreeWalker(
+          widget,
+          NodeFilter.SHOW_TEXT
+        );
+        
+        let node;
+        while (node = walker.nextNode()) {
+          if (node.textContent && node.textContent.includes('Start a call')) {
+            node.textContent = node.textContent.replace('Start a call', 'Chat with TomaBot');
+          }
+          if (node.textContent && node.textContent.includes('call to TomaBot')) {
+            node.textContent = node.textContent.replace('call to TomaBot', 'with TomaBot');
+          }
+        }
+        
+        // Also try to find and replace button text
+        const buttons = widget.querySelectorAll('button, [role="button"]');
+        buttons.forEach(button => {
+          if (button.textContent && button.textContent.includes('Start a call')) {
+            button.textContent = button.textContent.replace('Start a call', 'Chat with TomaBot');
+          }
+        });
       }
     }
     

@@ -7,14 +7,14 @@ const config: CapacitorConfig = {
   server: {
     androidScheme: 'https'
   },
-  android: {
-    buildOptions: {
-      keystorePath: undefined,
-      keystoreAlias: undefined,
-      keystorePassword: undefined,
-      keyPassword: undefined,
-    }
-  },
+      android: {
+      buildOptions: {
+        keystorePath: process.env.KEYSTORE_PATH || 'C:\\Users\\T O M A\\OneDrive\\Documents\\my-app-release-key',
+        keystoreAlias: process.env.KEYSTORE_ALIAS || 'your-keystore-alias',
+        keystorePassword: process.env.KEYSTORE_PASSWORD || 'your-keystore-password',
+        keystoreAliasPassword: process.env.KEY_PASSWORD || 'your-key-password',
+      }
+    },
   plugins: {
     SplashScreen: {
       launchShowDuration: 3000,
