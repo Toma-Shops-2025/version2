@@ -120,8 +120,53 @@ const App = () => {
         // Wait for widget to load and then customize text
         setTimeout(() => {
           customizeWidgetText();
+          createCustomAvatarOverlay();
         }, 1000);
       }
+    }
+    
+    function createCustomAvatarOverlay() {
+      // Remove any existing overlay
+      const existingOverlay = document.getElementById('tomabot-avatar-overlay');
+      if (existingOverlay) {
+        existingOverlay.remove();
+      }
+      
+      // Create overlay avatar
+      const overlay = document.createElement('div');
+      overlay.id = 'tomabot-avatar-overlay';
+      overlay.style.cssText = `
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-image: url('/tomabot-avatar.png');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        border: 2px solid #06b6d4;
+        box-shadow: 0 2px 8px rgba(6,182,212,0.3);
+        z-index: 10001;
+        cursor: pointer;
+        pointer-events: auto;
+      `;
+      
+      // Add click handler
+      overlay.addEventListener('click', () => {
+        const widget = document.getElementById('elevenlabs-convai-widget');
+        if (widget) {
+          const clickEvent = new MouseEvent('click', {
+            view: window,
+            bubbles: true,
+            cancelable: true
+          });
+          widget.dispatchEvent(clickEvent);
+        }
+      });
+      
+      document.body.appendChild(overlay);
     }
     
     function customizeWidgetText() {

@@ -54,7 +54,11 @@ elevenlabs-convai img[src*="avatar"],
 elevenlabs-convai .avatar,
 elevenlabs-convai [class*="avatar"],
 elevenlabs-convai [class*="profile"],
-elevenlabs-convai [class*="user-image"] {
+elevenlabs-convai [class*="user-image"],
+elevenlabs-convai img,
+elevenlabs-convai [class*="icon"],
+elevenlabs-convai [class*="button"] img,
+elevenlabs-convai button img {
   background-image: url("/tomabot-avatar.png") !important;
   background-size: cover !important;
   background-position: center !important;
@@ -65,6 +69,22 @@ elevenlabs-convai [class*="user-image"] {
   display: block !important;
   visibility: visible !important;
   position: relative !important;
+  opacity: 1 !important;
+}
+
+/* Target any image element within the widget */
+elevenlabs-convai img {
+  src: url("/tomabot-avatar.png") !important;
+  background-image: url("/tomabot-avatar.png") !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  border-radius: 50% !important;
+  width: 40px !important;
+  height: 40px !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 /* Ensure widget stays in correct position */
