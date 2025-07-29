@@ -23,7 +23,7 @@ const Header: React.FC = () => {
           <div className="flex items-center">
             <h1 className="text-xl font-bold text-gray-900 flex flex-col leading-tight">
               <span>TomaShops™</span>
-              <span className="text-teal-600">Video 1st</span>
+              <span className="text-cyan-400">Video 1st</span>
             </h1>
           </div>
           {/* Simple Search Bar */}
@@ -50,7 +50,7 @@ const Header: React.FC = () => {
             />
             <button
               type="submit"
-              className="bg-teal-600 text-white px-4 py-1 rounded-r hover:bg-teal-700"
+              className="bg-cyan-500 text-white px-4 py-1 rounded-r hover:bg-cyan-600"
             >
               Search
             </button>

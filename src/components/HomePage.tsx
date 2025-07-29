@@ -173,7 +173,7 @@ const HomePage: React.FC = () => {
         {/* Dark Banner Area - Also Sticky */}
         <div className="bg-gray-900 text-white px-4 py-3 shadow-lg">
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-2xl font-bold text-teal-400">Marketplace</h1>
+            <h1 className="text-2xl font-bold text-cyan-400">Marketplace</h1>
             <div className="flex items-center space-x-4">
               <Link to="/offers" className="text-cyan-400 hover:text-cyan-300">Offers</Link>
               <Button 
@@ -195,7 +195,7 @@ const HomePage: React.FC = () => {
           </div>
 
           <div className="flex items-center space-x-4 mb-4">
-            <Button onClick={handleSellClick} className="bg-teal-600 hover:bg-teal-700 text-white font-semibold">Sell</Button>
+            <Button onClick={handleSellClick} className="bg-cyan-500 hover:bg-cyan-600 text-white font-semibold">Sell</Button>
             <div className="flex items-center space-x-4">
               <Link to="/rentals" className="text-white hover:underline">Rentals</Link>
               <Link to="/jobs" className="text-white hover:underline">Jobs</Link>

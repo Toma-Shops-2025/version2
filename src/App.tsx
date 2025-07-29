@@ -96,8 +96,8 @@ const App = () => {
         widget.style.setProperty('--convai-widget-avatar-size', '40px');
         widget.style.setProperty('--convai-widget-position', 'bottom-right');
         widget.style.setProperty('--convai-widget-avatar-border-radius', '50%');
-        widget.style.setProperty('--convai-widget-avatar-border', '2px solid #ffffff');
-        widget.style.setProperty('--convai-widget-avatar-box-shadow', '0 2px 8px rgba(0,0,0,0.1)');
+        widget.style.setProperty('--convai-widget-avatar-border', '2px solid #06b6d4');
+        widget.style.setProperty('--convai-widget-avatar-box-shadow', '0 2px 8px rgba(6,182,212,0.3)');
         
         // Custom styling to override default text
         widget.style.setProperty('--convai-widget-title', 'TomaBot');
