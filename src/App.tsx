@@ -91,13 +91,13 @@ const App = () => {
         widget.style.bottom = '24px';
         widget.style.right = '24px';
         widget.style.zIndex = '9999';
-        // Add custom styling for the chat bubble with photo
-        widget.style.setProperty('--convai-widget-avatar', 'url("/tomabot-avatar.png")');
-        widget.style.setProperty('--convai-widget-avatar-size', '40px');
+        // Remove custom avatar styling to allow ElevenLabs avatar to show
+        // widget.style.setProperty('--convai-widget-avatar', 'url("/tomabot-avatar.png")');
+        // widget.style.setProperty('--convai-widget-avatar-size', '40px');
         widget.style.setProperty('--convai-widget-position', 'bottom-right');
-        widget.style.setProperty('--convai-widget-avatar-border-radius', '50%');
-        widget.style.setProperty('--convai-widget-avatar-border', '2px solid #06b6d4');
-        widget.style.setProperty('--convai-widget-avatar-box-shadow', '0 2px 8px rgba(6,182,212,0.3)');
+        // widget.style.setProperty('--convai-widget-avatar-border-radius', '50%');
+        // widget.style.setProperty('--convai-widget-avatar-border', '2px solid #06b6d4');
+        // widget.style.setProperty('--convai-widget-avatar-box-shadow', '0 2px 8px rgba(6,182,212,0.3)');
         
         // Custom styling to override default text
         widget.style.setProperty('--convai-widget-title', 'TomaBot');
@@ -105,15 +105,15 @@ const App = () => {
         widget.style.setProperty('--convai-widget-button-text', 'TomaBot');
         widget.style.setProperty('--convai-widget-button-hover-text', 'TomaBot');
         
-        // Test if the avatar image is accessible
-        const testImage = new Image();
-        testImage.onload = () => {
-          console.log('✅ TomaBot avatar loaded successfully');
-        };
-        testImage.onerror = () => {
-          console.error('❌ TomaBot avatar failed to load. Check if /tomabot-avatar.png exists in public folder');
-        };
-        testImage.src = '/tomabot-avatar.png';
+        // Remove avatar test since we're using ElevenLabs avatar
+        // const testImage = new Image();
+        // testImage.onload = () => {
+        //   console.log('✅ TomaBot avatar loaded successfully');
+        // };
+        // testImage.onerror = () => {
+        //   console.error('❌ TomaBot avatar failed to load. Check if /tomabot-avatar.png exists in public folder');
+        // };
+        // testImage.src = '/tomabot-avatar.png';
         
         document.body.appendChild(widget);
         
@@ -218,7 +218,8 @@ const App = () => {
               width: 120px !important;
               height: 120px !important;
               border-radius: 50% !important;
-              background-image: url('/tomabot-avatar.png') !important;
+              /* Remove background-image override to allow ElevenLabs avatar */
+              /* background-image: url('/tomabot-avatar.png') !important; */
               background-size: cover !important;
               background-position: center !important;
               background-repeat: no-repeat !important;
@@ -248,7 +249,8 @@ const App = () => {
               width: 120px !important;
               height: 120px !important;
               border-radius: 50% !important;
-              background-image: url('/tomabot-avatar.png') !important;
+              /* Remove background-image override to allow ElevenLabs avatar */
+              /* background-image: url('/tomabot-avatar.png') !important; */
               background-size: cover !important;
               background-position: center !important;
               background-repeat: no-repeat !important;
@@ -306,22 +308,22 @@ const App = () => {
           });
         });
         
-        // Force avatar to show in correct position
-        const avatarElements = widget.querySelectorAll('img, [class*="avatar"], [class*="profile"], [class*="user-image"]');
-        avatarElements.forEach(avatar => {
-          if (avatar.tagName === 'IMG') {
-            (avatar as HTMLImageElement).src = '/tomabot-avatar.png';
-            (avatar as HTMLElement).style.display = 'block';
-            (avatar as HTMLElement).style.visibility = 'visible';
-          }
-          (avatar as HTMLElement).style.backgroundImage = 'url("/tomabot-avatar.png")';
-          (avatar as HTMLElement).style.backgroundSize = 'cover';
-          (avatar as HTMLElement).style.backgroundPosition = 'center';
-          (avatar as HTMLElement).style.borderRadius = '50%';
-          (avatar as HTMLElement).style.width = '40px';
-          (avatar as HTMLElement).style.height = '40px';
-          (avatar as HTMLElement).style.position = 'relative';
-        });
+        // Remove avatar overrides to allow ElevenLabs avatar to show
+        // const avatarElements = widget.querySelectorAll('img, [class*="avatar"], [class*="profile"], [class*="user-image"]');
+        // avatarElements.forEach(avatar => {
+        //   if (avatar.tagName === 'IMG') {
+        //     (avatar as HTMLImageElement).src = '/tomabot-avatar.png';
+        //     (avatar as HTMLElement).style.display = 'block';
+        //     (avatar as HTMLElement).style.visibility = 'visible';
+        //   }
+        //   (avatar as HTMLElement).style.backgroundImage = 'url("/tomabot-avatar.png")';
+        //   (avatar as HTMLElement).style.backgroundSize = 'cover';
+        //   (avatar as HTMLElement).style.backgroundPosition = 'center';
+        //   (avatar as HTMLElement).style.borderRadius = '50%';
+        //   (avatar as HTMLElement).style.width = '40px';
+        //   (avatar as HTMLElement).style.height = '40px';
+        //   (avatar as HTMLElement).style.position = 'relative';
+        // });
         
         // Ensure widget stays in correct position
         widget.style.position = 'fixed';

@@ -34,18 +34,23 @@ elevenlabs-convai .call-button span {
   opacity: 0 !important;
 }
 
-/* Ensure avatar shows properly in the correct position */
+/* Ensure widget positioning without overriding ElevenLabs avatar */
 elevenlabs-convai {
+  --convai-widget-position: bottom-right !important;
+}
+
+/* Remove avatar overrides to allow ElevenLabs avatar to show */
+/* elevenlabs-convai {
   --convai-widget-avatar: url("/tomabot-avatar.png") !important;
   --convai-widget-avatar-size: 40px !important;
   --convai-widget-avatar-border-radius: 50% !important;
   --convai-widget-avatar-border: 2px solid #ffffff !important;
   --convai-widget-avatar-box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
   --convai-widget-position: bottom-right !important;
-}
+} */
 
-/* Force avatar visibility and positioning */
-elevenlabs-convai img[src*="avatar"],
+/* Remove forced avatar styling to allow ElevenLabs avatar */
+/* elevenlabs-convai img[src*="avatar"],
 elevenlabs-convai .avatar,
 elevenlabs-convai [class*="avatar"],
 elevenlabs-convai [class*="profile"],
@@ -65,10 +70,10 @@ elevenlabs-convai button img {
   visibility: visible !important;
   position: relative !important;
   opacity: 1 !important;
-}
+} */
 
-/* Target any image element within the widget */
-elevenlabs-convai img {
+/* Remove image overrides to allow ElevenLabs avatar */
+/* elevenlabs-convai img {
   src: url("/tomabot-avatar.png") !important;
   background-image: url("/tomabot-avatar.png") !important;
   background-size: cover !important;
@@ -80,7 +85,7 @@ elevenlabs-convai img {
   display: block !important;
   visibility: visible !important;
   opacity: 1 !important;
-}
+} */
 
 /* Ensure widget stays in correct position */
 elevenlabs-convai {
@@ -99,7 +104,7 @@ elevenlabs-convai .call-button::before {
   display: none !important;
 }
 
-/* Style the large avatar in the chat interface (when opened) */
+/* Style the large avatar in the chat interface (when opened) - allow ElevenLabs avatar */
 elevenlabs-convai .chat-interface .avatar,
 elevenlabs-convai .conversation .avatar,
 elevenlabs-convai .chat-container .avatar,
@@ -111,7 +116,8 @@ elevenlabs-convai .main-avatar {
   width: 120px !important;
   height: 120px !important;
   border-radius: 50% !important;
-  background-image: url("/tomabot-avatar.png") !important;
+  /* Remove background-image override to allow ElevenLabs avatar */
+  /* background-image: url("/tomabot-avatar.png") !important; */
   background-size: cover !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
@@ -122,11 +128,12 @@ elevenlabs-convai .main-avatar {
   position: relative !important;
 }
 
-/* Target any large circular area in the chat interface */
+/* Target any large circular area in the chat interface - allow ElevenLabs avatar */
 elevenlabs-convai [class*="circle"],
 elevenlabs-convai [class*="avatar-area"],
 elevenlabs-convai [class*="profile-area"] {
-  background-image: url("/tomabot-avatar.png") !important;
+  /* Remove background-image override to allow ElevenLabs avatar */
+  /* background-image: url("/tomabot-avatar.png") !important; */
   background-size: cover !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
