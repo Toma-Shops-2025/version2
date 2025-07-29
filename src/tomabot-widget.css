@@ -13,20 +13,15 @@ elevenlabs-convai .call-button {
   position: relative !important;
 }
 
-/* Replace text content using ::before pseudo-element */
-elevenlabs-convai button::before,
-elevenlabs-convai [role="button"]::before,
-elevenlabs-convai .widget-button::before,
-elevenlabs-convai .call-button::before {
+/* Replace text content using ::after pseudo-element for the text */
+elevenlabs-convai button::after,
+elevenlabs-convai [role="button"]::after,
+elevenlabs-convai .widget-button::after,
+elevenlabs-convai .call-button::after {
   content: "TomaBot" !important;
-  position: absolute !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  z-index: 1000 !important;
-  background: transparent !important;
   color: white !important;
   font-weight: bold !important;
+  font-size: 14px !important;
   pointer-events: none !important;
 }
 
@@ -93,6 +88,51 @@ elevenlabs-convai {
   bottom: 24px !important;
   right: 24px !important;
   z-index: 9999 !important;
+}
+
+/* Hide avatar from the initial button - it will show in the chat interface */
+elevenlabs-convai button::before,
+elevenlabs-convai [role="button"]::before,
+elevenlabs-convai .widget-button::before,
+elevenlabs-convai .call-button::before {
+  content: "" !important;
+  display: none !important;
+}
+
+/* Style the large avatar in the chat interface (when opened) */
+elevenlabs-convai .chat-interface .avatar,
+elevenlabs-convai .conversation .avatar,
+elevenlabs-convai .chat-container .avatar,
+elevenlabs-convai [class*="chat"] .avatar,
+elevenlabs-convai [class*="conversation"] .avatar,
+elevenlabs-convai [class*="interface"] .avatar,
+elevenlabs-convai .large-avatar,
+elevenlabs-convai .main-avatar {
+  width: 120px !important;
+  height: 120px !important;
+  border-radius: 50% !important;
+  background-image: url("/tomabot-avatar.png") !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  border: 3px solid #06b6d4 !important;
+  box-shadow: 0 4px 12px rgba(6,182,212,0.3) !important;
+  display: block !important;
+  margin: 0 auto !important;
+  position: relative !important;
+}
+
+/* Target any large circular area in the chat interface */
+elevenlabs-convai [class*="circle"],
+elevenlabs-convai [class*="avatar-area"],
+elevenlabs-convai [class*="profile-area"] {
+  background-image: url("/tomabot-avatar.png") !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  border-radius: 50% !important;
+  border: 3px solid #06b6d4 !important;
+  box-shadow: 0 4px 12px rgba(6,182,212,0.3) !important;
 }
 
 /* Additional targeting for text replacement */

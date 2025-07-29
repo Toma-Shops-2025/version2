@@ -120,53 +120,147 @@ const App = () => {
         // Wait for widget to load and then customize text
         setTimeout(() => {
           customizeWidgetText();
-          createCustomAvatarOverlay();
+          setupChatInterfaceObserver();
         }, 1000);
       }
     }
     
-    function createCustomAvatarOverlay() {
-      // Remove any existing overlay
-      const existingOverlay = document.getElementById('tomabot-avatar-overlay');
-      if (existingOverlay) {
-        existingOverlay.remove();
-      }
-      
-      // Create overlay avatar
-      const overlay = document.createElement('div');
-      overlay.id = 'tomabot-avatar-overlay';
-      overlay.style.cssText = `
-        position: fixed;
-        bottom: 24px;
-        right: 24px;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background-image: url('/tomabot-avatar.png');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        border: 2px solid #06b6d4;
-        box-shadow: 0 2px 8px rgba(6,182,212,0.3);
-        z-index: 10001;
-        cursor: pointer;
-        pointer-events: auto;
-      `;
-      
-      // Add click handler
-      overlay.addEventListener('click', () => {
-        const widget = document.getElementById('elevenlabs-convai-widget');
-        if (widget) {
-          const clickEvent = new MouseEvent('click', {
-            view: window,
-            bubbles: true,
-            cancelable: true
-          });
-          widget.dispatchEvent(clickEvent);
-        }
+    function setupChatInterfaceObserver() {
+      // Create a MutationObserver to watch for when the chat interface opens
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.type === 'childList') {
+            mutation.addedNodes.forEach((node) => {
+              if (node.nodeType === Node.ELEMENT_NODE) {
+                const element = node as Element;
+                
+                // Check if this is the chat interface opening
+                if (element.classList.contains('chat-interface') || 
+                    element.classList.contains('conversation') ||
+                    element.classList.contains('chat-container') ||
+                    element.querySelector('.chat-interface') ||
+                    element.querySelector('.conversation') ||
+                    element.querySelector('.chat-container')) {
+                  
+                  // Wait a bit for the interface to fully render
+                  setTimeout(() => {
+                    applyAvatarToChatInterface();
+                  }, 500);
+                }
+              }
+            });
+          }
+          
+          // Also watch for attribute changes that might indicate the interface is opening
+          if (mutation.type === 'attributes') {
+            const target = mutation.target as Element;
+            if (target.classList.contains('open') || 
+                target.classList.contains('active') ||
+                target.classList.contains('visible') ||
+                target.style.display === 'block' ||
+                target.style.visibility === 'visible') {
+              setTimeout(() => {
+                applyAvatarToChatInterface();
+              }, 500);
+            }
+          }
+        });
       });
       
-      document.body.appendChild(overlay);
+      // Start observing the widget container
+      const widget = document.getElementById('elevenlabs-convai-widget');
+      if (widget) {
+        observer.observe(widget, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ['class', 'style']
+        });
+      }
+      
+      // Also set up a periodic check as a fallback
+      setInterval(() => {
+        const widget = document.getElementById('elevenlabs-convai-widget');
+        if (widget) {
+          const chatInterface = widget.querySelector('.chat-interface, .conversation, .chat-container, [class*="chat"], [class*="conversation"]');
+          if (chatInterface) {
+            applyAvatarToChatInterface();
+          }
+        }
+      }, 2000);
+    }
+    
+    function applyAvatarToChatInterface() {
+      // Find the large circular area in the chat interface
+      const widget = document.getElementById('elevenlabs-convai-widget');
+      if (!widget) return;
+      
+      // Look for various possible selectors for the avatar area
+      const avatarSelectors = [
+        '.chat-interface .avatar',
+        '.conversation .avatar', 
+        '.chat-container .avatar',
+        '[class*="chat"] .avatar',
+        '[class*="conversation"] .avatar',
+        '[class*="interface"] .avatar',
+        '.large-avatar',
+        '.main-avatar',
+        '[class*="circle"]',
+        '[class*="avatar-area"]',
+        '[class*="profile-area"]'
+      ];
+      
+      avatarSelectors.forEach(selector => {
+        const avatarElements = widget.querySelectorAll(selector);
+        avatarElements.forEach(avatar => {
+          if (avatar instanceof HTMLElement) {
+            avatar.style.cssText = `
+              width: 120px !important;
+              height: 120px !important;
+              border-radius: 50% !important;
+              background-image: url('/tomabot-avatar.png') !important;
+              background-size: cover !important;
+              background-position: center !important;
+              background-repeat: no-repeat !important;
+              border: 3px solid #06b6d4 !important;
+              box-shadow: 0 4px 12px rgba(6,182,212,0.3) !important;
+              display: block !important;
+              margin: 0 auto !important;
+              position: relative !important;
+            `;
+          }
+        });
+      });
+      
+      // Also check for any large circular divs that might be the avatar area
+      const allDivs = widget.querySelectorAll('div');
+      allDivs.forEach(div => {
+        if (div instanceof HTMLElement) {
+          const style = window.getComputedStyle(div);
+          const width = parseInt(style.width);
+          const height = parseInt(style.height);
+          const borderRadius = style.borderRadius;
+          
+          // If it's a large circular area (likely the avatar placeholder)
+          if (width >= 80 && height >= 80 && 
+              (borderRadius === '50%' || borderRadius.includes('50%'))) {
+            div.style.cssText = `
+              width: 120px !important;
+              height: 120px !important;
+              border-radius: 50% !important;
+              background-image: url('/tomabot-avatar.png') !important;
+              background-size: cover !important;
+              background-position: center !important;
+              background-repeat: no-repeat !important;
+              border: 3px solid #06b6d4 !important;
+              box-shadow: 0 4px 12px rgba(6,182,212,0.3) !important;
+              display: block !important;
+              margin: 0 auto !important;
+              position: relative !important;
+            `;
+          }
+        }
+      });
     }
     
     function customizeWidgetText() {
