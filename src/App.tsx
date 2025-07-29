@@ -85,7 +85,7 @@ const App = () => {
       // Inject the widget element if not present
       if (!document.getElementById('elevenlabs-convai-widget')) {
         const widget = document.createElement('elevenlabs-convai');
-        widget.setAttribute('agent-id', 'agent_8601k16170epe0tr29btacdc5428');
+        widget.setAttribute('agent-id', 'agent_4701k1a2btwdegysfzxgjhts8wvg');
         widget.id = 'elevenlabs-convai-widget';
         widget.style.position = 'fixed';
         widget.style.bottom = '24px';
