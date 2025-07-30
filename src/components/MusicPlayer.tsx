@@ -27,6 +27,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
   const [isMuted, setIsMuted] = useState(false);
   const [showPlayer, setShowPlayer] = useState(true);
   const [currentTrack, setCurrentTrack] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const genres = [
@@ -92,8 +93,8 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
   }, [isPlaying, currentGenre, shouldPauseMusic]);
 
   const playMusic = async () => {
-    if (!audioRef.current || !currentGenre) {
-      console.log('🎵 Cannot play: no audio element or genre selected');
+    if (!audioRef.current || !currentGenre || isLoading) {
+      console.log('🎵 Cannot play: no audio element, genre selected, or currently loading');
       return;
     }
 
@@ -103,15 +104,15 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
       // Set volume before playing
       audioRef.current.volume = isMuted ? 0 : volume;
       
-      // Only play if not already playing
-      if (audioRef.current.paused) {
+      // Only play if not already playing and not loading
+      if (audioRef.current.paused && !isLoading) {
         await audioRef.current.play();
         setIsPlaying(true);
         setMusicPlaying(true);
         onAudioStateChange?.(true);
         console.log('🎵 Music started playing successfully');
       } else {
-        console.log('🎵 Audio is already playing');
+        console.log('🎵 Audio is already playing or loading');
       }
     } catch (error) {
       console.error('🎵 Audio playback failed:', error);
@@ -131,7 +132,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
     }
   };
 
-  const selectGenre = (genreId: string) => {
+  const selectGenre = async (genreId: string) => {
     console.log('🎵 Genre selected:', genreId);
     
     // If same genre is selected, just toggle play/pause
@@ -144,7 +145,8 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
       return;
     }
     
-    // Set loading state
+    // Set loading state to prevent multiple operations
+    setIsLoading(true);
     setIsPlaying(false);
     setMusicPlaying(false);
     
@@ -156,20 +158,40 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
       setCurrentTrack(randomTrack);
       
       if (audioRef.current) {
-        // Stop current audio without pause to prevent interruption
-        audioRef.current.src = '';
-        audioRef.current.load();
-        
-        // Set new source
-        audioRef.current.src = randomTrack.url;
-        audioRef.current.load();
-        console.log('🎵 Track loaded:', randomTrack.title);
-        
-        // Auto-play the new genre after a longer delay to ensure proper loading
-        setTimeout(() => {
-          playMusic();
-        }, 1000);
+        try {
+          // Pause current audio first
+          audioRef.current.pause();
+          
+          // Wait a bit before loading new audio
+          await new Promise(resolve => setTimeout(resolve, 100));
+          
+          // Set new source
+          audioRef.current.src = randomTrack.url;
+          audioRef.current.load();
+          console.log('🎵 Track loaded:', randomTrack.title);
+          
+          // Wait for audio to be ready
+          await new Promise((resolve, reject) => {
+            if (audioRef.current) {
+              audioRef.current.addEventListener('canplaythrough', resolve, { once: true });
+              audioRef.current.addEventListener('error', reject, { once: true });
+              // Timeout after 5 seconds
+              setTimeout(() => reject(new Error('Audio loading timeout')), 5000);
+            }
+          });
+          
+          // Auto-play the new genre
+          await playMusic();
+        } catch (error) {
+          console.error('🎵 Error loading audio:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setIsLoading(false);
       }
+    } else {
+      setIsLoading(false);
     }
   };
 
@@ -323,7 +345,12 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
 
           {/* Status */}
           <div className="mt-3 text-xs text-gray-500">
-            {currentGenre ? (
+            {isLoading ? (
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></div>
+                <span>Loading • {currentGenre.toUpperCase()}</span>
+              </div>
+            ) : currentGenre ? (
               <div className="flex items-center space-x-2">
                 <div className={`w-2 h-2 rounded-full ${isPlaying ? 'bg-green-500' : 'bg-gray-400'}`}></div>
                 <span>
