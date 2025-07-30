@@ -12,7 +12,7 @@ import {
   X
 } from 'lucide-react';
 import { useAppContext } from '@/contexts/AppContext';
-import { useAudioContext } from '@/hooks/use-audio-context';
+import { useAudioContext } from '@/hooks/use-audio-context.tsx';
 
 interface MusicPlayerProps {
   onAudioStateChange?: (isPlaying: boolean) => void;

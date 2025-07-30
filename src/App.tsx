@@ -44,7 +44,7 @@ import SuggestionBox from './pages/SuggestionBox';
 import React, { useEffect } from 'react';
 import './tomabot-widget.css';
 import MusicPlayer from './components/MusicPlayer';
-import { AudioProvider } from './hooks/use-audio-context';
+import { AudioProvider } from './hooks/use-audio-context.tsx';
 
 const queryClient = new QueryClient();
 
