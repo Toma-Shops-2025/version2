@@ -41,29 +41,29 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
   // Sample music tracks for each genre (in production, you'd use a real music API)
   const sampleTracks = {
     country: [
-      { title: 'Country Roads', artist: 'Country Vibes', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
-      { title: 'Southern Nights', artist: 'Country Vibes', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' }
+      { title: 'Country Roads', artist: 'Country Vibes', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' },
+      { title: 'Southern Nights', artist: 'Country Vibes', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' }
     ],
     rock: [
-      { title: 'Rock Anthem', artist: 'Rock Vibes', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
-      { title: 'Electric Dreams', artist: 'Rock Vibes', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' }
+      { title: 'Rock Anthem', artist: 'Rock Vibes', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' },
+      { title: 'Electric Dreams', artist: 'Rock Vibes', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' }
     ],
     classicrock: [
-      { title: 'Classic Rock Revival', artist: 'Classic Rock Vibes', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
-      { title: 'Timeless Rock', artist: 'Classic Rock Vibes', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
-      { title: 'Golden Age Rock', artist: 'Classic Rock Vibes', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' }
+      { title: 'Classic Rock Revival', artist: 'Classic Rock Vibes', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' },
+      { title: 'Timeless Rock', artist: 'Classic Rock Vibes', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' },
+      { title: 'Golden Age Rock', artist: 'Classic Rock Vibes', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' }
     ],
     hiphop: [
-      { title: 'Urban Flow', artist: 'Hip Hop Vibes', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
-      { title: 'Street Beats', artist: 'Hip Hop Vibes', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' }
+      { title: 'Urban Flow', artist: 'Hip Hop Vibes', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' },
+      { title: 'Street Beats', artist: 'Hip Hop Vibes', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' }
     ],
     rnb: [
-      { title: 'Smooth R&B', artist: 'R&B Vibes', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
-      { title: 'Soulful Nights', artist: 'R&B Vibes', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' }
+      { title: 'Smooth R&B', artist: 'R&B Vibes', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' },
+      { title: 'Soulful Nights', artist: 'R&B Vibes', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' }
     ],
     countryrap: [
-      { title: 'Country Rap Fusion', artist: 'Country Rap Vibes', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
-      { title: 'Southern Hip Hop', artist: 'Country Rap Vibes', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' }
+      { title: 'Country Rap Fusion', artist: 'Country Rap Vibes', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' },
+      { title: 'Southern Hip Hop', artist: 'Country Rap Vibes', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' }
     ]
   };
 
@@ -100,8 +100,14 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
     try {
       console.log('🎵 Attempting to play music:', currentGenre);
       
+      // Ensure audio is paused before attempting to play
+      audioRef.current.pause();
+      
       // Set volume before playing
       audioRef.current.volume = isMuted ? 0 : volume;
+      
+      // Add a small delay to prevent interruption
+      await new Promise(resolve => setTimeout(resolve, 100));
       
       await audioRef.current.play();
       setIsPlaying(true);
@@ -139,6 +145,11 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
       return;
     }
     
+    // Pause current audio before switching
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+    
     setCurrentGenre(genreId);
     
     const tracks = sampleTracks[genreId as keyof typeof sampleTracks];
@@ -151,10 +162,10 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
         audioRef.current.load();
         console.log('🎵 Track loaded:', randomTrack.title);
         
-        // Auto-play the new genre after a short delay
+        // Auto-play the new genre after a longer delay to ensure proper loading
         setTimeout(() => {
           playMusic();
-        }, 200);
+        }, 500);
       }
     }
   };
