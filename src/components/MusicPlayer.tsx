@@ -100,20 +100,19 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
     try {
       console.log('🎵 Attempting to play music:', currentGenre);
       
-      // Ensure audio is paused before attempting to play
-      audioRef.current.pause();
-      
       // Set volume before playing
       audioRef.current.volume = isMuted ? 0 : volume;
       
-      // Add a small delay to prevent interruption
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      await audioRef.current.play();
-      setIsPlaying(true);
-      setMusicPlaying(true);
-      onAudioStateChange?.(true);
-      console.log('🎵 Music started playing successfully');
+      // Only play if not already playing
+      if (audioRef.current.paused) {
+        await audioRef.current.play();
+        setIsPlaying(true);
+        setMusicPlaying(true);
+        onAudioStateChange?.(true);
+        console.log('🎵 Music started playing successfully');
+      } else {
+        console.log('🎵 Audio is already playing');
+      }
     } catch (error) {
       console.error('🎵 Audio playback failed:', error);
       setIsPlaying(false);
@@ -145,10 +144,9 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
       return;
     }
     
-    // Pause current audio before switching
-    if (audioRef.current) {
-      audioRef.current.pause();
-    }
+    // Set loading state
+    setIsPlaying(false);
+    setMusicPlaying(false);
     
     setCurrentGenre(genreId);
     
@@ -158,6 +156,11 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
       setCurrentTrack(randomTrack);
       
       if (audioRef.current) {
+        // Stop current audio without pause to prevent interruption
+        audioRef.current.src = '';
+        audioRef.current.load();
+        
+        // Set new source
         audioRef.current.src = randomTrack.url;
         audioRef.current.load();
         console.log('🎵 Track loaded:', randomTrack.title);
@@ -165,7 +168,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
         // Auto-play the new genre after a longer delay to ensure proper loading
         setTimeout(() => {
           playMusic();
-        }, 500);
+        }, 1000);
       }
     }
   };
