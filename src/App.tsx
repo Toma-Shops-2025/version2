@@ -218,7 +218,7 @@ const App = () => {
               width: 120px !important;
               height: 120px !important;
               border-radius: 50% !important;
-              background-image: url('/tomabot-avatar.png') !important;
+              background-image: url('./tomabot-avatar.png') !important;
               background-size: cover !important;
               background-position: center !important;
               background-repeat: no-repeat !important;
@@ -248,7 +248,7 @@ const App = () => {
               width: 120px !important;
               height: 120px !important;
               border-radius: 50% !important;
-              background-image: url('/tomabot-avatar.png') !important;
+              background-image: url('./tomabot-avatar.png') !important;
               background-size: cover !important;
               background-position: center !important;
               background-repeat: no-repeat !important;

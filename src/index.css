@@ -179,7 +179,7 @@ elevenlabs-convai .main-avatar,
 elevenlabs-convai [class*="circle"],
 elevenlabs-convai [class*="avatar-area"],
 elevenlabs-convai [class*="profile-area"] {
-  background-image: url("/tomabot-avatar.png") !important;
+  background-image: url("./tomabot-avatar.png") !important;
   background-size: cover !important;
   background-position: center !important;
   background-repeat: no-repeat !important;

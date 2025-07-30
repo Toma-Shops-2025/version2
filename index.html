@@ -23,18 +23,26 @@
     <meta name="twitter:image" content="/og.jpg" />
     <meta name="monetag" content="45aad9af83e24ad4f1600efda4b35f3b">
     <script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
+    <script type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
     <script type="text/javascript">
         // Alternative AdCash loading method
         window.addEventListener('load', function() {
             setTimeout(function() {
                 if (typeof window.aclib !== 'undefined') {
                     console.log('✅ AdCash library loaded via window.aclib');
+                    console.log('Window aclib methods:', Object.keys(window.aclib));
                     // Try alternative method names
                     if (typeof window.aclib.runBanner === 'function') {
                         console.log('✅ runBanner method found');
                     } else if (typeof window.aclib.banner === 'function') {
                         console.log('✅ banner method found (alternative)');
                         window.aclib.banner({zoneId: '10231174'});
+                    } else if (typeof window.aclib.showBanner === 'function') {
+                        console.log('✅ showBanner method found');
+                        window.aclib.showBanner({zoneId: '10231174'});
+                    } else if (typeof window.aclib.init === 'function') {
+                        console.log('✅ init method found, trying to initialize...');
+                        window.aclib.init();
                     }
                 } else {
                     console.log('❌ AdCash library not found on window object');
@@ -110,6 +118,20 @@
         window.addEventListener('load', function() {
             setTimeout(initAds, 1000);
         });
+        
+        // Alternative: Try direct AdCash implementation
+        setTimeout(function() {
+            console.log('Trying direct AdCash implementation...');
+            if (typeof window.AdCash !== 'undefined') {
+                console.log('✅ AdCash global object found');
+                window.AdCash.init();
+            } else if (typeof window.adcash !== 'undefined') {
+                console.log('✅ adcash global object found');
+                window.adcash.init();
+            } else {
+                console.log('❌ No AdCash global objects found');
+            }
+        }, 3000);
     </script>
   </head>
   <script src="https://fpyf8.com/88/tag.min.js" data-zone="160083" async data-cfasync="false"></script>
