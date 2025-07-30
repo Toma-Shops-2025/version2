@@ -223,10 +223,11 @@ const HomePage: React.FC = () => {
             </div>
           </div>
           
-          {/* Add back My Listings, My Orders, and Notifications in turquoise */}
+          {/* Add back My Listings, My Orders, Notifications, and My Profile in turquoise */}
           <div className="flex items-center space-x-6 mt-4">
             <Link to="/my-listings" className="text-cyan-400 hover:text-cyan-300 font-medium">My Listings</Link>
             <Link to="/my-orders" className="text-cyan-400 hover:text-cyan-300 font-medium">My Orders</Link>
+            <Link to="/my-profile" className="text-cyan-400 hover:text-cyan-300 font-medium">My Profile</Link>
             <Link to="/notifications" className="text-cyan-400 hover:text-cyan-300 font-medium relative">
               Notifications
               {user && unreadNotificationsCount > 0 && (

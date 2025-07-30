@@ -22,6 +22,7 @@ import OffersPage from './pages/OffersPage';
 import SellPage from './components/SellPage';
 import Account from './pages/Account';
 import Profile from './pages/Profile';
+import MyProfile from './pages/MyProfile';
 import AuthPage from './components/AuthPage';
 import { AppProvider } from './contexts/AppContext';
 import Rentals from './pages/Rentals';
@@ -326,10 +327,10 @@ const App = () => {
         // });
         
         // Ensure widget stays in correct position
-        widget.style.position = 'fixed';
-        widget.style.bottom = '24px';
-        widget.style.right = '24px';
-        widget.style.zIndex = '9999';
+        (widget as HTMLElement).style.position = 'fixed';
+        (widget as HTMLElement).style.bottom = '24px';
+        (widget as HTMLElement).style.right = '24px';
+        (widget as HTMLElement).style.zIndex = '9999';
       }
       
       // Run again after a delay to catch any dynamically loaded content
@@ -381,6 +382,7 @@ const App = () => {
                 <Route path="/messages" element={<MessagesPage onBack={() => window.history.back()} />} />
                         <Route path="/account" element={<Account />} />
         <Route path="/profile/:id" element={<Profile />} />
+        <Route path="/my-profile" element={<MyProfile />} />
         <Route path="/login" element={<AuthPage />} />
                 <Route path="/rentals" element={<Rentals />} />
                 <Route path="/jobs" element={<Jobs />} />
