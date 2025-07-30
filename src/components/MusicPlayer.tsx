@@ -100,13 +100,6 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
     try {
       console.log('🎵 Attempting to play music:', currentGenre);
       
-      // Ensure audio is loaded
-      if (!audioRef.current.src) {
-        console.log('🎵 No audio source, selecting genre first');
-        selectGenre(currentGenre);
-        return;
-      }
-
       // Set volume before playing
       audioRef.current.volume = isMuted ? 0 : volume;
       
@@ -135,6 +128,17 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
 
   const selectGenre = (genreId: string) => {
     console.log('🎵 Genre selected:', genreId);
+    
+    // If same genre is selected, just toggle play/pause
+    if (currentGenre === genreId) {
+      if (isPlaying) {
+        pauseMusic();
+      } else {
+        playMusic();
+      }
+      return;
+    }
+    
     setCurrentGenre(genreId);
     
     const tracks = sampleTracks[genreId as keyof typeof sampleTracks];
@@ -147,10 +151,10 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
         audioRef.current.load();
         console.log('🎵 Track loaded:', randomTrack.title);
         
-        // Auto-play the new genre
+        // Auto-play the new genre after a short delay
         setTimeout(() => {
           playMusic();
-        }, 100);
+        }, 200);
       }
     }
   };
