@@ -1,6 +1,6 @@
 /*
-  Cross-Origin-Embedder-Policy:
-  Cross-Origin-Opener-Policy:
+  Cross-Origin-Embedder-Policy: unsafe-none
+  Cross-Origin-Opener-Policy: same-origin
 
 /*
   Access-Control-Allow-Origin: *

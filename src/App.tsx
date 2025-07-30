@@ -105,15 +105,15 @@ const App = () => {
         widget.style.setProperty('--convai-widget-button-text', 'TomaBot');
         widget.style.setProperty('--convai-widget-button-hover-text', 'TomaBot');
         
-        // Remove avatar test since we're using ElevenLabs avatar
-        // const testImage = new Image();
-        // testImage.onload = () => {
-        //   console.log('✅ TomaBot avatar loaded successfully');
-        // };
-        // testImage.onerror = () => {
-        //   console.error('❌ TomaBot avatar failed to load. Check if /tomabot-avatar.png exists in public folder');
-        // };
-        // testImage.src = '/tomabot-avatar.png';
+        // Test avatar loading
+        const testImage = new Image();
+        testImage.onload = () => {
+          console.log('✅ TomaBot avatar loaded successfully');
+        };
+        testImage.onerror = () => {
+          console.error('❌ TomaBot avatar failed to load. Check if /tomabot-avatar.png exists in public folder');
+        };
+        testImage.src = '/tomabot-avatar.png';
         
         document.body.appendChild(widget);
         

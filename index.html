@@ -24,6 +24,25 @@
     <meta name="monetag" content="45aad9af83e24ad4f1600efda4b35f3b">
     <script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
     <script type="text/javascript">
+        // Alternative AdCash loading method
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                if (typeof window.aclib !== 'undefined') {
+                    console.log('✅ AdCash library loaded via window.aclib');
+                    // Try alternative method names
+                    if (typeof window.aclib.runBanner === 'function') {
+                        console.log('✅ runBanner method found');
+                    } else if (typeof window.aclib.banner === 'function') {
+                        console.log('✅ banner method found (alternative)');
+                        window.aclib.banner({zoneId: '10231174'});
+                    }
+                } else {
+                    console.log('❌ AdCash library not found on window object');
+                }
+            }, 2000);
+        });
+    </script>
+    <script type="text/javascript">
         // Debug: Check if aclib loads
         window.addEventListener('load', function() {
             console.log('Page loaded, checking aclib...');
@@ -38,36 +57,48 @@
         function initAds() {
             if (typeof aclib !== 'undefined') {
                 console.log('Initializing AdCash ads...');
+                console.log('aclib object:', aclib);
+                console.log('Available methods:', Object.keys(aclib));
                 
-                // Initialize banner ads
-                try {
-                    aclib.runBanner({
-                        zoneId: '10231174',
-                    });
-                    console.log('✅ Banner ads initialized');
-                } catch (e) {
-                    console.error('❌ Banner ads failed:', e);
+                // Check if methods exist before calling them
+                if (typeof aclib.runBanner === 'function') {
+                    try {
+                        aclib.runBanner({
+                            zoneId: '10231174',
+                        });
+                        console.log('✅ Banner ads initialized');
+                    } catch (e) {
+                        console.error('❌ Banner ads failed:', e);
+                    }
+                } else {
+                    console.error('❌ aclib.runBanner is not available');
                 }
                 
-                // Initialize in-page push ads
-                try {
-                    aclib.runInPagePush({
-                        zoneId: '10231190',
-                        maxAds: 2,
-                    });
-                    console.log('✅ In-page push ads initialized');
-                } catch (e) {
-                    console.error('❌ In-page push ads failed:', e);
+                if (typeof aclib.runInPagePush === 'function') {
+                    try {
+                        aclib.runInPagePush({
+                            zoneId: '10231190',
+                            maxAds: 2,
+                        });
+                        console.log('✅ In-page push ads initialized');
+                    } catch (e) {
+                        console.error('❌ In-page push ads failed:', e);
+                    }
+                } else {
+                    console.error('❌ aclib.runInPagePush is not available');
                 }
                 
-                // Initialize pop ads
-                try {
-                    aclib.runPop({
-                        zoneId: '10231198',
-                    });
-                    console.log('✅ Pop ads initialized');
-                } catch (e) {
-                    console.error('❌ Pop ads failed:', e);
+                if (typeof aclib.runPop === 'function') {
+                    try {
+                        aclib.runPop({
+                            zoneId: '10231198',
+                        });
+                        console.log('✅ Pop ads initialized');
+                    } catch (e) {
+                        console.error('❌ Pop ads failed:', e);
+                    }
+                } else {
+                    console.error('❌ aclib.runPop is not available');
                 }
             } else {
                 console.log('aclib not ready, retrying in 1 second...');
