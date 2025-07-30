@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase';
 import { useAppContext } from '@/contexts/AppContext';
 
 const Notifications = () => {
+  const navigate = useNavigate();
   const { user } = useAppContext();
   const [notifications, setNotifications] = useState([]);
 
@@ -22,7 +25,8 @@ const Notifications = () => {
   }, [user]);
 
   return (
-    <div>
+    <div className="container mx-auto py-8">
+      <Button variant="secondary" className="mb-4" onClick={() => navigate(-1)}>Back</Button>
       <h2>Notifications</h2>
       {notifications.length === 0 && <div>No notifications.</div>}
       {notifications.map(n => (

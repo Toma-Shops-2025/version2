@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase';
 import { useAppContext } from '@/contexts/AppContext';
 
 const SellerOrders = () => {
+  const navigate = useNavigate();
   const { user } = useAppContext();
   const [orders, setOrders] = useState([]);
 
@@ -31,7 +34,8 @@ const SellerOrders = () => {
   };
 
   return (
-    <div>
+    <div className="container mx-auto py-8">
+      <Button variant="secondary" className="mb-4" onClick={() => navigate(-1)}>Back</Button>
       <h2>Pending Digital Orders</h2>
       {orders.length === 0 && <div>No pending orders.</div>}
       {orders.map(order => (

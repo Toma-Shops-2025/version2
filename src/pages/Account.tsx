@@ -19,6 +19,7 @@ const Account: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center py-8 bg-black text-white">
+      <Button variant="secondary" className="mb-4 self-start ml-4" onClick={() => navigate(-1)}>Back</Button>
       <div className="bg-gray-900 rounded-lg shadow p-6 w-full max-w-xl flex flex-col items-center mb-8">
         <h1 className="text-2xl font-bold mb-1">Account</h1>
         <p className="text-gray-400 mb-2">{user.email}</p>

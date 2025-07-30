@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase';
 
 function shuffleArray(array: any[]) {
@@ -11,6 +13,7 @@ function shuffleArray(array: any[]) {
 }
 
 const Browse = () => {
+  const navigate = useNavigate();
   const [listings, setListings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -38,6 +41,7 @@ const Browse = () => {
 
   return (
     <div className="container mx-auto py-8">
+      <Button variant="secondary" className="mb-4" onClick={() => navigate(-1)}>Back</Button>
       <h1 className="text-3xl font-bold mb-4">Browse All Listings</h1>
       <div className="mt-8">
         {loading ? (

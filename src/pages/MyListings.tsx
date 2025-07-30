@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '@/contexts/AppContext';
 import { supabase } from '@/lib/supabase';
 import ListingsGrid from '@/components/ListingsGrid';
 import { Button } from '@/components/ui/button';
 
 const MyListings: React.FC = () => {
+  const navigate = useNavigate();
   const { user } = useAppContext();
   const [listings, setListings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -27,6 +29,7 @@ const MyListings: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white p-6">
+      <Button variant="secondary" className="mb-4" onClick={() => navigate(-1)}>Back</Button>
       <h1 className="text-2xl font-bold mb-6">My Listings</h1>
       {loading ? (
         <div>Loading...</div>

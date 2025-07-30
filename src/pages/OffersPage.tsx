@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useAppContext } from '@/contexts/AppContext';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 
 const OffersPage: React.FC = () => {
+  const navigate = useNavigate();
   const { user, loading } = useAppContext();
   const [offers, setOffers] = useState<any[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
@@ -56,6 +58,7 @@ const OffersPage: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col items-center py-8 bg-black text-white">
       <div className="w-full max-w-3xl">
+        <Button variant="secondary" className="mb-4 self-start" onClick={() => navigate(-1)}>Back</Button>
         <h2 className="text-2xl font-bold mb-6">Offers Received</h2>
         {offersError ? (
           <div className="text-center text-red-500 py-8">{offersError}</div>
