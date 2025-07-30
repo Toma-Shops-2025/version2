@@ -5,8 +5,8 @@
 ### App Configuration
 - [x] App ID: `com.tomashops.videoapp` (consistent across files)
 - [x] App Name: "TomaShops Video1stMarketplace"
-- [x] Version Code: 8
-- [x] Version Name: "1.0.1"
+- [x] Version Code: 8 (Updated)
+- [x] Version Name: "1.0" (Updated)
 - [x] Target SDK: 35 (Android 14)
 - [x] Min SDK: 23 (Android 6.0)
 
@@ -48,6 +48,13 @@
 
 ### Generate Release Build
 ```bash
+# Step 1: Create keystore (if not already done)
+create-keystore.bat
+
+# Step 2: Set up environment variables
+# Copy .env.example to .env and update with your keystore details
+
+# Step 3: Build production app
 # On Windows:
 build-production.bat
 
