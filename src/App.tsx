@@ -43,6 +43,8 @@ import DeleteAccountPage from './pages/DeleteAccount';
 import SuggestionBox from './pages/SuggestionBox';
 import React, { useEffect } from 'react';
 import './tomabot-widget.css';
+import MusicPlayer from './components/MusicPlayer';
+import { AudioProvider } from './hooks/use-audio-context';
 
 const queryClient = new QueryClient();
 
@@ -357,53 +359,56 @@ const App = () => {
 
   return (
     <AppProvider>
-      <ThemeProvider defaultTheme="light">
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/how-it-works" element={<HowItWorks />} />
-                <Route path="/why-tomashops" element={<WhyTomaShops />} />
-                <Route path="/safety" element={<Safety />} />
-                <Route path="/shipping" element={<Shipping />} />
-                <Route path="/privacy" element={<Privacy />} />
-                <Route path="/terms" element={<Terms />} />
-                <Route path="/faq" element={<Faq />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/categories" element={<Categories />} />
-                <Route path="/favorites" element={<Favorites />} />
-                <Route path="/notifications" element={<Notifications />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/offers" element={<OffersPage />} />
-                <Route path="/sell" element={<SellPage onBack={() => window.history.back()} />} />
-                <Route path="/messages" element={<MessagesPage onBack={() => window.history.back()} />} />
-                        <Route path="/account" element={<Account />} />
-        <Route path="/profile/:id" element={<Profile />} />
-        <Route path="/my-profile" element={<MyProfile />} />
-        <Route path="/login" element={<AuthPage />} />
-                <Route path="/rentals" element={<Rentals />} />
-                <Route path="/jobs" element={<Jobs />} />
-                <Route path="/jobs/:id" element={<JobDetail />} />
-                <Route path="/browse" element={<Browse />} />
-                <Route path="/digital/:id" element={<DigitalProductDetail />} />
-                <Route path="/digital" element={<Digital />} />
-                <Route path="/ads" element={<Ads />} />
-                <Route path="/my-listings" element={<MyListings />} />
-                <Route path="/my-orders" element={<MyOrders />} />
-                <Route path="/seller-orders" element={<SellerOrders />} />
-                <Route path="/rentals/:id" element={<RentalDetail />} />
-                <Route path="/ads/:id" element={<AdDetail />} />
-                <Route path="/delete-account" element={<DeleteAccountPage onBack={() => window.history.back()} />} />
-                <Route path="/suggestion-box" element={<SuggestionBox />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </TooltipProvider>
-        </QueryClientProvider>
-      </ThemeProvider>
+      <AudioProvider>
+        <ThemeProvider defaultTheme="light">
+          <QueryClientProvider client={queryClient}>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/how-it-works" element={<HowItWorks />} />
+                  <Route path="/why-tomashops" element={<WhyTomaShops />} />
+                  <Route path="/safety" element={<Safety />} />
+                  <Route path="/shipping" element={<Shipping />} />
+                  <Route path="/privacy" element={<Privacy />} />
+                  <Route path="/terms" element={<Terms />} />
+                  <Route path="/faq" element={<Faq />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/categories" element={<Categories />} />
+                  <Route path="/favorites" element={<Favorites />} />
+                  <Route path="/notifications" element={<Notifications />} />
+                  <Route path="/cart" element={<Cart />} />
+                  <Route path="/offers" element={<OffersPage />} />
+                  <Route path="/sell" element={<SellPage onBack={() => window.history.back()} />} />
+                  <Route path="/messages" element={<MessagesPage onBack={() => window.history.back()} />} />
+                          <Route path="/account" element={<Account />} />
+          <Route path="/profile/:id" element={<Profile />} />
+          <Route path="/my-profile" element={<MyProfile />} />
+          <Route path="/login" element={<AuthPage />} />
+                  <Route path="/rentals" element={<Rentals />} />
+                  <Route path="/jobs" element={<Jobs />} />
+                  <Route path="/jobs/:id" element={<JobDetail />} />
+                  <Route path="/browse" element={<Browse />} />
+                  <Route path="/digital/:id" element={<DigitalProductDetail />} />
+                  <Route path="/digital" element={<Digital />} />
+                  <Route path="/ads" element={<Ads />} />
+                  <Route path="/my-listings" element={<MyListings />} />
+                  <Route path="/my-orders" element={<MyOrders />} />
+                  <Route path="/seller-orders" element={<SellerOrders />} />
+                  <Route path="/rentals/:id" element={<RentalDetail />} />
+                  <Route path="/ads/:id" element={<AdDetail />} />
+                  <Route path="/delete-account" element={<DeleteAccountPage onBack={() => window.history.back()} />} />
+                  <Route path="/suggestion-box" element={<SuggestionBox />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+                <MusicPlayer />
+              </BrowserRouter>
+            </TooltipProvider>
+          </QueryClientProvider>
+        </ThemeProvider>
+      </AudioProvider>
     </AppProvider>
   );
 };
