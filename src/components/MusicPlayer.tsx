@@ -31,6 +31,8 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const oscillatorRef = useRef<OscillatorNode | null>(null);
+  const gainNodeRef = useRef<GainNode | null>(null);
+  const [audioContextReady, setAudioContextReady] = useState(false);
 
   const genres = [
     { id: 'country', name: 'COUNTRY', color: 'bg-green-500' },
@@ -89,12 +91,31 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
         oscillatorRef.current.stop();
         oscillatorRef.current = null;
       }
+      if (gainNodeRef.current) {
+        gainNodeRef.current.disconnect();
+        gainNodeRef.current = null;
+      }
       if (audioContextRef.current) {
         audioContextRef.current.close();
         audioContextRef.current = null;
       }
     };
   }, [isPlaying, currentGenre, shouldPauseMusic]);
+
+  // Function to initialize audio context on user interaction
+  const initializeAudioContext = async () => {
+    if (!audioContextRef.current) {
+      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      console.log('🎵 Audio context initialized');
+    }
+    
+    if (audioContextRef.current.state === 'suspended') {
+      await audioContextRef.current.resume();
+      console.log('🎵 Audio context resumed');
+    }
+    
+    setAudioContextReady(true);
+  };
 
   const playMusic = async () => {
     if (!audioContextRef.current || !currentGenre || isLoading) {
@@ -104,6 +125,11 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
 
     try {
       console.log('🎵 Attempting to play music:', currentGenre);
+      
+      // Initialize audio context if not ready
+      if (!audioContextReady) {
+        await initializeAudioContext();
+      }
       
       // Resume audio context if suspended
       if (audioContextRef.current.state === 'suspended') {
@@ -115,8 +141,12 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
         oscillatorRef.current.stop();
         oscillatorRef.current = null;
       }
+      if (gainNodeRef.current) {
+        gainNodeRef.current.disconnect();
+        gainNodeRef.current = null;
+      }
       
-      // Create new oscillator
+      // Create new oscillator and gain node
       const oscillator = audioContextRef.current.createOscillator();
       const gainNode = audioContextRef.current.createGain();
       
@@ -131,9 +161,12 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
       // Set volume
       gainNode.gain.setValueAtTime(isMuted ? 0 : volume * 0.3, audioContextRef.current.currentTime);
       
+      // Store references
+      oscillatorRef.current = oscillator;
+      gainNodeRef.current = gainNode;
+      
       // Start oscillator
       oscillator.start();
-      oscillatorRef.current = oscillator;
       
       setIsPlaying(true);
       setMusicPlaying(true);
@@ -151,11 +184,15 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
     if (oscillatorRef.current) {
       oscillatorRef.current.stop();
       oscillatorRef.current = null;
-      setIsPlaying(false);
-      setMusicPlaying(false);
-      onAudioStateChange?.(false);
-      console.log('🎵 Music paused');
     }
+    if (gainNodeRef.current) {
+      gainNodeRef.current.disconnect();
+      gainNodeRef.current = null;
+    }
+    setIsPlaying(false);
+    setMusicPlaying(false);
+    onAudioStateChange?.(false);
+    console.log('🎵 Music paused');
   };
 
   const selectGenre = async (genreId: string) => {
@@ -166,6 +203,10 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
       if (isPlaying) {
         pauseMusic();
       } else {
+        // Initialize audio context on first user interaction
+        if (!audioContextReady) {
+          await initializeAudioContext();
+        }
         playMusic();
       }
       return;
@@ -184,6 +225,11 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
       setCurrentTrack(randomTrack);
       console.log('🎵 Track loaded:', randomTrack.title);
       
+      // Initialize audio context on first user interaction
+      if (!audioContextReady) {
+        await initializeAudioContext();
+      }
+      
       // Auto-play the new genre after a short delay
       setTimeout(() => {
         playMusic();
@@ -196,17 +242,15 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
 
   const toggleMute = () => {
     setIsMuted(!isMuted);
-    if (oscillatorRef.current && audioContextRef.current) {
-      const gainNode = audioContextRef.current.createGain();
-      gainNode.gain.setValueAtTime(isMuted ? 0 : volume * 0.3, audioContextRef.current.currentTime);
+    if (gainNodeRef.current && audioContextRef.current) {
+      gainNodeRef.current.gain.setValueAtTime(isMuted ? 0 : volume * 0.3, audioContextRef.current.currentTime);
     }
   };
 
   const handleVolumeChange = (newVolume: number) => {
     setVolume(newVolume);
-    if (oscillatorRef.current && audioContextRef.current && !isMuted) {
-      const gainNode = audioContextRef.current.createGain();
-      gainNode.gain.setValueAtTime(newVolume * 0.3, audioContextRef.current.currentTime);
+    if (gainNodeRef.current && audioContextRef.current && !isMuted) {
+      gainNodeRef.current.gain.setValueAtTime(newVolume * 0.3, audioContextRef.current.currentTime);
     }
   };
 
