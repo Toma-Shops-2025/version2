@@ -29,6 +29,8 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
   const [currentTrack, setCurrentTrack] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const oscillatorRef = useRef<OscillatorNode | null>(null);
 
   const genres = [
     { id: 'country', name: 'COUNTRY', color: 'bg-green-500' },
@@ -42,41 +44,39 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
   // Sample music tracks for each genre (in production, you'd use a real music API)
   const sampleTracks = {
     country: [
-      { title: 'Country Roads', artist: 'Country Vibes', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' },
-      { title: 'Southern Nights', artist: 'Country Vibes', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' }
+      { title: 'Country Roads', artist: 'Country Vibes', frequency: 220 },
+      { title: 'Southern Nights', artist: 'Country Vibes', frequency: 330 }
     ],
     rock: [
-      { title: 'Rock Anthem', artist: 'Rock Vibes', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' },
-      { title: 'Electric Dreams', artist: 'Rock Vibes', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' }
+      { title: 'Rock Anthem', artist: 'Rock Vibes', frequency: 440 },
+      { title: 'Electric Dreams', artist: 'Rock Vibes', frequency: 550 }
     ],
     classicrock: [
-      { title: 'Classic Rock Revival', artist: 'Classic Rock Vibes', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' },
-      { title: 'Timeless Rock', artist: 'Classic Rock Vibes', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' },
-      { title: 'Golden Age Rock', artist: 'Classic Rock Vibes', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' }
+      { title: 'Classic Rock Revival', artist: 'Classic Rock Vibes', frequency: 660 },
+      { title: 'Timeless Rock', artist: 'Classic Rock Vibes', frequency: 770 },
+      { title: 'Golden Age Rock', artist: 'Classic Rock Vibes', frequency: 880 }
     ],
     hiphop: [
-      { title: 'Urban Flow', artist: 'Hip Hop Vibes', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' },
-      { title: 'Street Beats', artist: 'Hip Hop Vibes', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' }
+      { title: 'Urban Flow', artist: 'Hip Hop Vibes', frequency: 110 },
+      { title: 'Street Beats', artist: 'Hip Hop Vibes', frequency: 165 }
     ],
     rnb: [
-      { title: 'Smooth R&B', artist: 'R&B Vibes', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' },
-      { title: 'Soulful Nights', artist: 'R&B Vibes', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' }
+      { title: 'Smooth R&B', artist: 'R&B Vibes', frequency: 196 },
+      { title: 'Soulful Nights', artist: 'R&B Vibes', frequency: 293 }
     ],
     countryrap: [
-      { title: 'Country Rap Fusion', artist: 'Country Rap Vibes', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' },
-      { title: 'Southern Hip Hop', artist: 'Country Rap Vibes', url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT' }
+      { title: 'Country Rap Fusion', artist: 'Country Rap Vibes', frequency: 147 },
+      { title: 'Southern Hip Hop', artist: 'Country Rap Vibes', frequency: 220 }
     ]
   };
 
   useEffect(() => {
     console.log('🎵 MusicPlayer component mounted');
     
-    // Initialize audio element
-    if (!audioRef.current) {
-      audioRef.current = new Audio();
-      audioRef.current.loop = true;
-      audioRef.current.volume = volume;
-      console.log('🎵 Audio element initialized');
+    // Initialize audio context
+    if (!audioContextRef.current) {
+      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      console.log('🎵 Audio context initialized');
     }
 
     // Auto-pause music when videos are playing
@@ -85,35 +85,60 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
     }
 
     return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
+      if (oscillatorRef.current) {
+        oscillatorRef.current.stop();
+        oscillatorRef.current = null;
+      }
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+        audioContextRef.current = null;
       }
     };
   }, [isPlaying, currentGenre, shouldPauseMusic]);
 
   const playMusic = async () => {
-    if (!audioRef.current || !currentGenre || isLoading) {
-      console.log('🎵 Cannot play: no audio element, genre selected, or currently loading');
+    if (!audioContextRef.current || !currentGenre || isLoading) {
+      console.log('🎵 Cannot play: no audio context, genre selected, or currently loading');
       return;
     }
 
     try {
       console.log('🎵 Attempting to play music:', currentGenre);
       
-      // Set volume before playing
-      audioRef.current.volume = isMuted ? 0 : volume;
-      
-      // Only play if not already playing and not loading
-      if (audioRef.current.paused && !isLoading) {
-        await audioRef.current.play();
-        setIsPlaying(true);
-        setMusicPlaying(true);
-        onAudioStateChange?.(true);
-        console.log('🎵 Music started playing successfully');
-      } else {
-        console.log('🎵 Audio is already playing or loading');
+      // Resume audio context if suspended
+      if (audioContextRef.current.state === 'suspended') {
+        await audioContextRef.current.resume();
       }
+      
+      // Stop any existing oscillator
+      if (oscillatorRef.current) {
+        oscillatorRef.current.stop();
+        oscillatorRef.current = null;
+      }
+      
+      // Create new oscillator
+      const oscillator = audioContextRef.current.createOscillator();
+      const gainNode = audioContextRef.current.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContextRef.current.destination);
+      
+      // Set frequency based on current track
+      if (currentTrack && currentTrack.frequency) {
+        oscillator.frequency.setValueAtTime(currentTrack.frequency, audioContextRef.current.currentTime);
+      }
+      
+      // Set volume
+      gainNode.gain.setValueAtTime(isMuted ? 0 : volume * 0.3, audioContextRef.current.currentTime);
+      
+      // Start oscillator
+      oscillator.start();
+      oscillatorRef.current = oscillator;
+      
+      setIsPlaying(true);
+      setMusicPlaying(true);
+      onAudioStateChange?.(true);
+      console.log('🎵 Music started playing successfully');
     } catch (error) {
       console.error('🎵 Audio playback failed:', error);
       setIsPlaying(false);
@@ -123,8 +148,9 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
   };
 
   const pauseMusic = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
+    if (oscillatorRef.current) {
+      oscillatorRef.current.stop();
+      oscillatorRef.current = null;
       setIsPlaying(false);
       setMusicPlaying(false);
       onAudioStateChange?.(false);
@@ -156,61 +182,31 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
     if (tracks && tracks.length > 0) {
       const randomTrack = tracks[Math.floor(Math.random() * tracks.length)];
       setCurrentTrack(randomTrack);
+      console.log('🎵 Track loaded:', randomTrack.title);
       
-      if (audioRef.current) {
-        try {
-          // Pause current audio first
-          audioRef.current.pause();
-          
-          // Wait a bit before loading new audio
-          await new Promise(resolve => setTimeout(resolve, 100));
-          
-          // Set new source
-          audioRef.current.src = randomTrack.url;
-          audioRef.current.load();
-          console.log('🎵 Track loaded:', randomTrack.title);
-          
-          // Wait for audio to be ready
-          await new Promise((resolve, reject) => {
-            if (audioRef.current) {
-              audioRef.current.addEventListener('canplaythrough', resolve, { once: true });
-              audioRef.current.addEventListener('error', reject, { once: true });
-              // Timeout after 5 seconds
-              setTimeout(() => reject(new Error('Audio loading timeout')), 5000);
-            }
-          });
-          
-          // Auto-play the new genre
-          await playMusic();
-        } catch (error) {
-          console.error('🎵 Error loading audio:', error);
-        } finally {
-          setIsLoading(false);
-        }
-      } else {
+      // Auto-play the new genre after a short delay
+      setTimeout(() => {
+        playMusic();
         setIsLoading(false);
-      }
+      }, 200);
     } else {
       setIsLoading(false);
     }
   };
 
   const toggleMute = () => {
-    if (audioRef.current) {
-      if (isMuted) {
-        audioRef.current.volume = volume;
-        setIsMuted(false);
-      } else {
-        audioRef.current.volume = 0;
-        setIsMuted(true);
-      }
+    setIsMuted(!isMuted);
+    if (oscillatorRef.current && audioContextRef.current) {
+      const gainNode = audioContextRef.current.createGain();
+      gainNode.gain.setValueAtTime(isMuted ? 0 : volume * 0.3, audioContextRef.current.currentTime);
     }
   };
 
   const handleVolumeChange = (newVolume: number) => {
     setVolume(newVolume);
-    if (audioRef.current && !isMuted) {
-      audioRef.current.volume = newVolume;
+    if (oscillatorRef.current && audioContextRef.current && !isMuted) {
+      const gainNode = audioContextRef.current.createGain();
+      gainNode.gain.setValueAtTime(newVolume * 0.3, audioContextRef.current.currentTime);
     }
   };
 
@@ -225,7 +221,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
       
       setCurrentTrack(nextTrack);
       if (audioRef.current) {
-        audioRef.current.src = nextTrack.url;
+        audioRef.current.src = `data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT`; // Placeholder for actual audio data
         if (isPlaying) {
           audioRef.current.play();
         }
