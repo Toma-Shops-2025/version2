@@ -28,6 +28,7 @@ import Rentals from './pages/Rentals';
 import Jobs from './pages/Jobs';
 import Browse from './pages/Browse';
 import DigitalDetail from './pages/DigitalDetail';
+import DigitalProductDetail from './pages/DigitalProductDetail';
 import Digital from './pages/Digital';
 import Ads from './pages/Ads';
 import MyListings from './pages/MyListings';
@@ -385,7 +386,7 @@ const App = () => {
                 <Route path="/jobs" element={<Jobs />} />
                 <Route path="/jobs/:id" element={<JobDetail />} />
                 <Route path="/browse" element={<Browse />} />
-                <Route path="/digital/:id" element={<DigitalDetail />} />
+                <Route path="/digital/:id" element={<DigitalProductDetail />} />
                 <Route path="/digital" element={<Digital />} />
                 <Route path="/ads" element={<Ads />} />
                 <Route path="/my-listings" element={<MyListings />} />

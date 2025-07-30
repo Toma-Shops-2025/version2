@@ -191,6 +191,61 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
     }
   };
 
+  const handleDigitalPurchase = async () => {
+    if (!user) return;
+    try {
+      // Check if purchase already exists
+      const { data: existingPurchase } = await supabase
+        .from('purchases')
+        .select('*')
+        .eq('listing_id', listing.id)
+        .eq('buyer_id', user.id)
+        .single();
+      
+      if (existingPurchase) {
+        alert('You have already requested access to this digital product.');
+        return;
+      }
+      
+      // Insert new purchase
+      const { error: insertError } = await supabase
+        .from('purchases')
+        .insert({
+          listing_id: listing.id,
+          buyer_id: user.id,
+          confirmed: false,
+          created_at: new Date().toISOString()
+        });
+        
+      if (insertError) {
+        console.error('Purchase insert error:', insertError);
+        alert(`Purchase failed: ${insertError.message}`);
+        return;
+      }
+      
+      // Notify the seller
+      if (listing.seller_id) {
+        try {
+          await supabase.from('notifications').insert({
+            user_id: listing.seller_id,
+            type: 'order_requested',
+            message: `You have a new digital order request for '${listing.title}'.`,
+            link: `/seller-orders`,
+            created_at: new Date().toISOString()
+          });
+        } catch (notificationErr) {
+          console.error('Failed to create notification:', notificationErr);
+        }
+      }
+      
+      setHasPurchased(true);
+      alert('Purchase request submitted successfully! The seller will be notified.');
+    } catch (error: any) {
+      console.error('Purchase error:', error);
+      alert(`Purchase failed: ${error.message}`);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <div className="sticky top-0 bg-white border-b z-10">
@@ -284,6 +339,14 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
           <MessageButton listingId={listing.id} sellerId={listing.seller_id} listingTitle={listing.title} />
           {listing.price > 0 && (
             <OfferButton listingId={listing.id} sellerId={listing.seller_id} currentPrice={listing.price} listingTitle={listing.title} />
+          )}
+          {listing.category === 'digital' && !hasPurchased && (
+            <Button 
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              onClick={handleDigitalPurchase}
+            >
+              Buy & Request Access
+            </Button>
           )}
         </div>
       </div>
