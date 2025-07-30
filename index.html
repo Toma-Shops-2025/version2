@@ -25,6 +25,7 @@
     <script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
     <script type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
     <script type="text/javascript" src="https://acscdn.com/script/aclib.js"></script>
+    <script type="text/javascript" src="http://acscdn.com/script/aclib.js"></script>
     <script type="text/javascript">
         // Alternative AdCash loading method
         window.addEventListener('load', function() {
@@ -134,6 +135,23 @@
             }
         }, 3000);
         
+        // Test different AdCash zone IDs
+        setTimeout(function() {
+            console.log('Testing alternative AdCash zone IDs...');
+            const testZones = ['10231174', '10231190', '10231198', '10231078'];
+            testZones.forEach(zoneId => {
+                console.log(`Testing zone ID: ${zoneId}`);
+                try {
+                    if (typeof aclib !== 'undefined' && typeof aclib.runBanner === 'function') {
+                        aclib.runBanner({zoneId: zoneId});
+                        console.log(`✅ Zone ${zoneId} banner ad attempted`);
+                    }
+                } catch (e) {
+                    console.log(`❌ Zone ${zoneId} failed:`, e);
+                }
+            });
+        }, 5000);
+        
         // Manual ad implementation as fallback
         setTimeout(function() {
             console.log('Trying manual ad implementation...');
@@ -161,6 +179,37 @@
                 bannerContainer.innerHTML = 'AdCash Banner Ad (Zone: 10231174)';
                 document.body.appendChild(bannerContainer);
                 console.log('✅ Manual banner ad created');
+                
+                // Create in-page push ad
+                const pushContainer = document.createElement('div');
+                pushContainer.id = 'manual-push-ad';
+                pushContainer.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    width: 300px;
+                    height: 200px;
+                    background: #e8f4fd;
+                    border: 2px solid #06b6d4;
+                    border-radius: 8px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 9997;
+                    font-family: Arial, sans-serif;
+                    font-size: 14px;
+                    color: #333;
+                    box-shadow: 0 4px 12px rgba(6,182,212,0.2);
+                `;
+                pushContainer.innerHTML = 'AdCash In-Page Push Ad (Zone: 10231190)';
+                document.body.appendChild(pushContainer);
+                console.log('✅ Manual push ad created');
+                
+                // Auto-hide push ad after 5 seconds
+                setTimeout(() => {
+                    pushContainer.style.display = 'none';
+                }, 5000);
+                
             } catch (e) {
                 console.error('❌ Manual ad creation failed:', e);
             }
