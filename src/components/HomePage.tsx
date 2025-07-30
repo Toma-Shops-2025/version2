@@ -16,6 +16,7 @@ import { Link } from 'react-router-dom';
 import UserNavBar from './UserNavBar';
 import BottomNavBar from './BottomNavBar';
 import { useUnreadMessagesCount } from '@/hooks/use-unread-messages-count';
+import { useUnreadNotificationsCount } from '@/hooks/use-unread-notifications-count';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -34,6 +35,7 @@ const HomePage: React.FC = () => {
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
   const [visibleCount, setVisibleCount] = useState(20);
   const unreadCount = useUnreadMessagesCount();
+  const unreadNotificationsCount = useUnreadNotificationsCount();
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -227,7 +229,11 @@ const HomePage: React.FC = () => {
             <Link to="/my-orders" className="text-cyan-400 hover:text-cyan-300 font-medium">My Orders</Link>
             <Link to="/notifications" className="text-cyan-400 hover:text-cyan-300 font-medium relative">
               Notifications
-              {/* Add notification count if needed */}
+              {user && unreadNotificationsCount > 0 && (
+                <span className="absolute -top-2 -right-3 bg-red-500 text-white rounded-full text-xs px-2 py-0.5 min-w-[18px] text-center font-bold">
+                  {unreadNotificationsCount}
+                </span>
+              )}
             </Link>
           </div>
         </div>
