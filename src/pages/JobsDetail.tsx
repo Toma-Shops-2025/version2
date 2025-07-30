@@ -13,22 +13,7 @@ const JobDetail = () => {
   
   console.log('JobDetail state:', { id, listing, loading, error });
 
-  // Temporary simple test to see if component renders at all
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold mb-4">JobDetail Component Test</h1>
-        <p className="mb-2">ID from URL: {id}</p>
-        <p className="mb-4">Component is rendering!</p>
-        <button 
-          onClick={() => navigate(-1)}
-          className="bg-blue-600 text-white px-4 py-2 rounded"
-        >
-          Go Back
-        </button>
-      </div>
-    </div>
-  );
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,6 +26,7 @@ const JobDetail = () => {
           .from('listings')
           .select('*')
           .eq('id', id)
+          .eq('category', 'job')
           .single();
         if (listingError) {
           console.error('Job fetch error:', listingError);

@@ -11,13 +11,14 @@ import { MapPin, MessageCircle } from 'lucide-react';
 import Map from './Map';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { useAppContext } from '@/contexts/AppContext';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import UserNavBar from './UserNavBar';
 import BottomNavBar from './BottomNavBar';
 import { useUnreadMessagesCount } from '@/hooks/use-unread-messages-count';
 
 const HomePage: React.FC = () => {
+  const navigate = useNavigate();
   const [selectedListing, setSelectedListing] = useState<string | null>(null);
   const [showSellPage, setShowSellPage] = useState(false);
   const [showMessages, setShowMessages] = useState(false);
@@ -84,7 +85,23 @@ const HomePage: React.FC = () => {
   }, [user]);
 
   const handleListingClick = (id: string) => {
-    setSelectedListing(id);
+    // Find the listing to determine its category
+    const listing = listings.find(l => l.id === id);
+    if (!listing) return;
+    
+    // Route to appropriate page based on category
+    if (listing.category === 'job') {
+      navigate(`/jobs/${id}`);
+    } else if (listing.category === 'rental') {
+      navigate(`/rentals/${id}`);
+    } else if (listing.category === 'digital') {
+      navigate(`/digital/${id}`);
+    } else if (listing.category === 'ad') {
+      navigate(`/ads/${id}`);
+    } else {
+      // Default to ProductDetail for regular listings
+      setSelectedListing(id);
+    }
   };
 
   const handleBackToGrid = () => {
