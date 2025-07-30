@@ -167,6 +167,32 @@ elevenlabs-convai img[src*="avatar"] {
   opacity: 1 !important;
 }
 
+/* Large avatar in chat interface (teal area) */
+elevenlabs-convai .chat-interface .avatar,
+elevenlabs-convai .conversation .avatar,
+elevenlabs-convai .chat-container .avatar,
+elevenlabs-convai [class*="chat"] .avatar,
+elevenlabs-convai [class*="conversation"] .avatar,
+elevenlabs-convai [class*="interface"] .avatar,
+elevenlabs-convai .large-avatar,
+elevenlabs-convai .main-avatar,
+elevenlabs-convai [class*="circle"],
+elevenlabs-convai [class*="avatar-area"],
+elevenlabs-convai [class*="profile-area"] {
+  background-image: url("/tomabot-avatar.png") !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  border-radius: 50% !important;
+  border: 3px solid #06b6d4 !important;
+  box-shadow: 0 4px 12px rgba(6,182,212,0.3) !important;
+  width: 120px !important;
+  height: 120px !important;
+  display: block !important;
+  margin: 0 auto !important;
+  position: relative !important;
+}
+
 /* Hide default avatar if it exists */
 elevenlabs-convai [data-avatar]:not([style*="tomabot-avatar"]),
 elevenlabs-convai .avatar:not([style*="tomabot-avatar"]) {

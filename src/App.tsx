@@ -218,8 +218,7 @@ const App = () => {
               width: 120px !important;
               height: 120px !important;
               border-radius: 50% !important;
-              /* Remove background-image override to allow ElevenLabs avatar */
-              /* background-image: url('/tomabot-avatar.png') !important; */
+              background-image: url('/tomabot-avatar.png') !important;
               background-size: cover !important;
               background-position: center !important;
               background-repeat: no-repeat !important;
@@ -245,12 +244,11 @@ const App = () => {
           // If it's a large circular area (likely the avatar placeholder)
           if (width >= 80 && height >= 80 && 
               (borderRadius === '50%' || borderRadius.includes('50%'))) {
-            div.style.cssText = `
+            (div as HTMLElement).style.cssText = `
               width: 120px !important;
               height: 120px !important;
               border-radius: 50% !important;
-              /* Remove background-image override to allow ElevenLabs avatar */
-              /* background-image: url('/tomabot-avatar.png') !important; */
+              background-image: url('/tomabot-avatar.png') !important;
               background-size: cover !important;
               background-position: center !important;
               background-repeat: no-repeat !important;
