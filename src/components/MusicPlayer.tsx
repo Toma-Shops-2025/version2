@@ -25,13 +25,14 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
   const [currentGenre, setCurrentGenre] = useState<string>('');
   const [volume, setVolume] = useState(0.3);
   const [isMuted, setIsMuted] = useState(false);
-  const [showPlayer, setShowPlayer] = useState(true); // Changed to true to show by default
+  const [showPlayer, setShowPlayer] = useState(true);
   const [currentTrack, setCurrentTrack] = useState<any>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const genres = [
     { id: 'country', name: 'COUNTRY', color: 'bg-green-500' },
     { id: 'rock', name: 'ROCK', color: 'bg-red-500' },
+    { id: 'classicrock', name: 'CLASSIC ROCK', color: 'bg-yellow-500' },
     { id: 'hiphop', name: 'HIP HOP', color: 'bg-purple-500' },
     { id: 'rnb', name: 'R&B', color: 'bg-blue-500' },
     { id: 'countryrap', name: 'COUNTRY RAP', color: 'bg-orange-500' }
@@ -46,6 +47,11 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
     rock: [
       { title: 'Rock Anthem', artist: 'Rock Vibes', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
       { title: 'Electric Dreams', artist: 'Rock Vibes', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' }
+    ],
+    classicrock: [
+      { title: 'Classic Rock Revival', artist: 'Classic Rock Vibes', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
+      { title: 'Timeless Rock', artist: 'Classic Rock Vibes', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
+      { title: 'Golden Age Rock', artist: 'Classic Rock Vibes', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' }
     ],
     hiphop: [
       { title: 'Urban Flow', artist: 'Hip Hop Vibes', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
@@ -85,20 +91,35 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
     };
   }, [isPlaying, currentGenre, shouldPauseMusic]);
 
-  const playMusic = () => {
-    if (audioRef.current && currentGenre) {
+  const playMusic = async () => {
+    if (!audioRef.current || !currentGenre) {
+      console.log('🎵 Cannot play: no audio element or genre selected');
+      return;
+    }
+
+    try {
       console.log('🎵 Attempting to play music:', currentGenre);
-      audioRef.current.play().then(() => {
-        setIsPlaying(true);
-        setMusicPlaying(true);
-        onAudioStateChange?.(true);
-        console.log('🎵 Music started playing');
-      }).catch(error => {
-        console.log('🎵 Audio playback failed:', error);
-        // Fallback: show a message that music is not available
-        setIsPlaying(false);
-        setMusicPlaying(false);
-      });
+      
+      // Ensure audio is loaded
+      if (!audioRef.current.src) {
+        console.log('🎵 No audio source, selecting genre first');
+        selectGenre(currentGenre);
+        return;
+      }
+
+      // Set volume before playing
+      audioRef.current.volume = isMuted ? 0 : volume;
+      
+      await audioRef.current.play();
+      setIsPlaying(true);
+      setMusicPlaying(true);
+      onAudioStateChange?.(true);
+      console.log('🎵 Music started playing successfully');
+    } catch (error) {
+      console.error('🎵 Audio playback failed:', error);
+      setIsPlaying(false);
+      setMusicPlaying(false);
+      onAudioStateChange?.(false);
     }
   };
 
@@ -125,6 +146,11 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
         audioRef.current.src = randomTrack.url;
         audioRef.current.load();
         console.log('🎵 Track loaded:', randomTrack.title);
+        
+        // Auto-play the new genre
+        setTimeout(() => {
+          playMusic();
+        }, 100);
       }
     }
   };
