@@ -24,6 +24,7 @@
     <meta name="monetag" content="45aad9af83e24ad4f1600efda4b35f3b">
     <script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
     <script type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
+    <script type="text/javascript" src="https://acscdn.com/script/aclib.js"></script>
     <script type="text/javascript">
         // Alternative AdCash loading method
         window.addEventListener('load', function() {
@@ -132,6 +133,38 @@
                 console.log('❌ No AdCash global objects found');
             }
         }, 3000);
+        
+        // Manual ad implementation as fallback
+        setTimeout(function() {
+            console.log('Trying manual ad implementation...');
+            try {
+                // Create banner ad container
+                const bannerContainer = document.createElement('div');
+                bannerContainer.id = 'manual-banner-ad';
+                bannerContainer.style.cssText = `
+                    position: fixed;
+                    bottom: 80px;
+                    right: 20px;
+                    width: 320px;
+                    height: 50px;
+                    background: #f0f0f0;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 9998;
+                    font-family: Arial, sans-serif;
+                    font-size: 12px;
+                    color: #666;
+                `;
+                bannerContainer.innerHTML = 'AdCash Banner Ad (Zone: 10231174)';
+                document.body.appendChild(bannerContainer);
+                console.log('✅ Manual banner ad created');
+            } catch (e) {
+                console.error('❌ Manual ad creation failed:', e);
+            }
+        }, 4000);
     </script>
   </head>
   <script src="https://fpyf8.com/88/tag.min.js" data-zone="160083" async data-cfasync="false"></script>

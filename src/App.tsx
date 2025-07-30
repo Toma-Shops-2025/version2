@@ -218,7 +218,7 @@ const App = () => {
               width: 120px !important;
               height: 120px !important;
               border-radius: 50% !important;
-              background-image: url('./tomabot-avatar.png') !important;
+              background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%2306b6d4'/%3E%3Ctext x='50' y='55' text-anchor='middle' fill='white' font-size='24' font-family='Arial'%3ETB%3C/text%3E%3C/svg%3E") !important;
               background-size: cover !important;
               background-position: center !important;
               background-repeat: no-repeat !important;
@@ -248,7 +248,7 @@ const App = () => {
               width: 120px !important;
               height: 120px !important;
               border-radius: 50% !important;
-              background-image: url('./tomabot-avatar.png') !important;
+              background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%2306b6d4'/%3E%3Ctext x='50' y='55' text-anchor='middle' fill='white' font-size='24' font-family='Arial'%3ETB%3C/text%3E%3C/svg%3E") !important;
               background-size: cover !important;
               background-position: center !important;
               background-repeat: no-repeat !important;
