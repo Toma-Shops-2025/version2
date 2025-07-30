@@ -25,7 +25,6 @@
     <script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
     <script type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
     <script type="text/javascript" src="https://acscdn.com/script/aclib.js"></script>
-    <script type="text/javascript" src="http://acscdn.com/script/aclib.js"></script>
     <script type="text/javascript">
         // Alternative AdCash loading method
         window.addEventListener('load', function() {
@@ -152,6 +151,52 @@
             });
         }, 5000);
         
+        // Try alternative AdCash implementation methods
+        setTimeout(function() {
+            console.log('Trying alternative AdCash methods...');
+            
+            // Method 1: Try global AdCash object
+            if (typeof window.AdCash !== 'undefined') {
+                console.log('✅ Found window.AdCash');
+                try {
+                    window.AdCash.init();
+                    console.log('✅ AdCash.init() called');
+                } catch (e) {
+                    console.log('❌ AdCash.init() failed:', e);
+                }
+            }
+            
+            // Method 2: Try adcash global object
+            if (typeof window.adcash !== 'undefined') {
+                console.log('✅ Found window.adcash');
+                try {
+                    window.adcash.init();
+                    console.log('✅ adcash.init() called');
+                } catch (e) {
+                    console.log('❌ adcash.init() failed:', e);
+                }
+            }
+            
+            // Method 3: Try direct script injection
+            try {
+                const script = document.createElement('script');
+                script.src = 'https://acscdn.com/script/aclib.js';
+                script.onload = function() {
+                    console.log('✅ AdCash script loaded via injection');
+                    if (typeof aclib !== 'undefined') {
+                        console.log('✅ aclib available after injection');
+                        console.log('Available methods:', Object.keys(aclib));
+                    }
+                };
+                script.onerror = function() {
+                    console.log('❌ AdCash script injection failed');
+                };
+                document.head.appendChild(script);
+            } catch (e) {
+                console.log('❌ Script injection failed:', e);
+            }
+        }, 6000);
+        
         // Manual ad implementation as fallback
         setTimeout(function() {
             console.log('Trying manual ad implementation...');
@@ -209,6 +254,44 @@
                 setTimeout(() => {
                     pushContainer.style.display = 'none';
                 }, 5000);
+                
+                // Create pop ad after 3 seconds
+                setTimeout(() => {
+                    const popContainer = document.createElement('div');
+                    popContainer.id = 'manual-pop-ad';
+                    popContainer.style.cssText = `
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        width: 400px;
+                        height: 300px;
+                        background: #fff;
+                        border: 3px solid #06b6d4;
+                        border-radius: 12px;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        z-index: 9999;
+                        font-family: Arial, sans-serif;
+                        font-size: 16px;
+                        color: #333;
+                        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+                    `;
+                    popContainer.innerHTML = `
+                        <div style="margin-bottom: 20px; font-weight: bold; color: #06b6d4;">AdCash Pop Ad</div>
+                        <div style="margin-bottom: 20px;">Zone: 10231198</div>
+                        <button onclick="this.parentElement.remove()" style="padding: 8px 16px; background: #06b6d4; color: white; border: none; border-radius: 4px; cursor: pointer;">Close</button>
+                    `;
+                    document.body.appendChild(popContainer);
+                    console.log('✅ Manual pop ad created');
+                    
+                    // Auto-hide pop ad after 8 seconds
+                    setTimeout(() => {
+                        popContainer.remove();
+                    }, 8000);
+                }, 3000);
                 
             } catch (e) {
                 console.error('❌ Manual ad creation failed:', e);
