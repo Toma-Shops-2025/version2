@@ -22,7 +22,7 @@ import {
 import Reviews from '@/components/Reviews';
 
 const Profile: React.FC = () => {
-  const { userId } = useParams<{ userId: string }>();
+  const { id } = useParams<{ id: string }>();
   const { user: currentUser, loading: currentUserLoading } = useAppContext();
   const [profileUser, setProfileUser] = useState<any>(null);
   const [profileLoading, setProfileLoading] = useState(true);
@@ -42,7 +42,7 @@ const Profile: React.FC = () => {
   useEffect(() => {
     const fetchProfileUser = async () => {
       setProfileLoading(true);
-      const targetUserId = userId || currentUser?.id;
+      const targetUserId = id || currentUser?.id;
       if (!targetUserId) {
         setProfileLoading(false);
         return;
@@ -60,7 +60,7 @@ const Profile: React.FC = () => {
     if (!currentUserLoading) {
       fetchProfileUser();
     }
-  }, [userId, currentUser, currentUserLoading]);
+  }, [id, currentUser, currentUserLoading]);
 
   const handleBlockUser = async () => {
     if (!currentUser || !profileUser) return;

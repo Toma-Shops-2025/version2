@@ -80,13 +80,23 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
 
     const fetchSellerName = async () => {
       if (!listing.seller_id) return;
-      const { data, error } = await supabase
-        .from('users')
-        .select('name, email')
-        .eq('id', listing.seller_id)
-        .single();
-      if (data) {
-        setSellerName(data.name || data.email);
+      try {
+        const { data, error } = await supabase
+          .from('users')
+          .select('name, email')
+          .eq('id', listing.seller_id)
+          .single();
+        if (error) {
+          console.error('Error fetching seller name:', error);
+          setSellerName('Seller');
+        } else if (data) {
+          setSellerName(data.name || data.email || 'Seller');
+        } else {
+          setSellerName('Seller');
+        }
+      } catch (err) {
+        console.error('Error in fetchSellerName:', err);
+        setSellerName('Seller');
       }
     };
 
@@ -330,7 +340,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
           <div className="mb-6 border-t pt-6">
             <h3 className="font-semibold text-gray-900 mb-2">About the Seller</h3>
             <Link to={`/profile/${listing.seller_id}`} className="text-blue-500 hover:underline">
-              View {sellerName}'s Profile
+              View Seller's Profile
             </Link>
           </div>
         )}
