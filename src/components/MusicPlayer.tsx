@@ -25,7 +25,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
   const [currentGenre, setCurrentGenre] = useState<string>('');
   const [volume, setVolume] = useState(0.3);
   const [isMuted, setIsMuted] = useState(false);
-  const [showPlayer, setShowPlayer] = useState(false);
+  const [showPlayer, setShowPlayer] = useState(true); // Changed to true to show by default
   const [currentTrack, setCurrentTrack] = useState<any>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -62,11 +62,14 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
   };
 
   useEffect(() => {
+    console.log('🎵 MusicPlayer component mounted');
+    
     // Initialize audio element
     if (!audioRef.current) {
       audioRef.current = new Audio();
       audioRef.current.loop = true;
       audioRef.current.volume = volume;
+      console.log('🎵 Audio element initialized');
     }
 
     // Auto-pause music when videos are playing
@@ -84,12 +87,14 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
 
   const playMusic = () => {
     if (audioRef.current && currentGenre) {
+      console.log('🎵 Attempting to play music:', currentGenre);
       audioRef.current.play().then(() => {
         setIsPlaying(true);
         setMusicPlaying(true);
         onAudioStateChange?.(true);
+        console.log('🎵 Music started playing');
       }).catch(error => {
-        console.log('Audio playback failed:', error);
+        console.log('🎵 Audio playback failed:', error);
         // Fallback: show a message that music is not available
         setIsPlaying(false);
         setMusicPlaying(false);
@@ -103,33 +108,24 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
       setIsPlaying(false);
       setMusicPlaying(false);
       onAudioStateChange?.(false);
+      console.log('🎵 Music paused');
     }
   };
 
   const selectGenre = (genreId: string) => {
-    if (currentGenre === genreId) {
-      // If same genre, toggle play/pause
-      if (isPlaying) {
-        pauseMusic();
-      } else {
-        playMusic();
-      }
-      return;
-    }
-
+    console.log('🎵 Genre selected:', genreId);
     setCurrentGenre(genreId);
     
-    // Select a random track from the genre
     const tracks = sampleTracks[genreId as keyof typeof sampleTracks];
-    const randomTrack = tracks[Math.floor(Math.random() * tracks.length)];
-    setCurrentTrack(randomTrack);
-
-    if (audioRef.current) {
-      audioRef.current.src = randomTrack.url;
-      audioRef.current.volume = isMuted ? 0 : volume;
+    if (tracks && tracks.length > 0) {
+      const randomTrack = tracks[Math.floor(Math.random() * tracks.length)];
+      setCurrentTrack(randomTrack);
       
-      // Auto-play the new genre
-      playMusic();
+      if (audioRef.current) {
+        audioRef.current.src = randomTrack.url;
+        audioRef.current.load();
+        console.log('🎵 Track loaded:', randomTrack.title);
+      }
     }
   };
 
@@ -153,8 +149,10 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
   };
 
   const nextTrack = () => {
-    if (currentGenre) {
-      const tracks = sampleTracks[currentGenre as keyof typeof sampleTracks];
+    if (!currentGenre) return;
+    
+    const tracks = sampleTracks[currentGenre as keyof typeof sampleTracks];
+    if (tracks && tracks.length > 1) {
       const currentIndex = tracks.findIndex(track => track.title === currentTrack?.title);
       const nextIndex = (currentIndex + 1) % tracks.length;
       const nextTrack = tracks[nextIndex];
@@ -171,7 +169,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
 
   if (!showPlayer) {
     return (
-      <div className="fixed bottom-24 right-4 z-50">
+      <div className="fixed bottom-24 right-4 z-[9998]">
         <Button
           onClick={() => setShowPlayer(true)}
           className="bg-cyan-500 hover:bg-cyan-600 text-white rounded-full p-3 shadow-lg"
@@ -184,7 +182,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
   }
 
   return (
-    <div className="fixed bottom-24 right-4 z-50">
+    <div className="fixed bottom-24 right-4 z-[9998]">
       <Card className="w-80 bg-white/95 backdrop-blur-sm shadow-xl border-0">
         <CardContent className="p-4">
           {/* Header */}
