@@ -24,7 +24,7 @@ interface Conversation {
 
 interface ConversationsListProps {
   onBack: () => void;
-  onSelectConversation: (conversationId: string, listingTitle: string) => void;
+  onSelectConversation: (conversationId: string, listingTitle: string, listingId: string) => void;
 }
 
 const ConversationsList: React.FC<ConversationsListProps> = ({ 
@@ -47,16 +47,24 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
   }, [currentUserId]);
 
   const loadConversations = async () => {
-    if (!currentUserId) return;
+    if (!currentUserId) {
+      console.log('No current user ID, skipping conversation load');
+      return;
+    }
     try {
+      console.log('Loading conversations for user:', currentUserId);
+      
       // First, get a list of users that the current user has blocked
       const { data: blockedUsers, error: blockedError } = await supabase
         .from('blocks')
         .select('blocked_id')
         .eq('blocker_id', currentUserId);
 
-      if (blockedError) throw blockedError;
-      const blockedUserIds = blockedUsers.map(b => b.blocked_id);
+      if (blockedError) {
+        console.error('Error loading blocked users:', blockedError);
+        throw blockedError;
+      }
+      const blockedUserIds = blockedUsers?.map(b => b.blocked_id) || [];
 
       // Also get a list of users who have blocked the current user
       const { data: usersWhoBlockedMe, error: blockedMeError } = await supabase
@@ -64,27 +72,39 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
         .select('blocker_id')
         .eq('blocked_id', currentUserId);
       
-      if (blockedMeError) throw blockedMeError;
-      const usersWhoBlockedMeIds = usersWhoBlockedMe.map(b => b.blocker_id);
+      if (blockedMeError) {
+        console.error('Error loading users who blocked me:', blockedMeError);
+        throw blockedMeError;
+      }
+      const usersWhoBlockedMeIds = usersWhoBlockedMe?.map(b => b.blocker_id) || [];
 
       const allBlockedIds = [...new Set([...blockedUserIds, ...usersWhoBlockedMeIds])];
+      console.log('Blocked user IDs:', allBlockedIds);
 
       const { data, error } = await supabase
         .from('conversations')
         .select('*')
         .or(`buyer_id.eq.${currentUserId},seller_id.eq.${currentUserId}`)
-        .not('buyer_id', 'in', `(${allBlockedIds.join(',')})`)
-        .not('seller_id', 'in', `(${allBlockedIds.join(',')})`)
         .order('created_at', { ascending: false });
-      if (error) throw error;
+        
+      if (error) {
+        console.error('Error loading conversations:', error);
+        throw error;
+      }
       
+      console.log('Raw conversations data:', data);
+      
+      // Filter out blocked conversations
       const filteredData = (data || []).filter(c => 
         !allBlockedIds.includes(c.buyer_id) && !allBlockedIds.includes(c.seller_id)
       );
       
+      console.log('Filtered conversations:', filteredData);
+      
       setConversations(filteredData);
       
       if (!filteredData || filteredData.length === 0) {
+        console.log('No conversations found');
         setIsLoading(false);
         return;
       }
@@ -92,45 +112,70 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
       const userIds = Array.from(new Set(filteredData.flatMap((c: any) => [c.buyer_id, c.seller_id])));
       const listingIds = Array.from(new Set(filteredData.map((c: any) => c.listing_id)));
       
+      console.log('Loading user data for IDs:', userIds);
       if (userIds.length > 0) {
-        const { data: users } = await supabase.from('users').select('id, email').in('id', userIds);
-        if (users) {
-          const map: Record<string, string> = {};
-          users.forEach((u: any) => { map[u.id] = u.email; });
-          setUsersById(map);
+        try {
+          const { data: users, error: usersError } = await supabase.from('users').select('id, email').in('id', userIds);
+          if (usersError) {
+            console.error('Error loading users:', usersError);
+          } else if (users) {
+            const map: Record<string, string> = {};
+            users.forEach((u: any) => { map[u.id] = u.email; });
+            setUsersById(map);
+            console.log('Users loaded:', map);
+          }
+        } catch (userErr) {
+          console.error('Error in user loading:', userErr);
         }
       }
       
+      console.log('Loading listing data for IDs:', listingIds);
       if (listingIds.length > 0) {
-        const { data: listings } = await supabase.from('listings').select('id, title').in('id', listingIds);
-        if (listings) {
-          const map: Record<string, string> = {};
-          listings.forEach((l: any) => { map[l.id] = l.title; });
-          setListingsById(map);
+        try {
+          const { data: listings, error: listingsError } = await supabase.from('listings').select('id, title').in('id', listingIds);
+          if (listingsError) {
+            console.error('Error loading listings:', listingsError);
+          } else if (listings) {
+            const map: Record<string, string> = {};
+            listings.forEach((l: any) => { map[l.id] = l.title; });
+            setListingsById(map);
+            console.log('Listings loaded:', map);
+          }
+        } catch (listingErr) {
+          console.error('Error in listing loading:', listingErr);
         }
       }
       
       if (filteredData.length > 0) {
         const convIds = filteredData.map((c: any) => c.id);
-        const { data: messages } = await supabase
-          .from('messages')
-          .select('id, conversation_id, content, created_at')
-          .in('conversation_id', convIds)
-          .order('created_at', { ascending: false });
-        if (messages) {
-          const map: Record<string, { content: string; created_at: string }> = {};
-          messages.forEach((m: any) => {
-            if (!map[m.conversation_id]) {
-              map[m.conversation_id] = { content: m.content, created_at: m.created_at };
-            }
-          });
-          setLastMessages(map);
+        console.log('Loading messages for conversation IDs:', convIds);
+        try {
+          const { data: messages, error: messagesError } = await supabase
+            .from('messages')
+            .select('id, conversation_id, content, created_at')
+            .in('conversation_id', convIds)
+            .order('created_at', { ascending: false });
+          if (messagesError) {
+            console.error('Error loading messages:', messagesError);
+          } else if (messages) {
+            const map: Record<string, { content: string; created_at: string }> = {};
+            messages.forEach((m: any) => {
+              if (!map[m.conversation_id]) {
+                map[m.conversation_id] = { content: m.content, created_at: m.created_at };
+              }
+            });
+            setLastMessages(map);
+            console.log('Messages loaded:', map);
+          }
+        } catch (messageErr) {
+          console.error('Error in message loading:', messageErr);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Error in loadConversations:', error);
       toast({
         title: "Error",
-        description: "Failed to load conversations",
+        description: `Failed to load conversations: ${error.message || 'Unknown error'}`,
         variant: "destructive"
       });
     } finally {
@@ -182,7 +227,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
                     if (currentUserId && lastMessages[conversation.id]?.created_at) {
                       localStorage.setItem(`conv_last_viewed_${currentUserId}_${conversation.id}`, new Date().toISOString());
                     }
-                    onSelectConversation(conversation.id, listingTitle);
+                    onSelectConversation(conversation.id, listingTitle, conversation.listing_id);
                   }}
                 >
                   <div className="flex justify-between items-start">

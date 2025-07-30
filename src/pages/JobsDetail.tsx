@@ -15,14 +15,21 @@ const JobDetail = () => {
       setLoading(true);
       setError(null);
       try {
+        console.log('Fetching job with ID:', id);
         const { data, error: listingError } = await supabase
           .from('listings')
           .select('*')
           .eq('id', id)
+          .eq('category', 'job')
           .single();
-        if (listingError) throw listingError;
+        if (listingError) {
+          console.error('Job fetch error:', listingError);
+          throw listingError;
+        }
+        console.log('Job data:', data);
         setListing(data);
       } catch (err: any) {
+        console.error('Job detail error:', err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -31,9 +38,9 @@ const JobDetail = () => {
     fetchData();
   }, [id]);
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-  if (error) return <div className="min-h-screen flex items-center justify-center text-red-600">{error}</div>;
-  if (!listing) return <div className="min-h-screen flex items-center justify-center">Listing not found.</div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center">Loading job details...</div>;
+  if (error) return <div className="min-h-screen flex items-center justify-center text-red-600">Error: {error}</div>;
+  if (!listing) return <div className="min-h-screen flex items-center justify-center">Job listing not found.</div>;
 
   return (
     <div className="container mx-auto py-8">

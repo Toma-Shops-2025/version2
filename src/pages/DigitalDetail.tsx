@@ -31,31 +31,47 @@ const DigitalDetail = () => {
         setListing(listingData);
         // Check if user is a confirmed buyer
         if (user) {
-          const { data: purchaseData, error: purchaseError } = await supabase
-            .from('purchases')
-            .select('*')
-            .eq('listing_id', id)
-            .eq('buyer_id', user.id)
-            .single();
-          if (purchaseError && purchaseError.code !== 'PGRST116') throw purchaseError;
-          if (purchaseData) {
-            setIsBuyer(true);
-            setConfirmed(!!purchaseData.confirmed);
-            if (purchaseData.confirmed && Array.isArray(listingData.digital_file_urls) && listingData.digital_file_urls.length > 0) {
-              // Get signed URLs for all files
-              const urls: string[] = [];
-              for (const fileUrl of listingData.digital_file_urls) {
-                // fileUrl is a public URL, get the path after the bucket name
-                const match = fileUrl.match(/digital-products\/(.+)$/);
-                const filePath = match ? match[1] : null;
-                if (filePath) {
-                  const { data, error: urlError } = await supabase.storage.from('digital-products').createSignedUrl(filePath, 60);
-                  if (urlError) throw urlError;
-                  urls.push(data.signedUrl);
-                }
-              }
-              setDownloadUrls(urls);
+          try {
+            const { data: purchaseData, error: purchaseError } = await supabase
+              .from('purchases')
+              .select('*')
+              .eq('listing_id', id)
+              .eq('buyer_id', user.id)
+              .single();
+            if (purchaseError && purchaseError.code !== 'PGRST116') {
+              console.error('Purchase check error:', purchaseError);
+              throw purchaseError;
             }
+            if (purchaseData) {
+              console.log('Existing purchase found:', purchaseData);
+              setIsBuyer(true);
+              setConfirmed(!!purchaseData.confirmed);
+              if (purchaseData.confirmed && Array.isArray(listingData.digital_file_urls) && listingData.digital_file_urls.length > 0) {
+                // Get signed URLs for all files
+                const urls: string[] = [];
+                for (const fileUrl of listingData.digital_file_urls) {
+                  try {
+                    // fileUrl is a public URL, get the path after the bucket name
+                    const match = fileUrl.match(/digital-products\/(.+)$/);
+                    const filePath = match ? match[1] : null;
+                    if (filePath) {
+                      const { data, error: urlError } = await supabase.storage.from('digital-products').createSignedUrl(filePath, 60);
+                      if (urlError) {
+                        console.error('Signed URL error:', urlError);
+                        throw urlError;
+                      }
+                      urls.push(data.signedUrl);
+                    }
+                  } catch (urlErr) {
+                    console.error('Error getting signed URL for file:', fileUrl, urlErr);
+                  }
+                }
+                setDownloadUrls(urls);
+              }
+            }
+          } catch (purchaseErr) {
+            console.error('Error checking purchase status:', purchaseErr);
+            // Don't throw here, just log the error
           }
         }
       } catch (err: any) {
@@ -68,37 +84,94 @@ const DigitalDetail = () => {
   }, [id, user]);
 
   const handleBuy = async () => {
-    if (!user) return;
+    if (!user) {
+      setError('You must be logged in to purchase this item.');
+      return;
+    }
     setBuying(true);
     setError(null);
     try {
-      const { error: insertError } = await supabase.from('purchases').insert({
-        listing_id: id,
-        buyer_id: user.id,
-        confirmed: false
-      });
-      if (insertError) throw insertError;
+      console.log('Attempting to purchase digital product:', { listing_id: id, buyer_id: user.id });
+      
+      // Check if purchase already exists
+      const { data: existingPurchase, error: checkError } = await supabase
+        .from('purchases')
+        .select('*')
+        .eq('listing_id', id)
+        .eq('buyer_id', user.id)
+        .single();
+      
+      if (checkError && checkError.code !== 'PGRST116') {
+        console.error('Error checking existing purchase:', checkError);
+        throw checkError;
+      }
+      
+      if (existingPurchase) {
+        setError('You have already requested access to this digital product.');
+        setIsBuyer(true);
+        setConfirmed(!!existingPurchase.confirmed);
+        return;
+      }
+      
+      // Insert new purchase
+      const { data: purchaseData, error: insertError } = await supabase
+        .from('purchases')
+        .insert({
+          listing_id: id,
+          buyer_id: user.id,
+          confirmed: false,
+          created_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+        
+      if (insertError) {
+        console.error('Purchase insert error:', insertError);
+        throw insertError;
+      }
+      
+      console.log('Purchase created successfully:', purchaseData);
+      
       // Notify the seller
       if (listing && listing.seller_id) {
-        await supabase.from('notifications').insert({
-          user_id: listing.seller_id,
-          type: 'order_requested',
-          message: `You have a new digital order request for '${listing.title}'.`,
-          link: `/seller-orders`
-        });
+        try {
+          const { error: notificationError } = await supabase.from('notifications').insert({
+            user_id: listing.seller_id,
+            type: 'order_requested',
+            message: `You have a new digital order request for '${listing.title}'.`,
+            link: `/seller-orders`,
+            created_at: new Date().toISOString()
+          });
+          if (notificationError) {
+            console.error('Notification error:', notificationError);
+          }
+        } catch (notificationErr) {
+          console.error('Failed to create notification:', notificationErr);
+        }
       }
+      
       setIsBuyer(true);
       setConfirmed(false);
     } catch (err: any) {
-      setError(err.message);
+      console.error('Purchase error:', err);
+      setError(`Purchase failed: ${err.message}`);
     } finally {
       setBuying(false);
     }
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-  if (error) return <div className="min-h-screen flex items-center justify-center text-red-600">{error}</div>;
-  if (!listing) return <div className="min-h-screen flex items-center justify-center">Listing not found.</div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center">Loading digital product...</div>;
+  if (error) return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        <div className="text-red-600 mb-4">{error}</div>
+        <button onClick={() => navigate(-1)} className="bg-blue-600 text-white px-4 py-2 rounded">
+          Go Back
+        </button>
+      </div>
+    </div>
+  );
+  if (!listing) return <div className="min-h-screen flex items-center justify-center">Digital product not found.</div>;
 
   return (
     <div className="container mx-auto py-8">

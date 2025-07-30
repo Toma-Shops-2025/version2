@@ -21,6 +21,7 @@ import Cart from './pages/Cart';
 import OffersPage from './pages/OffersPage';
 import SellPage from './components/SellPage';
 import Account from './pages/Account';
+import Profile from './pages/Profile';
 import AuthPage from './components/AuthPage';
 import { AppProvider } from './contexts/AppContext';
 import Rentals from './pages/Rentals';
@@ -377,8 +378,9 @@ const App = () => {
                 <Route path="/offers" element={<OffersPage />} />
                 <Route path="/sell" element={<SellPage onBack={() => window.history.back()} />} />
                 <Route path="/messages" element={<MessagesPage onBack={() => window.history.back()} />} />
-                <Route path="/account" element={<Account />} />
-                <Route path="/login" element={<AuthPage />} />
+                        <Route path="/account" element={<Account />} />
+        <Route path="/profile/:id" element={<Profile />} />
+        <Route path="/login" element={<AuthPage />} />
                 <Route path="/rentals" element={<Rentals />} />
                 <Route path="/jobs" element={<Jobs />} />
                 <Route path="/jobs/:id" element={<JobDetail />} />

@@ -40,7 +40,7 @@ const HowItWorks: React.FC = () => {
         <li><b>Secure Messaging</b> — Talk without giving out personal contact info</li>
         <li><b>Flexible Delivery Options</b> — Local meetups or tracked shipping</li>
         <li><b>Privacy First</b> — Your data is protected and never sold</li>
-        <li><b>Trusted Support</b> — Email us at <a href="mailto:support@tomashops.com" className="text-blue-600 underline">support@tomashops.com</a> or call 1-800-TOMASHOPS</li>
+        <li><b>Trusted Support</b> — Email us at <a href="mailto:support@tomashops.com" className="text-blue-600 underline">support@tomashops.com</a> or call 954-TOMASHOPS</li>
       </ul>
       <h2 className="text-xl font-semibold mt-8 mb-2">🚀 Why Choose TomaShops™?</h2>
       <ul className="list-disc ml-6 mb-4 space-y-1">

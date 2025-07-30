@@ -10,10 +10,11 @@ const MessagesPage: React.FC<MessagesPageProps> = ({ onBack }) => {
   const [selectedConversation, setSelectedConversation] = useState<{
     id: string;
     title: string;
+    listingId: string;
   } | null>(null);
 
-  const handleSelectConversation = (conversationId: string, listingTitle: string) => {
-    setSelectedConversation({ id: conversationId, title: listingTitle });
+  const handleSelectConversation = (conversationId: string, listingTitle: string, listingId: string) => {
+    setSelectedConversation({ id: conversationId, title: listingTitle, listingId });
   };
 
   const handleBackToList = () => {
@@ -25,6 +26,7 @@ const MessagesPage: React.FC<MessagesPageProps> = ({ onBack }) => {
       <ChatWindow
         conversationId={selectedConversation.id}
         listingTitle={selectedConversation.title}
+        listingId={selectedConversation.listingId}
         onBack={handleBackToList}
       />
     );

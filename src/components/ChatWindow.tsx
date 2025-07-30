@@ -96,29 +96,50 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   }, [messages]);
 
   const fetchOtherUserEmail = async () => {
-    // Get conversation info
-    const { data: conv } = await supabase.from('conversations').select('*').eq('id', conversationId).single();
-    if (conv && currentUserId) {
-      const otherUserId = conv.buyer_id === currentUserId ? conv.seller_id : conv.buyer_id;
-      const { data: userData } = await supabase.from('users').select('email').eq('id', otherUserId).single();
-      if (userData) setOtherUserEmail(userData.email);
+    try {
+      console.log('Fetching other user email for conversation:', conversationId);
+      // Get conversation info
+      const { data: conv, error: convError } = await supabase.from('conversations').select('*').eq('id', conversationId).single();
+      if (convError) {
+        console.error('Error fetching conversation:', convError);
+        return;
+      }
+      if (conv && currentUserId) {
+        const otherUserId = conv.buyer_id === currentUserId ? conv.seller_id : conv.buyer_id;
+        console.log('Other user ID:', otherUserId);
+        const { data: userData, error: userError } = await supabase.from('users').select('email').eq('id', otherUserId).single();
+        if (userError) {
+          console.error('Error fetching user data:', userError);
+        } else if (userData) {
+          setOtherUserEmail(userData.email);
+          console.log('Other user email set:', userData.email);
+        }
+      }
+    } catch (error) {
+      console.error('Error in fetchOtherUserEmail:', error);
     }
   };
 
   const loadMessages = async () => {
     try {
+      console.log('Loading messages for conversation:', conversationId);
       const { data, error } = await supabase
         .from('messages')
         .select('*')
         .eq('conversation_id', conversationId)
         .order('created_at', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error loading messages:', error);
+        throw error;
+      }
+      console.log('Messages loaded:', data);
       setMessages(data || []);
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Error in loadMessages:', error);
       toast({
         title: "Error",
-        description: "Failed to load messages",
+        description: `Failed to load messages: ${error.message || 'Unknown error'}`,
         variant: "destructive"
       });
     } finally {
@@ -128,11 +149,22 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
 
   // Helper to get the other user's ID
   const getOtherUserId = async () => {
-    const { data: conv } = await supabase.from('conversations').select('*').eq('id', conversationId).single();
-    if (conv && currentUserId) {
-      return conv.buyer_id === currentUserId ? conv.seller_id : conv.buyer_id;
+    try {
+      const { data: conv, error: convError } = await supabase.from('conversations').select('*').eq('id', conversationId).single();
+      if (convError) {
+        console.error('Error getting conversation for other user ID:', convError);
+        return null;
+      }
+      if (conv && currentUserId) {
+        const otherUserId = conv.buyer_id === currentUserId ? conv.seller_id : conv.buyer_id;
+        console.log('Other user ID determined:', otherUserId);
+        return otherUserId;
+      }
+      return null;
+    } catch (error) {
+      console.error('Error in getOtherUserId:', error);
+      return null;
     }
-    return null;
   };
 
   const sendMessage = async () => {
