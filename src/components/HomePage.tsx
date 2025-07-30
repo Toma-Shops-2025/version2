@@ -204,7 +204,7 @@ const HomePage: React.FC = () => {
                 <div className="relative">
                   <MessageCircle className="h-8 w-8" />
                   {user && unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-2 bg-red-500 text-white rounded-full text-xs px-1.5 py-0.5 min-w-[18px] text-center font-bold">
+                    <span className="absolute -top-1 -right-2 bg-green-500 text-white rounded-full text-xs px-1.5 py-0.5 min-w-[18px] text-center font-bold">
                       {unreadCount}
                     </span>
                   )}
@@ -230,7 +230,7 @@ const HomePage: React.FC = () => {
             <Link to="/notifications" className="text-cyan-400 hover:text-cyan-300 font-medium relative">
               Notifications
               {user && unreadNotificationsCount > 0 && (
-                <span className="absolute -top-2 -right-3 bg-red-500 text-white rounded-full text-xs px-2 py-0.5 min-w-[18px] text-center font-bold">
+                <span className="absolute -top-2 -right-3 bg-green-500 text-white rounded-full text-xs px-2 py-0.5 min-w-[18px] text-center font-bold">
                   {unreadNotificationsCount}
                 </span>
               )}

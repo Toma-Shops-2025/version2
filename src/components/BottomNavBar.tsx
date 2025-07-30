@@ -25,7 +25,7 @@ const BottomNavBar: React.FC = () => {
         <div className="relative">
           <MessageCircle className="h-6 w-6" />
           {user && unreadCount > 0 && (
-            <span className="absolute -top-1 -right-2 bg-red-500 text-white rounded-full text-xs px-1.5 py-0.5 min-w-[18px] text-center font-bold">
+            <span className="absolute -top-1 -right-2 bg-green-500 text-white rounded-full text-xs px-1.5 py-0.5 min-w-[18px] text-center font-bold">
               {unreadCount}
             </span>
           )}
@@ -64,7 +64,7 @@ const BottomNavBar: React.FC = () => {
         <div className="relative">
           <Bell className="h-6 w-6" />
           {user && unreadNotificationsCount > 0 && (
-            <span className="absolute -top-1 -right-2 bg-red-500 text-white rounded-full text-xs px-1.5 py-0.5 min-w-[18px] text-center font-bold">
+            <span className="absolute -top-1 -right-2 bg-green-500 text-white rounded-full text-xs px-1.5 py-0.5 min-w-[18px] text-center font-bold">
               {unreadNotificationsCount}
             </span>
           )}
