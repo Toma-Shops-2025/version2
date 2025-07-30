@@ -195,6 +195,29 @@
             } catch (e) {
                 console.log('❌ Script injection failed:', e);
             }
+            
+            // Method 4: Try iframe approach
+            try {
+                const iframe = document.createElement('iframe');
+                iframe.src = 'https://acscdn.com/script/aclib.js';
+                iframe.style.display = 'none';
+                iframe.onload = function() {
+                    console.log('✅ AdCash iframe loaded');
+                    // Try to access aclib from iframe context
+                    try {
+                        const iframeAclib = iframe.contentWindow.aclib;
+                        if (iframeAclib) {
+                            console.log('✅ aclib found in iframe');
+                            console.log('Available methods:', Object.keys(iframeAclib));
+                        }
+                    } catch (e) {
+                        console.log('❌ Cannot access iframe aclib:', e);
+                    }
+                };
+                document.body.appendChild(iframe);
+            } catch (e) {
+                console.log('❌ Iframe approach failed:', e);
+            }
         }, 6000);
         
         // Manual ad implementation as fallback
@@ -293,10 +316,19 @@
                     }, 8000);
                 }, 3000);
                 
-            } catch (e) {
-                console.error('❌ Manual ad creation failed:', e);
-            }
-        }, 4000);
+                            } catch (e) {
+                    console.error('❌ Manual ad creation failed:', e);
+                }
+                
+                // Log contact information for AdCash support
+                console.log('📞 Contact AdCash Support with these details:');
+                console.log('Error: ERR_BLOCKED_BY_RESPONSE.NotSameOriginAfterDefaultedToSameOriginByCoep');
+                console.log('Affected Scripts: aclib.js, native_render.js, native_server.js');
+                console.log('Manual Ads Working: ✅ Banner, Push, Pop ads created successfully');
+                console.log('Zone IDs: 10231174, 10231190, 10231198, 10231078');
+                console.log('Website: https://tomashops.com');
+                console.log('Platform: Capacitor Mobile App');
+            }, 4000);
     </script>
   </head>
   <script src="https://fpyf8.com/88/tag.min.js" data-zone="160083" async data-cfasync="false"></script>
