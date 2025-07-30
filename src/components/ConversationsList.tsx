@@ -244,7 +244,12 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
                       </p>
                     </div>
                     <span className="text-xs text-gray-400">
-                      {lastMessages[conversation.id]?.created_at ? new Date(lastMessages[conversation.id].created_at).toLocaleString() : new Date(conversation.created_at).toLocaleDateString()}
+                      {lastMessages[conversation.id]?.created_at ? 
+                        new Date(lastMessages[conversation.id].created_at).toLocaleString() : 
+                        conversation.created_at ? 
+                          new Date(conversation.created_at).toLocaleDateString() : 
+                          'No date'
+                      }
                     </span>
                   </div>
                 </Card>

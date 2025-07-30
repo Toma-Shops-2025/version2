@@ -117,7 +117,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
                     : salary || 'N/A')
                 : price === 0
                   ? 'Free'
-                  : `$${price?.toLocaleString?.() ?? price}`}
+                  : `$${(price && typeof price === 'number') ? price.toLocaleString() : price || 'N/A'}`}
             </h3>
           </div>
           <p className="text-gray-700 text-sm mb-2 line-clamp-2 leading-tight font-bold">{title}</p>
