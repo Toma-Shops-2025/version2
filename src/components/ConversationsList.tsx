@@ -55,28 +55,48 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
       console.log('Loading conversations for user:', currentUserId);
       
       // First, get a list of users that the current user has blocked
-      const { data: blockedUsers, error: blockedError } = await supabase
-        .from('blocks')
-        .select('blocked_id')
-        .eq('blocker_id', currentUserId);
-
-      if (blockedError) {
-        console.error('Error loading blocked users:', blockedError);
-        throw blockedError;
-      }
-      const blockedUserIds = blockedUsers?.map(b => b.blocked_id) || [];
-
-      // Also get a list of users who have blocked the current user
-      const { data: usersWhoBlockedMe, error: blockedMeError } = await supabase
-        .from('blocks')
-        .select('blocker_id')
-        .eq('blocked_id', currentUserId);
+      let blockedUserIds: string[] = [];
+      let usersWhoBlockedMeIds: string[] = [];
       
-      if (blockedMeError) {
-        console.error('Error loading users who blocked me:', blockedMeError);
-        throw blockedMeError;
+      try {
+        const { data: blockedUsers, error: blockedError } = await supabase
+          .from('blocks')
+          .select('blocked_id')
+          .eq('blocker_id', currentUserId);
+
+        if (blockedError) {
+          console.error('Error loading blocked users:', blockedError);
+          // If blocks table doesn't exist, just continue without blocking
+          if (blockedError.message.includes('does not exist')) {
+            console.log('Blocks table does not exist, skipping blocking functionality');
+          } else {
+            throw blockedError;
+          }
+        } else {
+          blockedUserIds = blockedUsers?.map(b => b.blocked_id) || [];
+        }
+
+        // Also get a list of users who have blocked the current user
+        const { data: usersWhoBlockedMe, error: blockedMeError } = await supabase
+          .from('blocks')
+          .select('blocker_id')
+          .eq('blocked_id', currentUserId);
+        
+        if (blockedMeError) {
+          console.error('Error loading users who blocked me:', blockedMeError);
+          // If blocks table doesn't exist, just continue without blocking
+          if (blockedMeError.message.includes('does not exist')) {
+            console.log('Blocks table does not exist, skipping blocking functionality');
+          } else {
+            throw blockedMeError;
+          }
+        } else {
+          usersWhoBlockedMeIds = usersWhoBlockedMe?.map(b => b.blocker_id) || [];
+        }
+      } catch (error) {
+        console.error('Error in blocking functionality:', error);
+        // Continue without blocking functionality
       }
-      const usersWhoBlockedMeIds = usersWhoBlockedMe?.map(b => b.blocker_id) || [];
 
       const allBlockedIds = [...new Set([...blockedUserIds, ...usersWhoBlockedMeIds])];
       console.log('Blocked user IDs:', allBlockedIds);
