@@ -4,14 +4,18 @@ import { supabase } from '@/lib/supabase';
 import { ArrowLeft } from 'lucide-react';
 
 const JobDetail = () => {
+  console.log('JobDetail component rendering');
   const navigate = useNavigate();
   const { id } = useParams();
   const [listing, setListing] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  console.log('JobDetail state:', { id, listing, loading, error });
 
   useEffect(() => {
     const fetchData = async () => {
+      console.log('JobDetail useEffect triggered with ID:', id);
       setLoading(true);
       setError(null);
       try {
@@ -20,24 +24,32 @@ const JobDetail = () => {
           .from('listings')
           .select('*')
           .eq('id', id)
-          .eq('category', 'job')
           .single();
         if (listingError) {
           console.error('Job fetch error:', listingError);
           throw listingError;
         }
         console.log('Job data:', data);
-        setListing(data);
+        if (data) {
+          console.log('Setting listing data:', data);
+          setListing(data);
+        } else {
+          console.log('No data returned from query');
+          setError('No job found with this ID');
+        }
       } catch (err: any) {
         console.error('Job detail error:', err);
         setError(err.message);
       } finally {
+        console.log('Setting loading to false');
         setLoading(false);
       }
     };
     fetchData();
   }, [id]);
 
+  console.log('JobDetail render conditions:', { loading, error, listing });
+  
   if (loading) return <div className="min-h-screen flex items-center justify-center">Loading job details...</div>;
   if (error) return <div className="min-h-screen flex items-center justify-center text-red-600">Error: {error}</div>;
   if (!listing) return <div className="min-h-screen flex items-center justify-center">Job listing not found.</div>;
