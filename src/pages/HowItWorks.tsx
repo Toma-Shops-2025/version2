@@ -82,6 +82,22 @@ const HowItWorks: React.FC = () => {
         <li>Designed for mobile-first users, available on all devices</li>
         <li>SEO-optimized listings help you get found faster in search engines</li>
       </ul>
+
+      {/* Third Video Embed - Near Bottom */}
+      <div className="mb-8">
+        <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+          <iframe
+            className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
+            src="https://www.youtube.com/embed/uS_JhdsZpcg?si=ytiuWXlm_xTIGPP9"
+            title="TomaShops Additional Demo"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          ></iframe>
+        </div>
+        <p className="text-sm text-gray-600 mt-2 text-center">Learn more about TomaShops™ features and benefits</p>
+      </div>
+
       <div className="mt-8 p-4 bg-teal-50 border-l-4 border-teal-400 rounded">
         <b>🛍️ Get Started Today</b><br />
         Whether you're decluttering, launching a side hustle, or just looking for a great deal — TomaShops™ is your go-to platform.
