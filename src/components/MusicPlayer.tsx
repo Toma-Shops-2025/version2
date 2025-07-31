@@ -101,19 +101,27 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
   }, [isPlaying, currentGenre, shouldPauseMusic]);
 
   const playMusic = async () => {
-    if (!audioContextRef.current || !currentGenre || isLoading) {
-      console.log('🎵 Cannot play: no audio context, genre selected, or currently loading');
+    if (!currentGenre || isLoading) {
+      console.log('🎵 Cannot play: no genre selected or currently loading');
       return;
     }
 
     try {
       console.log('🎵 Attempting to play music:', currentGenre);
       
-      // Resume audio context if suspended
-      if (audioContextRef.current.state === 'suspended') {
-        await audioContextRef.current.resume();
-        console.log('🎵 Audio context resumed from suspended state');
+      // Create audio context on first user interaction if not exists
+      if (!audioContextRef.current) {
+        console.log('🎵 Creating new audio context...');
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
       }
+      
+      // Resume audio context if suspended (required for user interaction)
+      if (audioContextRef.current.state === 'suspended') {
+        console.log('🎵 Resuming suspended audio context...');
+        await audioContextRef.current.resume();
+      }
+      
+      console.log('🎵 Audio context state:', audioContextRef.current.state);
       
       // Stop any existing oscillator
       if (oscillatorRef.current) {
@@ -138,8 +146,8 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
         console.log('🎵 Playing frequency:', currentTrack.frequency, 'Hz');
       }
       
-      // Set volume
-      const volumeLevel = isMuted ? 0 : volume * 0.5;
+      // Set volume - make it louder
+      const volumeLevel = isMuted ? 0 : volume * 0.8;
       gainNode.gain.setValueAtTime(volumeLevel, audioContextRef.current.currentTime);
       console.log('🎵 Volume level:', volumeLevel);
       
@@ -255,6 +263,35 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
     }
   };
 
+  const testAudio = async () => {
+    try {
+      console.log('🎵 Testing audio...');
+      
+      // Create a simple test oscillator
+      const testContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      
+      if (testContext.state === 'suspended') {
+        await testContext.resume();
+      }
+      
+      const testOscillator = testContext.createOscillator();
+      const testGain = testContext.createGain();
+      
+      testOscillator.connect(testGain);
+      testGain.connect(testContext.destination);
+      
+      testOscillator.frequency.setValueAtTime(440, testContext.currentTime); // A4 note
+      testGain.gain.setValueAtTime(0.3, testContext.currentTime);
+      
+      testOscillator.start();
+      testOscillator.stop(testContext.currentTime + 0.5); // Play for 0.5 seconds
+      
+      console.log('🎵 Test audio played successfully');
+    } catch (error) {
+      console.error('🎵 Test audio failed:', error);
+    }
+  };
+
   if (!showPlayer) {
     return (
       <div className="fixed bottom-24 right-4 z-[9998]">
@@ -339,6 +376,15 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
                 className="bg-gray-800 text-gray-200 border-gray-600 hover:bg-gray-700 hover:border-gray-500 hover:text-white transition-all duration-200 hover:scale-105 hover:shadow-md"
               >
                 <SkipForward className="h-4 w-4" />
+              </Button>
+              
+              <Button
+                onClick={testAudio}
+                variant="outline"
+                size="sm"
+                className="bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 transition-all duration-200 hover:scale-105 hover:shadow-md"
+              >
+                Test
               </Button>
             </div>
 
