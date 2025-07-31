@@ -49,23 +49,47 @@ elevenlabs-convai {
   --convai-widget-position: bottom-right !important;
 }
 
-/* Fix contrast issues for white areas with light text */
-elevenlabs-convai [class*="chat"],
-elevenlabs-convai [class*="conversation"],
-elevenlabs-convai [class*="interface"],
-elevenlabs-convai [class*="message"],
-elevenlabs-convai [class*="bubble"],
-elevenlabs-convai [class*="container"],
-elevenlabs-convai [class*="content"],
-elevenlabs-convai [class*="text"],
-elevenlabs-convai [class*="description"],
-elevenlabs-convai [class*="info"],
-elevenlabs-convai [class*="attribution"],
-elevenlabs-convai [class*="powered"],
-elevenlabs-convai [class*="elevenlabs"],
+/* AGGRESSIVE FIX FOR ALL WHITE AREAS WITH LIGHT TEXT */
+elevenlabs-convai * {
+  color: #1f2937 !important;
+  background-color: #f9fafb !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px !important;
+  padding: 8px !important;
+  margin: 4px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  font-weight: 500 !important;
+  line-height: 1.5 !important;
+}
+
+/* Override for specific elements that should keep their styling */
+elevenlabs-convai button,
+elevenlabs-convai [role="button"],
+elevenlabs-convai .widget-button,
+elevenlabs-convai .call-button,
+elevenlabs-convai [class*="toma"],
 elevenlabs-convai [class*="convai"],
-elevenlabs-convai [class*="ai"],
-elevenlabs-convai [class*="conversational"] {
+elevenlabs-convai [class*="widget"] {
+  background-color: #06b6d4 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 6px !important;
+  padding: 10px 16px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 2px 4px rgba(6, 182, 212, 0.3) !important;
+}
+
+/* Fix for text content specifically */
+elevenlabs-convai p,
+elevenlabs-convai div:not([class*="button"]):not([class*="widget"]):not([class*="convai"]),
+elevenlabs-convai span:not([class*="button"]):not([class*="widget"]):not([class*="convai"]),
+elevenlabs-convai label,
+elevenlabs-convai text,
+elevenlabs-convai [class*="text"],
+elevenlabs-convai [class*="content"],
+elevenlabs-convai [class*="message"],
+elevenlabs-convai [class*="description"],
+elevenlabs-convai [class*="info"] {
   color: #1f2937 !important;
   background-color: #f9fafb !important;
   border: 1px solid #e5e7eb !important;
@@ -73,24 +97,21 @@ elevenlabs-convai [class*="conversational"] {
   padding: 12px !important;
   margin: 8px !important;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-}
-
-/* Fix specific text elements that are hard to read */
-elevenlabs-convai p,
-elevenlabs-convai div,
-elevenlabs-convai span,
-elevenlabs-convai label,
-elevenlabs-convai text {
-  color: #1f2937 !important;
   font-weight: 500 !important;
   line-height: 1.5 !important;
+  font-size: 14px !important;
 }
 
 /* Fix safety warning text specifically */
 elevenlabs-convai *:contains("Stay Safe"),
 elevenlabs-convai *:contains("Never send money"),
 elevenlabs-convai *:contains("personal information"),
-elevenlabs-convai *:contains("strangers") {
+elevenlabs-convai *:contains("strangers"),
+elevenlabs-convai *:contains("Get Started Today"),
+elevenlabs-convai *:contains("decluttering"),
+elevenlabs-convai *:contains("launching"),
+elevenlabs-convai *:contains("great deal"),
+elevenlabs-convai *:contains("go-to platform") {
   color: #dc2626 !important;
   font-weight: 600 !important;
   background-color: #fef2f2 !important;
@@ -98,25 +119,31 @@ elevenlabs-convai *:contains("strangers") {
   border-radius: 6px !important;
   padding: 8px 12px !important;
   margin: 4px 0 !important;
+  font-size: 16px !important;
 }
 
 /* Fix email and contact information */
 elevenlabs-convai *:contains("support@tomashops.com"),
 elevenlabs-convai *:contains("954-TOMASHOPS"),
 elevenlabs-convai a[href*="mailto"],
-elevenlabs-convai a[href*="support"] {
+elevenlabs-convai a[href*="support"],
+elevenlabs-convai [class*="email"],
+elevenlabs-convai [class*="contact"] {
   color: #2563eb !important;
   font-weight: 600 !important;
   text-decoration: underline !important;
   background-color: #eff6ff !important;
   padding: 4px 8px !important;
   border-radius: 4px !important;
+  border: 1px solid #bfdbfe !important;
 }
 
 /* Fix "Powered by ElevenLabs" attribution */
 elevenlabs-convai *:contains("Powered by ElevenLabs"),
 elevenlabs-convai *:contains("Conversational AI"),
-elevenlabs-convai *:contains("ElevenLabs") {
+elevenlabs-convai *:contains("ElevenLabs"),
+elevenlabs-convai [class*="powered"],
+elevenlabs-convai [class*="attribution"] {
   color: #6b7280 !important;
   font-size: 12px !important;
   font-weight: 400 !important;
@@ -133,7 +160,10 @@ elevenlabs-convai [class*="feedback"],
 elevenlabs-convai [class*="form"],
 elevenlabs-convai [class*="input"],
 elevenlabs-convai [class*="select"],
-elevenlabs-convai [class*="textarea"] {
+elevenlabs-convai [class*="textarea"],
+elevenlabs-convai input,
+elevenlabs-convai select,
+elevenlabs-convai textarea {
   color: #1f2937 !important;
   background-color: #ffffff !important;
   border: 2px solid #d1d5db !important;
@@ -141,12 +171,14 @@ elevenlabs-convai [class*="textarea"] {
   padding: 8px 12px !important;
   font-size: 14px !important;
   font-weight: 500 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* Fix dropdown/select elements */
 elevenlabs-convai select,
 elevenlabs-convai [class*="dropdown"],
-elevenlabs-convai [class*="select"] {
+elevenlabs-convai [class*="select"],
+elevenlabs-convai option {
   color: #1f2937 !important;
   background-color: #ffffff !important;
   border: 2px solid #d1d5db !important;

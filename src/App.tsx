@@ -425,6 +425,85 @@ const App = () => {
           });
         });
         
+        // AGGRESSIVE FIX FOR WHITE AREAS WITH UNREADABLE TEXT
+        const allElements = widget.querySelectorAll('*');
+        allElements.forEach(element => {
+          if (element instanceof HTMLElement) {
+            const style = window.getComputedStyle(element);
+            const backgroundColor = style.backgroundColor;
+            const color = style.color;
+            
+            // If element has white/light background with light text, fix it
+            if ((backgroundColor.includes('rgb(255, 255, 255)') || 
+                 backgroundColor.includes('rgba(255, 255, 255') ||
+                 backgroundColor.includes('white') ||
+                 backgroundColor.includes('rgb(248, 250, 252)') ||
+                 backgroundColor.includes('rgb(249, 250, 251)')) &&
+                (color.includes('rgb(255, 255, 255)') || 
+                 color.includes('rgba(255, 255, 255') ||
+                 color.includes('white') ||
+                 color.includes('rgb(248, 250, 252)') ||
+                 color.includes('rgb(249, 250, 251)') ||
+                 color.includes('rgb(156, 163, 175)') ||
+                 color.includes('rgb(107, 114, 128)'))) {
+              
+              // Apply readable styling
+              element.style.color = '#1f2937';
+              element.style.backgroundColor = '#f9fafb';
+              element.style.border = '1px solid #e5e7eb';
+              element.style.borderRadius = '8px';
+              element.style.padding = '8px';
+              element.style.margin = '4px';
+              element.style.fontWeight = '500';
+              element.style.lineHeight = '1.5';
+              element.style.fontSize = '14px';
+              element.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+            }
+            
+            // Special handling for specific text content
+            if (element.textContent) {
+              const text = element.textContent.toLowerCase();
+              
+              // Safety warnings
+              if (text.includes('stay safe') || 
+                  text.includes('never send money') || 
+                  text.includes('personal information') || 
+                  text.includes('strangers') ||
+                  text.includes('get started today') ||
+                  text.includes('decluttering') ||
+                  text.includes('launching') ||
+                  text.includes('great deal') ||
+                  text.includes('go-to platform')) {
+                element.style.color = '#dc2626';
+                element.style.backgroundColor = '#fef2f2';
+                element.style.border = '1px solid #fecaca';
+                element.style.fontWeight = '600';
+                element.style.fontSize = '16px';
+              }
+              
+              // Contact information
+              if (text.includes('support@tomashops.com') || 
+                  text.includes('954-tomashops')) {
+                element.style.color = '#2563eb';
+                element.style.backgroundColor = '#eff6ff';
+                element.style.textDecoration = 'underline';
+                element.style.fontWeight = '600';
+                element.style.border = '1px solid #bfdbfe';
+              }
+              
+              // ElevenLabs attribution
+              if (text.includes('powered by elevenlabs') || 
+                  text.includes('conversational ai')) {
+                element.style.color = '#6b7280';
+                element.style.backgroundColor = '#f3f4f6';
+                element.style.fontSize = '12px';
+                element.style.fontWeight = '400';
+                element.style.border = '1px solid #d1d5db';
+              }
+            }
+          }
+        });
+        
         // Remove avatar overrides to allow ElevenLabs avatar to show
         // const avatarElements = widget.querySelectorAll('img, [class*="avatar"], [class*="profile"], [class*="user-image"]');
         // avatarElements.forEach(avatar => {
@@ -460,6 +539,38 @@ const App = () => {
                 .replace(/Start a call/g, 'TomaBot')
                 .replace(/call to TomaBot/g, 'TomaBot')
                 .replace(/Start a call to TomaBot/g, 'TomaBot');
+            }
+            
+            // Apply the same aggressive styling fix
+            if (element instanceof HTMLElement) {
+              const style = window.getComputedStyle(element);
+              const backgroundColor = style.backgroundColor;
+              const color = style.color;
+              
+              if ((backgroundColor.includes('rgb(255, 255, 255)') || 
+                   backgroundColor.includes('rgba(255, 255, 255') ||
+                   backgroundColor.includes('white') ||
+                   backgroundColor.includes('rgb(248, 250, 252)') ||
+                   backgroundColor.includes('rgb(249, 250, 251)')) &&
+                  (color.includes('rgb(255, 255, 255)') || 
+                   color.includes('rgba(255, 255, 255') ||
+                   color.includes('white') ||
+                   color.includes('rgb(248, 250, 252)') ||
+                   color.includes('rgb(249, 250, 251)') ||
+                   color.includes('rgb(156, 163, 175)') ||
+                   color.includes('rgb(107, 114, 128)'))) {
+                
+                element.style.color = '#1f2937';
+                element.style.backgroundColor = '#f9fafb';
+                element.style.border = '1px solid #e5e7eb';
+                element.style.borderRadius = '8px';
+                element.style.padding = '8px';
+                element.style.margin = '4px';
+                element.style.fontWeight = '500';
+                element.style.lineHeight = '1.5';
+                element.style.fontSize = '14px';
+                element.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
+              }
             }
           });
         }
