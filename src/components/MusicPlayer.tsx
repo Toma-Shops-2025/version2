@@ -104,32 +104,43 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
 
   // Function to initialize audio context on user interaction
   const initializeAudioContext = async () => {
-    if (!audioContextRef.current) {
-      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-      console.log('🎵 Audio context initialized');
+    try {
+      if (!audioContextRef.current) {
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+        console.log('🎵 Audio context created');
+      }
+      
+      if (audioContextRef.current.state === 'suspended') {
+        await audioContextRef.current.resume();
+        console.log('🎵 Audio context resumed from suspended state');
+      }
+      
+      console.log('🎵 Audio context state:', audioContextRef.current.state);
+      setAudioContextReady(true);
+      return true;
+    } catch (error) {
+      console.error('🎵 Error initializing audio context:', error);
+      return false;
     }
-    
-    if (audioContextRef.current.state === 'suspended') {
-      await audioContextRef.current.resume();
-      console.log('🎵 Audio context resumed');
-    }
-    
-    setAudioContextReady(true);
   };
 
   const playMusic = async () => {
-    if (!audioContextRef.current || !currentGenre || isLoading) {
-      console.log('🎵 Cannot play: no audio context, genre selected, or currently loading');
+    if (!currentGenre || isLoading) {
+      console.log('🎵 Cannot play: no genre selected or currently loading');
       return;
+    }
+    
+    // Always try to initialize audio context if not ready
+    if (!audioContextRef.current || !audioContextReady) {
+      const success = await initializeAudioContext();
+      if (!success) {
+        console.log('🎵 Failed to initialize audio context');
+        return;
+      }
     }
 
     try {
       console.log('🎵 Attempting to play music:', currentGenre);
-      
-      // Initialize audio context if not ready
-      if (!audioContextReady) {
-        await initializeAudioContext();
-      }
       
       // Resume audio context if suspended
       if (audioContextRef.current.state === 'suspended') {
@@ -210,10 +221,6 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
       if (isPlaying) {
         pauseMusic();
       } else {
-        // Initialize audio context on first user interaction
-        if (!audioContextReady) {
-          await initializeAudioContext();
-        }
         playMusic();
       }
       return;
@@ -231,11 +238,6 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
       const randomTrack = tracks[Math.floor(Math.random() * tracks.length)];
       setCurrentTrack(randomTrack);
       console.log('🎵 Track loaded:', randomTrack.title);
-      
-      // Initialize audio context on first user interaction
-      if (!audioContextReady) {
-        await initializeAudioContext();
-      }
       
       // Auto-play the new genre after a short delay
       setTimeout(() => {
