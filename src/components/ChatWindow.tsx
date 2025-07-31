@@ -261,7 +261,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
-      <div className="bg-white border-b p-4">
+      <div className="bg-gray-900 border-b border-gray-700 p-4">
         <div className="flex items-center">
           <Button variant="ghost" size="sm" onClick={onBack} className="mr-3">
             <ArrowLeft className="h-5 w-5" />

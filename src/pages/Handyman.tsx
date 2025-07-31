@@ -152,24 +152,24 @@ const Handyman = () => {
   }, [showForm]);
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="sticky top-0 z-40 bg-white dark:bg-gray-900 pb-2">
+    <div className="container mx-auto py-8 bg-black text-white min-h-screen">
+      <div className="sticky top-0 z-40 bg-black pb-2">
         <BackButton />
       </div>
-      <h1 className="text-3xl font-bold mb-4">Handyman Services</h1>
+      <h1 className="text-3xl font-bold mb-4 text-white">Handyman Services</h1>
       <button className="bg-yellow-600 text-white px-4 py-2 rounded" onClick={() => setShowForm(true)}>Create New Handyman Service</button>
       <div className="mt-8">
         {loading ? (
-          <div className="text-gray-500">Loading listings...</div>
+          <div className="text-gray-400">Loading listings...</div>
         ) : error ? (
-          <div className="text-red-600">{error}</div>
+          <div className="text-red-400">{error}</div>
         ) : listings.length === 0 ? (
-          <div className="text-gray-500">No handyman services yet.</div>
+          <div className="text-gray-400">No handyman services yet.</div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {listings.map(listing => (
               <Link key={listing.id} to={`/handyman/${listing.id}`} className="block">
-                <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-4 hover:ring-2 hover:ring-yellow-400 transition">
+                <div className="bg-gray-900 rounded-lg shadow p-4 hover:ring-2 hover:ring-yellow-400 transition">
                   {listing.images && listing.images.length > 0 && (
                     <img src={listing.images[0]} alt={listing.title} className="w-full h-40 object-cover rounded mb-2" crossOrigin="anonymous" />
                   )}

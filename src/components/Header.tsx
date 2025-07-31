@@ -16,9 +16,8 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-sm">
-      {/* Top White Area */}
-      <div className="bg-white border-b border-gray-200">
+    <header className="sticky top-0 z-50 bg-black shadow-sm">
+      <div className="bg-black border-b border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
           <div className="flex items-center">
             <h1 className="text-xl font-bold text-gray-900 flex flex-col leading-tight">

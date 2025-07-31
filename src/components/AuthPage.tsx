@@ -51,7 +51,7 @@ const AuthPage: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center" style={{
       background: 'linear-gradient(135deg, #e0e7ff 0%, #f0fdfa 100%)',
     }}>
-      <form onSubmit={handleAuth} className="bg-white p-8 rounded shadow-md w-full max-w-sm space-y-6 flex flex-col items-center">
+      <form onSubmit={handleAuth} className="bg-gray-900 p-8 rounded shadow-md w-full max-w-sm space-y-6 flex flex-col items-center">
         <Link to="/" className="block w-full flex flex-col items-center mb-2">
           <img
             src="/logo.png"

@@ -12,7 +12,7 @@ const BottomNavBar: React.FC = () => {
   const unreadNotificationsCount = useUnreadNotificationsCount();
 
   return (
-    <nav className="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 z-50 flex justify-around items-center h-16 shadow-lg md:hidden">
+    <nav className="fixed bottom-0 left-0 w-full bg-black border-t border-gray-800 z-50 flex justify-around items-center h-16 shadow-lg md:hidden">
       <Link to="/" className="flex flex-col items-center text-gray-600 hover:text-teal-600">
         <Home className="h-6 w-6" />
         <span className="text-xs">Home</span>

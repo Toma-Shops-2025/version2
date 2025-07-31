@@ -39,8 +39,8 @@ const categories = [
 const Categories: React.FC = () => {
   const navigate = useNavigate();
   return (
-    <div className="min-h-screen bg-white p-6">
-      <h1 className="text-2xl font-bold mb-6">Categories</h1>
+    <div className="min-h-screen bg-black text-white p-6">
+      <h1 className="text-2xl font-bold mb-6 text-white">Categories</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {categories.map((cat) => (
           <Button key={cat} className="w-full" variant="outline" onClick={() => {}}>

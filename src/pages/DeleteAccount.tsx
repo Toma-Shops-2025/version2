@@ -52,8 +52,8 @@ const DeleteAccountPage: React.FC<DeleteAccountPageProps> = ({ onBack }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="sticky top-0 bg-white border-b z-10">
+    <div className="min-h-screen bg-black text-white">
+      <div className="sticky top-0 bg-black border-b border-gray-800 z-10">
         <div className="flex items-center justify-between p-4 max-w-2xl mx-auto">
           <Button variant="ghost" size="sm" onClick={onBack}>
             <ArrowLeft className="h-5 w-5 mr-2" />
@@ -64,10 +64,10 @@ const DeleteAccountPage: React.FC<DeleteAccountPageProps> = ({ onBack }) => {
         </div>
       </div>
       <div className="p-4 max-w-2xl mx-auto">
-        <div className="bg-white p-6 rounded-lg shadow space-y-4">
+        <div className="bg-gray-900 p-6 rounded-lg shadow space-y-4">
             <h2 className="text-xl font-bold text-red-600">Are you sure you want to delete your account?</h2>
-            <p className="text-gray-600">This action is permanent and cannot be undone. When you delete your account:</p>
-            <ul className="list-disc list-inside text-gray-600 space-y-2">
+            <p className="text-gray-300">This action is permanent and cannot be undone. When you delete your account:</p>
+            <ul className="list-disc list-inside text-gray-300 space-y-2">
                 <li>Your profile and all personal information will be permanently removed.</li>
                 <li>All of your active and past listings will be deleted.</li>
                 <li>All of your conversations and messages will be deleted.</li>

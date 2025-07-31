@@ -68,7 +68,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
   onRadiusChange
 }) => {
   return (
-    <div className="bg-white border-b border-gray-200 py-4">
+    <div className="bg-black border-b border-gray-800 py-4">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-center gap-4">
           {/* Location */}

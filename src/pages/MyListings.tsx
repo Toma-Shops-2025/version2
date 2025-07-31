@@ -28,7 +28,7 @@ const MyListings: React.FC = () => {
   if (!user) return <div className="p-8 text-center">Please log in to view your listings.</div>;
 
   return (
-    <div className="min-h-screen bg-white p-6">
+    <div className="min-h-screen bg-black text-white p-6">
       <Button variant="secondary" className="mb-4" onClick={() => navigate(-1)}>Back</Button>
       <h1 className="text-2xl font-bold mb-6">My Listings</h1>
       {loading ? (
