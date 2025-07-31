@@ -37,6 +37,11 @@ const HomePage: React.FC = () => {
   const unreadCount = useUnreadMessagesCount();
   const unreadNotificationsCount = useUnreadNotificationsCount();
 
+  // Scroll to top when HomePage mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   useEffect(() => {
     const fetchListings = async () => {
       setLoading(true);

@@ -48,12 +48,15 @@ import MusicPlatformIntegration from './components/MusicPlatformIntegration';
 
 const queryClient = new QueryClient();
 
-// Custom hook to handle back button
+// Custom hook to handle back button and scroll to top
 const useBackButtonHandler = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
+    // Scroll to top on every route change
+    window.scrollTo(0, 0);
+    
     // Track navigation history
     let navigationHistory: string[] = [];
     
@@ -113,8 +116,32 @@ const BackButtonHandler: React.FC = () => {
   return null;
 };
 
+// Component to handle scroll to top on app start and refresh
+const ScrollToTopHandler: React.FC = () => {
+  useEffect(() => {
+    // Scroll to top when component mounts (app starts/refreshes)
+    window.scrollTo(0, 0);
+    
+    // Also scroll to top on page refresh
+    const handleBeforeUnload = () => {
+      window.scrollTo(0, 0);
+    };
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+  
+  return null;
+};
+
 const App = () => {
   useEffect(() => {
+    // Scroll to top immediately when app loads
+    window.scrollTo(0, 0);
+    
     // Global error handler for Video.js and other errors
     const handleGlobalError = (event: ErrorEvent) => {
       if (event.message.includes('videojs') || event.message.includes('Invalid target')) {
@@ -453,6 +480,7 @@ const App = () => {
               <Toaster />
               <Sonner />
               <BrowserRouter>
+                <ScrollToTopHandler />
                 <BackButtonHandler />
                 <Routes>
                   <Route path="/" element={<Index />} />

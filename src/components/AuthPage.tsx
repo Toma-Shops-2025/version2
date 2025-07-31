@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAppContext } from '@/contexts/AppContext';
 import { Input } from '@/components/ui/input';
@@ -13,6 +13,11 @@ const AuthPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  // Scroll to top when AuthPage mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,6 +40,8 @@ const AuthPage: React.FC = () => {
           email: result.data.user.email || '',
         });
         showToast(isSignUp ? 'Sign up successful!' : 'Login successful!');
+        // Scroll to top before navigating to home page
+        window.scrollTo(0, 0);
         navigate('/');
       } else {
         setError('Unknown error.');
