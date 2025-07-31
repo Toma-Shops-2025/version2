@@ -22,11 +22,12 @@ const HowItWorks: React.FC = () => {
         <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
           <iframe
             className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
-            src="https://www.youtube.com/embed/72xUXyYISUQ?si=1CUlfurcdPTd0pM8"
+            src="https://www.youtube.com/embed/72xUXyYISUQ"
             title="TomaShops Introduction Video"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
+            loading="lazy"
           ></iframe>
         </div>
         <p className="text-sm text-gray-600 mt-2 text-center">Watch how TomaShops™ revolutionizes online marketplace with video listings</p>
@@ -48,11 +49,12 @@ const HowItWorks: React.FC = () => {
         <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
           <iframe
             className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
-            src="https://www.youtube.com/embed/0XYtJzPZjUo?si=siJxDUzRAdk1LsDG"
+            src="https://www.youtube.com/embed/0XYtJzPZjUo"
             title="TomaShops Platform Demo"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
+            loading="lazy"
           ></iframe>
         </div>
         <p className="text-sm text-gray-600 mt-2 text-center">See the TomaShops™ platform in action</p>
@@ -88,11 +90,12 @@ const HowItWorks: React.FC = () => {
         <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
           <iframe
             className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
-            src="https://www.youtube.com/embed/uS_JhdsZpcg?si=ytiuWXlm_xTIGPP9"
+            src="https://www.youtube.com/embed/uS_JhdsZpcg"
             title="TomaShops Additional Demo"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
+            loading="lazy"
           ></iframe>
         </div>
         <p className="text-sm text-gray-600 mt-2 text-center">Learn more about TomaShops™ features and benefits</p>
