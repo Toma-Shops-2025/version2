@@ -257,8 +257,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="sticky top-0 bg-white border-b z-10">
+    <div className="min-h-screen bg-black text-white">
+      <div className="sticky top-0 bg-black border-b border-gray-800 z-10">
         <div className="flex items-center justify-between p-4">
           <Button variant="ghost" size="sm" onClick={onBack}>
             <ArrowLeft className="h-5 w-5" />
@@ -301,9 +301,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
 
       <div className="p-4">
         <div className="mb-4">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">${listing.price === 0 ? 'Free' : listing.price.toLocaleString()}</h1>
-          <h2 className="text-lg text-gray-700 mb-3">{listing.title}</h2>
-          <div className="flex items-center text-gray-500 text-sm mb-4">
+          <h1 className="text-2xl font-bold text-white mb-2">${listing.price === 0 ? 'Free' : listing.price.toLocaleString()}</h1>
+          <h2 className="text-lg text-gray-200 mb-3">{listing.title}</h2>
+          <div className="flex items-center text-gray-400 text-sm mb-4">
             <MapPin className="h-4 w-4 mr-1" />
             <span>{listing.location}</span>
           </div>
@@ -314,21 +314,21 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
           )}
         </div>
 
-        <div className="mb-6 border-t pt-6">
-          <h3 className="font-semibold text-gray-900 mb-2">Description</h3>
-          <p className="text-gray-700">{listing.description}</p>
+        <div className="mb-6 border-t border-gray-800 pt-6">
+          <h3 className="font-semibold text-white mb-2">Description</h3>
+          <p className="text-gray-300">{listing.description}</p>
         </div>
 
         {hasPurchased && !hasReviewed && (
-          <div className="mb-6 border-t pt-6">
-            <h3 className="font-semibold text-gray-900 mb-2">Leave a Review</h3>
+          <div className="mb-6 border-t border-gray-800 pt-6">
+            <h3 className="font-semibold text-white mb-2">Leave a Review</h3>
             <form onSubmit={handleReviewSubmit}>
               <div className="flex items-center mb-2">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star key={star} className={`w-6 h-6 cursor-pointer ${reviewRating >= star ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} onClick={() => setReviewRating(star)} />
                 ))}
               </div>
-              <textarea className="w-full border rounded p-2" rows={3} placeholder="Share your experience..." value={reviewComment} onChange={(e) => setReviewComment(e.target.value)} required />
+              <textarea className="w-full border border-gray-700 bg-gray-900 text-white rounded p-2" rows={3} placeholder="Share your experience..." value={reviewComment} onChange={(e) => setReviewComment(e.target.value)} required />
               <Button type="submit" disabled={submittingReview} className="mt-2">
                 {submittingReview ? 'Submitting...' : 'Submit Review'}
               </Button>
@@ -337,9 +337,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
         )}
 
         {listing.seller_id && (
-          <div className="mb-6 border-t pt-6">
-            <h3 className="font-semibold text-gray-900 mb-2">About the Seller</h3>
-            <Link to={`/profile/${listing.seller_id}`} className="text-blue-500 hover:underline">
+          <div className="mb-6 border-t border-gray-800 pt-6">
+            <h3 className="font-semibold text-white mb-2">About the Seller</h3>
+            <Link to={`/profile/${listing.seller_id}`} className="text-blue-400 hover:underline">
               View Seller's Profile
             </Link>
           </div>

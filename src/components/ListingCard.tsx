@@ -109,7 +109,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
         )}
         <CardContent className="p-3">
           <div className="mb-1">
-            <h3 className="font-bold text-lg text-gray-900">
+            <h3 className="font-bold text-lg text-white">
               {/* Show salary for jobs, price for others */}
               {category === 'job'
                 ? (salary && !isNaN(Number(salary))
@@ -120,12 +120,12 @@ const ListingCard: React.FC<ListingCardProps> = ({
                   : `$${(price && typeof price === 'number') ? price.toLocaleString() : price || 'N/A'}`}
             </h3>
           </div>
-          <p className="text-gray-700 text-sm mb-2 line-clamp-2 leading-tight font-bold">{title}</p>
-          <div className="flex items-center text-gray-500 text-xs mb-2">
+          <p className="text-gray-200 text-sm mb-2 line-clamp-2 leading-tight font-bold">{title}</p>
+          <div className="flex items-center text-gray-300 text-xs mb-2">
             <MapPin className="h-3 w-3 mr-1 flex-shrink-0" />
             <span className="truncate">{location}</span>
           </div>
-          <div className="text-gray-600 mt-2 line-clamp-2 text-sm">{description}</div>
+          <div className="text-gray-300 mt-2 line-clamp-2 text-sm">{description}</div>
         </CardContent>
       </div>
       {/* Owner controls (unchanged) */}
