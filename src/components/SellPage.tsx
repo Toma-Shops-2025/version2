@@ -204,9 +204,9 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-black text-white">
       {/* Header */}
-      <div className="sticky top-0 bg-white border-b z-10">
+      <div className="sticky top-0 bg-black border-b border-gray-800 z-10">
         <div className="flex items-center justify-between p-4">
           <Button variant="ghost" size="sm" onClick={onBack}>
             <ArrowLeft className="h-5 w-5 mr-2" />

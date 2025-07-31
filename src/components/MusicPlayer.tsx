@@ -271,13 +271,13 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
 
   return (
     <div className="fixed bottom-24 right-4 z-[9998]">
-      <Card className="w-80 bg-white/95 backdrop-blur-sm shadow-xl border-0">
+      <Card className="w-80 bg-gray-900/95 backdrop-blur-sm shadow-xl border border-gray-700">
         <CardContent className="p-4">
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
               <Music className="h-5 w-5 text-cyan-500" />
-              <h3 className="font-semibold text-gray-900">Background Music</h3>
+              <h3 className="font-semibold text-white">Background Music</h3>
             </div>
             <Button
               variant="ghost"
@@ -299,7 +299,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
 
           {/* Genre Selection */}
           <div className="mb-4">
-            <h4 className="text-sm font-medium text-gray-700 mb-2">Select Genre:</h4>
+            <h4 className="text-sm font-medium text-gray-300 mb-2">Select Genre:</h4>
             <div className="grid grid-cols-2 gap-2">
               {genres.map((genre) => (
                 <Button
@@ -367,7 +367,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
           </div>
 
           {/* Status */}
-          <div className="mt-3 text-xs text-gray-500">
+          <div className="mt-3 text-xs text-gray-300">
             {isLoading ? (
               <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></div>

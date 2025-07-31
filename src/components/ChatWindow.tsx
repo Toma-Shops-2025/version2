@@ -260,7 +260,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col h-screen bg-black">
       <div className="bg-gray-900 border-b border-gray-700 p-4">
         <div className="flex items-center">
           <Button variant="ghost" size="sm" onClick={onBack} className="mr-3">
@@ -291,7 +291,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
               <Card className={`max-w-xs p-3 ${
                 message.sender_id === currentUserId 
                   ? 'bg-blue-600 text-white' 
-                  : 'bg-white'
+                  : 'bg-gray-800 text-white'
               }`}>
                   <div className="flex flex-col">
                     <span className="text-xs font-semibold mb-1">
@@ -325,7 +325,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="bg-white border-t p-4">
+      <div className="bg-gray-900 border-t border-gray-700 p-4">
         {isBlocked ? (
           <div className="text-center text-gray-500 text-sm">
             You can no longer reply to this conversation.
