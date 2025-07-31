@@ -25,7 +25,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
   const [currentGenre, setCurrentGenre] = useState<string>('');
   const [volume, setVolume] = useState(0.3);
   const [isMuted, setIsMuted] = useState(false);
-  const [showPlayer, setShowPlayer] = useState(true);
+  const [showPlayer, setShowPlayer] = useState(false);
   const [currentTrack, setCurrentTrack] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const audioContextRef = useRef<AudioContext | null>(null);

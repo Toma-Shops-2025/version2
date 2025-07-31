@@ -9,7 +9,7 @@ const BottomNavBar: React.FC = () => {
   const unreadNotificationsCount = useUnreadNotificationsCount();
 
   return (
-    <nav className="fixed bottom-0 left-0 w-full bg-black border-t border-gray-800 z-50 flex justify-around items-center h-16 shadow-lg md:hidden">
+    <nav className="fixed bottom-0 left-0 w-full bg-black border-t border-gray-800 z-50 flex justify-around items-center h-16 shadow-lg md:hidden opacity-0 hover:opacity-100 transition-opacity duration-300">
       <Link to="/" className="flex flex-col items-center text-gray-400 hover:text-blue-400 transition-colors duration-200">
         <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center mb-1 hover:scale-110 transition-transform duration-200">
           <Home className="h-5 w-5 text-white" />
