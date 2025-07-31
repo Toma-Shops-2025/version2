@@ -360,7 +360,7 @@ const App = () => {
   return (
     <AppProvider>
       <AudioProvider>
-        <ThemeProvider defaultTheme="light">
+        <ThemeProvider defaultTheme="dark">
           <QueryClientProvider client={queryClient}>
             <TooltipProvider>
               <Toaster />

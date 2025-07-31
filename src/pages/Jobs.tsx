@@ -175,39 +175,39 @@ const Jobs = () => {
   }, [showForm]);
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="sticky top-0 z-40 bg-white dark:bg-gray-900 pb-2">
+    <div className="container mx-auto py-8 bg-black text-white min-h-screen">
+      <div className="sticky top-0 z-40 bg-black pb-2">
         <BackButton />
       </div>
-      <h1 className="text-3xl font-bold mb-4">Job Listings</h1>
+      <h1 className="text-3xl font-bold mb-4 text-white">Job Listings</h1>
       <button className="bg-green-600 text-white px-4 py-2 rounded" onClick={() => setShowForm(true)}>Create New Job Listing</button>
       <div className="mt-8">
         {loading ? (
-          <div className="text-gray-500">Loading listings...</div>
+          <div className="text-gray-400">Loading listings...</div>
         ) : error ? (
-          <div className="text-red-600">{error}</div>
+          <div className="text-red-400">{error}</div>
         ) : listings.length === 0 ? (
-          <div className="text-gray-500">No job listings yet.</div>
+          <div className="text-gray-400">No job listings yet.</div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {listings.map(listing => (
               <Link key={listing.id} to={`/jobs/${listing.id}`} className="block">
-                <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-4 hover:ring-2 hover:ring-green-400 transition">
+                <div className="bg-gray-900 rounded-lg shadow p-4 hover:ring-2 hover:ring-green-400 transition">
                   {listing.images && listing.images.length > 0 && (
                     <img src={listing.images[0]} alt={listing.title} className="w-full h-40 object-cover rounded mb-2" crossOrigin="anonymous" />
                   )}
-                  <h2 className="text-xl font-semibold mb-1">{listing.title}</h2>
-                  <div className="text-green-700 font-bold mb-1">{listing.company_name}</div>
-                  <div className="text-gray-700 mb-1">{listing.location}</div>
-                  <div className="text-sm text-gray-500 mb-1">{listing.job_type}</div>
-                  <div className="text-sm text-gray-500 mb-1">Salary: {listing.salary || 'N/A'}</div>
-                  <div className="text-sm text-gray-500 mb-1">{listing.requirements}</div>
-                  <div className="text-gray-600 mt-2 line-clamp-2">{listing.description}</div>
+                  <h2 className="text-xl font-semibold mb-1 text-white">{listing.title}</h2>
+                  <div className="text-green-400 font-bold mb-1">{listing.company_name}</div>
+                  <div className="text-gray-300 mb-1">{listing.location}</div>
+                  <div className="text-sm text-gray-400 mb-1">{listing.job_type}</div>
+                  <div className="text-sm text-gray-400 mb-1">Salary: {listing.salary || 'N/A'}</div>
+                  <div className="text-sm text-gray-400 mb-1">{listing.requirements}</div>
+                  <div className="text-gray-300 mt-2 line-clamp-2">{listing.description}</div>
                   {listing.application_url && (
-                    <a href={listing.application_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline text-sm mt-2 block">Apply Here</a>
+                    <a href={listing.application_url} target="_blank" rel="noopener noreferrer" className="text-blue-400 underline text-sm mt-2 block">Apply Here</a>
                   )}
                   {listing.contact_info && (
-                    <div className="text-xs text-gray-500 mt-1">Contact: {listing.contact_info}</div>
+                    <div className="text-xs text-gray-400 mt-1">Contact: {listing.contact_info}</div>
                   )}
                   {listing.video && (
                     <video src={listing.video} controls className="w-full mt-2 rounded" style={{ maxHeight: 120 }} crossOrigin="anonymous" />

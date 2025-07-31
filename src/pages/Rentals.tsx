@@ -204,19 +204,19 @@ const Rentals = () => {
   }, [showForm]); // refetch after closing form
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="sticky top-0 z-40 bg-white dark:bg-gray-900 pb-2">
+    <div className="container mx-auto py-8 bg-black text-white min-h-screen">
+      <div className="sticky top-0 z-40 bg-black pb-2">
         <BackButton />
       </div>
-      <h1 className="text-3xl font-bold mb-4">Rental Listings</h1>
+      <h1 className="text-3xl font-bold mb-4 text-white">Rental Listings</h1>
       <button className="bg-blue-600 text-white px-4 py-2 rounded" onClick={() => setShowForm(true)}>Create New Rental Listing</button>
       <div className="mt-8">
         {loading ? (
-          <div className="text-gray-500">Loading listings...</div>
+          <div className="text-gray-400">Loading listings...</div>
         ) : error ? (
-          <div className="text-red-600">{error}</div>
+          <div className="text-red-400">{error}</div>
         ) : listings.length === 0 ? (
-          <div className="text-gray-500">No rental listings yet.</div>
+          <div className="text-gray-400">No rental listings yet.</div>
         ) : (
           <ListingsGrid listings={listings} onListingClick={id => navigate(`/rentals/${id}`)} />
         )}

@@ -169,29 +169,29 @@ const Digital = () => {
   }, [showForm]);
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="sticky top-0 z-40 bg-white dark:bg-gray-900 pb-2">
+    <div className="container mx-auto py-8 bg-black text-white min-h-screen">
+      <div className="sticky top-0 z-40 bg-black pb-2">
         <BackButton />
       </div>
-      <h1 className="text-3xl font-bold mb-4">Digital Products</h1>
+      <h1 className="text-3xl font-bold mb-4 text-white">Digital Products</h1>
       <button className="bg-blue-600 text-white px-4 py-2 rounded" onClick={() => setShowForm(true)}>Create New Digital Product</button>
       <div className="mt-8">
         {loading ? (
-          <div className="text-gray-500">Loading listings...</div>
+          <div className="text-gray-400">Loading listings...</div>
         ) : error ? (
-          <div className="text-red-600">{error}</div>
+          <div className="text-red-400">{error}</div>
         ) : listings.length === 0 ? (
-          <div className="text-gray-500">No digital products yet.</div>
+          <div className="text-gray-400">No digital products yet.</div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {listings.map(listing => (
               <Link key={listing.id} to={`/digital/${listing.id}`} className="block">
-                <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-4 hover:ring-2 hover:ring-blue-400 transition">
-                  <h2 className="text-xl font-semibold mb-1">{listing.title}</h2>
-                  <div className="text-blue-700 font-bold mb-1">${listing.price}</div>
-                  <div className="text-gray-600 mt-2 line-clamp-2">{listing.description}</div>
+                <div className="bg-gray-900 rounded-lg shadow p-4 hover:ring-2 hover:ring-blue-400 transition">
+                  <h2 className="text-xl font-semibold mb-1 text-white">{listing.title}</h2>
+                  <div className="text-blue-400 font-bold mb-1">${listing.price}</div>
+                  <div className="text-gray-300 mt-2 line-clamp-2">{listing.description}</div>
                   {listing.digital_file_urls && listing.digital_file_urls.length > 0 && (
-                    <div className="mt-2 text-sm text-green-700">{listing.digital_file_urls.length} file(s) uploaded</div>
+                    <div className="mt-2 text-sm text-green-400">{listing.digital_file_urls.length} file(s) uploaded</div>
                   )}
                 </div>
               </Link>

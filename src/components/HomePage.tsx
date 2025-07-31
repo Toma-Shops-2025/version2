@@ -184,7 +184,7 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col bg-black text-white">
       {/* Sticky Header Area */}
       <div className="sticky top-0 z-50">
         <Header />
@@ -247,16 +247,16 @@ const HomePage: React.FC = () => {
             <Button variant="secondary" className="mb-4" onClick={() => setFilter('all')}>Back</Button>
           )}
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-900">Today's picks</h3>
-            <div className="flex items-center text-sm text-gray-600">
+            <h3 className="text-lg font-semibold text-white">Today's picks</h3>
+            <div className="flex items-center text-sm text-gray-400">
               <MapPin className="h-4 w-4 mr-1" />
               <span>Louisville, Kentucky</span>
             </div>
           </div>
           {loading ? (
-            <div className="text-center text-gray-500 py-8">Loading listings...</div>
+            <div className="text-center text-gray-400 py-8">Loading listings...</div>
           ) : error ? (
-            <div className="text-center text-red-500 py-8">{error}</div>
+            <div className="text-center text-red-400 py-8">{error}</div>
           ) : (
             <>
               <ListingsGrid 
