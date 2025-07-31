@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { 
   User, 
   Mail, 
@@ -21,14 +22,18 @@ import {
   Camera,
   Check,
   X,
-  Rocket
+  Rocket,
+  Pause,
+  Play
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAudioContext } from '@/hooks/use-audio-context';
 
 const MyProfile: React.FC = () => {
   const navigate = useNavigate();
   const { user: currentUser } = useAppContext();
   const { toast } = useToast();
+  const { audioContext, isPlaying, togglePlay } = useAudioContext();
   
   const [profileData, setProfileData] = useState<any>(null);
   const [profileLoading, setProfileLoading] = useState(true);

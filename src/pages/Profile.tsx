@@ -20,6 +20,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import Reviews from '@/components/Reviews';
+import { useAudioContext } from '../hooks/use-audio-context';
 
 const Profile: React.FC = () => {
   const { id } = useParams<{ id: string }>();

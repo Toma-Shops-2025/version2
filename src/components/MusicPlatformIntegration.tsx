@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Music, ExternalLink, Settings, Play, Pause, VolumeX, Volume2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { useToast } from '../hooks/use-toast';
 import { useAudioContext } from '../hooks/use-audio-context';
 
 interface MusicPlatform {
@@ -16,6 +17,38 @@ const MusicPlatformIntegration: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState<MusicPlatform | null>(null);
   const { shouldPauseMusic, isUploading, videoPlaying } = useAudioContext();
+  const { toast } = useToast();
+
+  // Show toast notifications when music state changes
+  useEffect(() => {
+    if (videoPlaying) {
+      toast({
+        title: "🎵 Music Paused",
+        description: "Music automatically paused while video is playing",
+        duration: 3000,
+      });
+    }
+  }, [videoPlaying, toast]);
+
+  useEffect(() => {
+    if (isUploading) {
+      toast({
+        title: "🎵 Music Paused",
+        description: "Music automatically paused during upload",
+        duration: 3000,
+      });
+    }
+  }, [isUploading, toast]);
+
+  useEffect(() => {
+    if (!shouldPauseMusic && !videoPlaying && !isUploading) {
+      toast({
+        title: "🎵 Music Resumed",
+        description: "Music automatically resumed",
+        duration: 2000,
+      });
+    }
+  }, [shouldPauseMusic, videoPlaying, isUploading, toast]);
 
   const musicPlatforms: MusicPlatform[] = [
     {
