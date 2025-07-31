@@ -5,7 +5,7 @@ import { useAudioContext } from '../hooks/use-audio-context';
 interface Track {
   id: string;
   name: string;
-  frequency: number;
+  url: string;
 }
 
 interface Genre {
@@ -24,9 +24,7 @@ const MusicPlayer: React.FC = () => {
   const [isMuted, setIsMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const oscillatorRef = useRef<OscillatorNode | null>(null);
-  const gainNodeRef = useRef<GainNode | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   
   const { shouldPauseMusic } = useAudioContext();
 
@@ -39,70 +37,58 @@ const MusicPlayer: React.FC = () => {
     { id: 'classicrock', name: 'CLASSIC ROCK', color: 'from-orange-500 to-orange-600' },
   ];
 
+  // Sample music URLs (royalty-free music)
   const sampleTracks: Record<string, Track[]> = {
     country: [
-      { id: 'c1', name: 'Country Road', frequency: 440 },
-      { id: 'c2', name: 'Blue Skies', frequency: 523.25 },
-      { id: 'c3', name: 'Prairie Wind', frequency: 587.33 },
+      { id: 'c1', name: 'Country Road', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
+      { id: 'c2', name: 'Blue Skies', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
+      { id: 'c3', name: 'Prairie Wind', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
     ],
     rock: [
-      { id: 'r1', name: 'Rock Anthem', frequency: 659.25 },
-      { id: 'r2', name: 'Electric Storm', frequency: 739.99 },
-      { id: 'r3', name: 'Thunder Road', frequency: 830.61 },
+      { id: 'r1', name: 'Rock Anthem', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
+      { id: 'r2', name: 'Electric Storm', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
+      { id: 'r3', name: 'Thunder Road', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
     ],
     hiphop: [
-      { id: 'h1', name: 'Urban Beat', frequency: 493.88 },
-      { id: 'h2', name: 'Street Flow', frequency: 554.37 },
-      { id: 'h3', name: 'City Rhythm', frequency: 622.25 },
+      { id: 'h1', name: 'Urban Beat', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
+      { id: 'h2', name: 'Street Flow', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
+      { id: 'h3', name: 'City Rhythm', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
     ],
     rnb: [
-      { id: 'rb1', name: 'Smooth Groove', frequency: 415.30 },
-      { id: 'rb2', name: 'Midnight Soul', frequency: 466.16 },
-      { id: 'rb3', name: 'Velvet Voice', frequency: 523.25 },
+      { id: 'rb1', name: 'Smooth Groove', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
+      { id: 'rb2', name: 'Midnight Soul', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
+      { id: 'rb3', name: 'Velvet Voice', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
     ],
     countryrap: [
-      { id: 'cr1', name: 'Country Rap Beat', frequency: 369.99 },
-      { id: 'cr2', name: 'Southern Flow', frequency: 415.30 },
-      { id: 'cr3', name: 'Rural Rhythm', frequency: 466.16 },
+      { id: 'cr1', name: 'Country Rap Beat', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
+      { id: 'cr2', name: 'Southern Flow', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
+      { id: 'cr3', name: 'Rural Rhythm', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
     ],
     classicrock: [
-      { id: 'cl1', name: 'Classic Riff', frequency: 587.33 },
-      { id: 'cl2', name: 'Vintage Rock', frequency: 659.25 },
-      { id: 'cl3', name: 'Timeless Tune', frequency: 739.99 },
+      { id: 'cl1', name: 'Classic Riff', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
+      { id: 'cl2', name: 'Vintage Rock', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
+      { id: 'cl3', name: 'Timeless Tune', url: 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav' },
     ],
   };
 
-  // Initialize audio context
-  const initializeAudioContext = async () => {
-    if (!audioContextRef.current) {
-      audioContextRef.current = new AudioContext();
-      console.log('🎵 Audio context created');
+  // Initialize audio element
+  useEffect(() => {
+    if (!audioRef.current) {
+      audioRef.current = new Audio();
+      audioRef.current.volume = volume;
     }
-    
-    if (audioContextRef.current.state === 'suspended') {
-      await audioContextRef.current.resume();
-      console.log('🎵 Audio context resumed');
-    }
-  };
+  }, []);
 
   // Test audio function
   const testAudio = async () => {
     try {
-      await initializeAudioContext();
+      if (!audioRef.current) {
+        audioRef.current = new Audio();
+      }
       
-      const testContext = new AudioContext();
-      const testOscillator = testContext.createOscillator();
-      const testGain = testContext.createGain();
-      
-      testOscillator.frequency.setValueAtTime(440, testContext.currentTime);
-      testOscillator.type = 'sine';
-      testGain.gain.setValueAtTime(0.5, testContext.currentTime);
-      
-      testOscillator.connect(testGain);
-      testGain.connect(testContext.destination);
-      
-      testOscillator.start(testContext.currentTime);
-      testOscillator.stop(testContext.currentTime + 0.5); // Stop after 0.5 seconds
+      audioRef.current.src = 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav';
+      audioRef.current.volume = 0.5;
+      await audioRef.current.play();
       
       console.log('🎵 Test audio played successfully');
     } catch (error) {
@@ -118,46 +104,16 @@ const MusicPlayer: React.FC = () => {
     }
 
     try {
-      await initializeAudioContext();
+      if (!audioRef.current) {
+        audioRef.current = new Audio();
+      }
+
+      audioRef.current.src = currentTrack.url;
+      audioRef.current.volume = isMuted ? 0 : volume;
       
-      // Stop any existing audio
-      pauseMusic();
-
-      // Create new audio nodes
-      const oscillator = audioContextRef.current!.createOscillator();
-      const gainNode = audioContextRef.current!.createGain();
-
-      // Configure oscillator
-      oscillator.frequency.setValueAtTime(currentTrack.frequency, audioContextRef.current!.currentTime);
-      oscillator.type = 'sine';
-
-      // Configure gain with fade in/out
-      const volumeLevel = isMuted ? 0 : volume * 0.8;
-      gainNode.gain.setValueAtTime(0, audioContextRef.current!.currentTime);
-      gainNode.gain.linearRampToValueAtTime(volumeLevel, audioContextRef.current!.currentTime + 0.1);
-      gainNode.gain.linearRampToValueAtTime(0, audioContextRef.current!.currentTime + 2.9);
-
-      // Connect nodes
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContextRef.current!.destination);
-
-      // Store references
-      oscillatorRef.current = oscillator;
-      gainNodeRef.current = gainNode;
-
-      // Start playback with automatic stop
-      oscillator.start(audioContextRef.current!.currentTime);
-      oscillator.stop(audioContextRef.current!.currentTime + 3.0); // Stop after 3 seconds
-      
+      await audioRef.current.play();
       setIsPlaying(true);
-      console.log('🎵 Music playing:', currentTrack.name, 'at', currentTrack.frequency, 'Hz');
-      
-      // Auto-stop after 3 seconds
-      setTimeout(() => {
-        setIsPlaying(false);
-        oscillatorRef.current = null;
-        gainNodeRef.current = null;
-      }, 3000);
+      console.log('🎵 Music playing:', currentTrack.name);
       
     } catch (error) {
       console.error('🎵 Audio playback failed:', error);
@@ -167,22 +123,8 @@ const MusicPlayer: React.FC = () => {
 
   // Pause music function
   const pauseMusic = () => {
-    if (oscillatorRef.current) {
-      try {
-        oscillatorRef.current.stop();
-        oscillatorRef.current.disconnect();
-      } catch (error) {
-        console.log('🎵 Oscillator already stopped');
-      }
-      oscillatorRef.current = null;
-    }
-    if (gainNodeRef.current) {
-      try {
-        gainNodeRef.current.disconnect();
-      } catch (error) {
-        console.log('🎵 Gain node already disconnected');
-      }
-      gainNodeRef.current = null;
+    if (audioRef.current) {
+      audioRef.current.pause();
     }
     setIsPlaying(false);
     console.log('🎵 Music paused');
@@ -257,17 +199,16 @@ const MusicPlayer: React.FC = () => {
   // Toggle mute
   const toggleMute = () => {
     setIsMuted(!isMuted);
-    if (gainNodeRef.current && audioContextRef.current) {
-      const newVolume = !isMuted ? 0 : volume * 0.8;
-      gainNodeRef.current.gain.setValueAtTime(newVolume, audioContextRef.current.currentTime);
+    if (audioRef.current) {
+      audioRef.current.volume = !isMuted ? 0 : volume;
     }
   };
 
   // Handle volume change
   const handleVolumeChange = (newVolume: number) => {
     setVolume(newVolume);
-    if (gainNodeRef.current && audioContextRef.current && !isMuted) {
-      gainNodeRef.current.gain.setValueAtTime(newVolume * 0.8, audioContextRef.current.currentTime);
+    if (audioRef.current && !isMuted) {
+      audioRef.current.volume = newVolume;
     }
   };
 
@@ -281,12 +222,9 @@ const MusicPlayer: React.FC = () => {
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (oscillatorRef.current) {
-        oscillatorRef.current.stop();
-        oscillatorRef.current.disconnect();
-      }
-      if (gainNodeRef.current) {
-        gainNodeRef.current.disconnect();
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
       }
     };
   }, []);
