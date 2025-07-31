@@ -1,228 +1,207 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { 
-  Play, 
-  Pause, 
-  SkipForward, 
-  Volume2, 
-  VolumeX,
-  Music,
-  X
-} from 'lucide-react';
-import { useAppContext } from '@/contexts/AppContext';
-import { useAudioContext } from '@/hooks/use-audio-context.tsx';
+import { Play, Pause, SkipForward, Volume2, VolumeX, X, Music } from 'lucide-react';
+import { useAudioContext } from './hooks/use-audio-context';
 
-interface MusicPlayerProps {
-  onAudioStateChange?: (isPlaying: boolean) => void;
+interface Track {
+  id: string;
+  name: string;
+  frequency: number;
 }
 
-const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
-  const { user } = useAppContext();
-  const { setMusicPlaying, shouldPauseMusic } = useAudioContext();
+interface Genre {
+  id: string;
+  name: string;
+  color: string;
+}
+
+const MusicPlayer: React.FC = () => {
+  const [showPlayer, setShowPlayer] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentGenre, setCurrentGenre] = useState<string>('');
-  const [volume, setVolume] = useState(0.3);
+  const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+  const [volume, setVolume] = useState(0.5);
   const [isMuted, setIsMuted] = useState(false);
-  const [showPlayer, setShowPlayer] = useState(false);
-  const [currentTrack, setCurrentTrack] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
+  
   const audioContextRef = useRef<AudioContext | null>(null);
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
+  
+  const { shouldPauseMusic } = useAudioContext();
 
-  const genres = [
-    { id: 'country', name: 'COUNTRY', color: 'bg-green-500' },
-    { id: 'rock', name: 'ROCK', color: 'bg-red-500' },
-    { id: 'classicrock', name: 'CLASSIC ROCK', color: 'bg-yellow-500' },
-    { id: 'hiphop', name: 'HIP HOP', color: 'bg-purple-500' },
-    { id: 'rnb', name: 'R&B', color: 'bg-blue-500' },
-    { id: 'countryrap', name: 'COUNTRY RAP', color: 'bg-orange-500' }
+  const genres: Genre[] = [
+    { id: 'country', name: 'COUNTRY', color: 'from-green-500 to-green-600' },
+    { id: 'rock', name: 'ROCK', color: 'from-red-500 to-red-600' },
+    { id: 'hiphop', name: 'HIPHOP', color: 'from-purple-500 to-purple-600' },
+    { id: 'rnb', name: 'R&B', color: 'from-blue-500 to-blue-600' },
+    { id: 'countryrap', name: 'COUNTRY RAP', color: 'from-yellow-500 to-yellow-600' },
+    { id: 'classicrock', name: 'CLASSIC ROCK', color: 'from-orange-500 to-orange-600' },
   ];
 
-  // Sample music tracks for each genre (in production, you'd use a real music API)
-  const sampleTracks = {
+  const sampleTracks: Record<string, Track[]> = {
     country: [
-      { title: 'Country Roads', artist: 'Country Vibes', frequency: 440 }, // A4
-      { title: 'Southern Nights', artist: 'Country Vibes', frequency: 523.25 } // C5
+      { id: 'c1', name: 'Country Road', frequency: 440 },
+      { id: 'c2', name: 'Blue Skies', frequency: 523.25 },
+      { id: 'c3', name: 'Prairie Wind', frequency: 587.33 },
     ],
     rock: [
-      { title: 'Rock Anthem', artist: 'Rock Vibes', frequency: 659.25 }, // E5
-      { title: 'Electric Dreams', artist: 'Rock Vibes', frequency: 783.99 } // G5
-    ],
-    classicrock: [
-      { title: 'Classic Rock Revival', artist: 'Classic Rock Vibes', frequency: 880 }, // A5
-      { title: 'Timeless Rock', artist: 'Classic Rock Vibes', frequency: 1046.50 }, // C6
-      { title: 'Golden Age Rock', artist: 'Classic Rock Vibes', frequency: 1174.66 } // D6
+      { id: 'r1', name: 'Rock Anthem', frequency: 659.25 },
+      { id: 'r2', name: 'Electric Storm', frequency: 739.99 },
+      { id: 'r3', name: 'Thunder Road', frequency: 830.61 },
     ],
     hiphop: [
-      { title: 'Urban Flow', artist: 'Hip Hop Vibes', frequency: 220 }, // A3
-      { title: 'Street Beats', artist: 'Hip Hop Vibes', frequency: 277.18 } // C#4
+      { id: 'h1', name: 'Urban Beat', frequency: 493.88 },
+      { id: 'h2', name: 'Street Flow', frequency: 554.37 },
+      { id: 'h3', name: 'City Rhythm', frequency: 622.25 },
     ],
     rnb: [
-      { title: 'Smooth R&B', artist: 'R&B Vibes', frequency: 349.23 }, // F4
-      { title: 'Soulful Nights', artist: 'R&B Vibes', frequency: 415.30 } // G#4
+      { id: 'rb1', name: 'Smooth Groove', frequency: 415.30 },
+      { id: 'rb2', name: 'Midnight Soul', frequency: 466.16 },
+      { id: 'rb3', name: 'Velvet Voice', frequency: 523.25 },
     ],
     countryrap: [
-      { title: 'Country Rap Fusion', artist: 'Country Rap Vibes', frequency: 329.63 }, // E4
-      { title: 'Southern Hip Hop', artist: 'Country Rap Vibes', frequency: 392.00 } // G4
-    ]
+      { id: 'cr1', name: 'Country Rap Beat', frequency: 369.99 },
+      { id: 'cr2', name: 'Southern Flow', frequency: 415.30 },
+      { id: 'cr3', name: 'Rural Rhythm', frequency: 466.16 },
+    ],
+    classicrock: [
+      { id: 'cl1', name: 'Classic Riff', frequency: 587.33 },
+      { id: 'cl2', name: 'Vintage Rock', frequency: 659.25 },
+      { id: 'cl3', name: 'Timeless Tune', frequency: 739.99 },
+    ],
   };
 
-  useEffect(() => {
-    console.log('🎵 MusicPlayer component mounted');
-    
-    // Initialize audio context
-    if (!audioContextRef.current) {
-      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-      console.log('🎵 Audio context initialized');
-    }
-
-    // Auto-pause music when videos are playing
-    if (shouldPauseMusic && isPlaying) {
-      pauseMusic();
-    }
-
-    return () => {
-      if (oscillatorRef.current) {
-        oscillatorRef.current.stop();
-        oscillatorRef.current = null;
-      }
-      if (gainNodeRef.current) {
-        gainNodeRef.current.disconnect();
-        gainNodeRef.current = null;
-      }
-      if (audioContextRef.current) {
-        audioContextRef.current.close();
-        audioContextRef.current = null;
-      }
-    };
-  }, [isPlaying, currentGenre, shouldPauseMusic]);
-
+  // Initialize audio context
   const initializeAudioContext = async () => {
-    try {
-      if (!audioContextRef.current) {
-        console.log('🎵 Creating new audio context...');
-        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-        gainNodeRef.current = audioContextRef.current.createGain();
-        gainNodeRef.current.connect(audioContextRef.current.destination);
-        console.log('🎵 Audio context created successfully');
-      }
-
-      if (audioContextRef.current.state === 'suspended') {
-        console.log('🎵 Audio context suspended, resuming...');
-        await audioContextRef.current.resume();
-        console.log('🎵 Audio context resumed successfully');
-      }
-
-      console.log('🎵 Audio context state:', audioContextRef.current.state);
-      return audioContextRef.current.state === 'running';
-    } catch (error) {
-      console.error('🎵 Error initializing audio context:', error);
-      return false;
+    if (!audioContextRef.current) {
+      audioContextRef.current = new AudioContext();
+      console.log('🎵 Audio context created');
+    }
+    
+    if (audioContextRef.current.state === 'suspended') {
+      await audioContextRef.current.resume();
+      console.log('🎵 Audio context resumed');
     }
   };
 
+  // Test audio function
+  const testAudio = async () => {
+    try {
+      await initializeAudioContext();
+      
+      const testContext = new AudioContext();
+      const testOscillator = testContext.createOscillator();
+      const testGain = testContext.createGain();
+      
+      testOscillator.frequency.setValueAtTime(440, testContext.currentTime);
+      testOscillator.type = 'sine';
+      testGain.gain.setValueAtTime(0.5, testContext.currentTime);
+      
+      testOscillator.connect(testGain);
+      testGain.connect(testContext.destination);
+      
+      testOscillator.start(testContext.currentTime);
+      testOscillator.stop(testContext.currentTime + 1.0);
+      
+      console.log('🎵 Test audio played successfully');
+    } catch (error) {
+      console.error('🎵 Test audio failed:', error);
+    }
+  };
+
+  // Play music function
   const playMusic = async () => {
-    if (!currentGenre || isLoading) {
-      console.log('🎵 Cannot play: no genre selected or currently loading');
+    if (!currentTrack || !currentGenre) {
+      console.log('🎵 Cannot play: no track or genre selected');
       return;
     }
 
     try {
-      console.log('🎵 Attempting to play music:', currentGenre);
+      await initializeAudioContext();
       
-      // Initialize audio context
-      const audioReady = await initializeAudioContext();
-      if (!audioReady) {
-        console.error('🎵 Audio context not ready');
-        return;
-      }
-      
-      // Stop any existing oscillator
-      if (oscillatorRef.current) {
-        oscillatorRef.current.stop();
-        oscillatorRef.current.disconnect();
-        oscillatorRef.current = null;
-      }
-      
-      // Create new oscillator
+      // Stop any existing audio
+      pauseMusic();
+
+      // Create new audio nodes
       const oscillator = audioContextRef.current!.createOscillator();
-      oscillator.type = 'sine'; // Use sine wave for better sound
-      
-      // Connect oscillator to gain node
-      oscillator.connect(gainNodeRef.current!);
-      
-      // Set frequency based on current track
-      if (currentTrack && currentTrack.frequency) {
-        oscillator.frequency.setValueAtTime(currentTrack.frequency, audioContextRef.current!.currentTime);
-        console.log('🎵 Playing frequency:', currentTrack.frequency, 'Hz');
-      } else {
-        // Fallback frequency if no track
-        oscillator.frequency.setValueAtTime(440, audioContextRef.current!.currentTime);
-        console.log('🎵 Playing fallback frequency: 440 Hz');
-      }
-      
-      // Set volume - make it louder and ensure it's not muted
-      const volumeLevel = isMuted ? 0 : Math.max(volume * 1.0, 0.1); // Minimum volume of 0.1
-      gainNodeRef.current!.gain.setValueAtTime(volumeLevel, audioContextRef.current!.currentTime);
-      console.log('🎵 Volume level:', volumeLevel);
-      
-      // Store reference
+      const gainNode = audioContextRef.current!.createGain();
+
+      // Configure oscillator
+      oscillator.frequency.setValueAtTime(currentTrack.frequency, audioContextRef.current!.currentTime);
+      oscillator.type = 'sine';
+
+      // Configure gain
+      const volumeLevel = isMuted ? 0 : volume * 0.8;
+      gainNode.gain.setValueAtTime(volumeLevel, audioContextRef.current!.currentTime);
+
+      // Connect nodes - use the correct connection method
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContextRef.current!.destination);
+
+      // Store references
       oscillatorRef.current = oscillator;
-      
-      // Start oscillator
+      gainNodeRef.current = gainNode;
+
+      // Start playback
       oscillator.start();
-      console.log('🎵 Oscillator started successfully');
       
       setIsPlaying(true);
-      setMusicPlaying(true);
-      onAudioStateChange?.(true);
-      console.log('🎵 Music started playing successfully');
+      console.log('🎵 Music playing:', currentTrack.name, 'at', currentTrack.frequency, 'Hz');
     } catch (error) {
       console.error('🎵 Audio playback failed:', error);
       setIsPlaying(false);
-      setMusicPlaying(false);
-      onAudioStateChange?.(false);
     }
   };
 
+  // Pause music function
   const pauseMusic = () => {
-    try {
-      if (oscillatorRef.current) {
+    if (oscillatorRef.current) {
+      try {
         oscillatorRef.current.stop();
-        oscillatorRef.current = null;
+        oscillatorRef.current.disconnect();
+      } catch (error) {
+        console.log('🎵 Oscillator already stopped');
       }
-      if (gainNodeRef.current) {
+      oscillatorRef.current = null;
+    }
+    if (gainNodeRef.current) {
+      try {
         gainNodeRef.current.disconnect();
-        gainNodeRef.current = null;
+      } catch (error) {
+        console.log('🎵 Gain node already disconnected');
       }
-      
-      setIsPlaying(false);
-      setMusicPlaying(false);
-      onAudioStateChange?.(false);
-      console.log('🎵 Music paused successfully');
-    } catch (error) {
-      console.error('🎵 Error pausing music:', error);
+      gainNodeRef.current = null;
+    }
+    setIsPlaying(false);
+    console.log('🎵 Music paused');
+  };
+
+  // Toggle play/pause
+  const togglePlayPause = async () => {
+    if (isPlaying) {
+      pauseMusic();
+    } else {
+      await playMusic();
     }
   };
 
+  // Select genre
   const selectGenre = async (genreId: string) => {
     console.log('🎵 Genre selected:', genreId);
     
-    // Get the selected genre and its tracks from sampleTracks
     const selectedGenre = genres.find(g => g.id === genreId);
-    const genreTracks = sampleTracks[genreId as keyof typeof sampleTracks];
+    const tracks = sampleTracks[genreId];
     
-    if (!selectedGenre || !genreTracks || genreTracks.length === 0) {
+    if (!selectedGenre || !tracks || tracks.length === 0) {
       console.error('🎵 No tracks found for genre:', genreId);
       return;
     }
     
-    // Set the current track to the first track of the selected genre
-    const firstTrack = genreTracks[0];
+    // Set the first track of the selected genre
+    const firstTrack = tracks[0];
     setCurrentTrack(firstTrack);
+    setCurrentTrackIndex(0);
     console.log('🎵 Set current track:', firstTrack);
     
     // If same genre is selected, just toggle play/pause
@@ -233,235 +212,175 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
         await playMusic();
       }
     } else {
-      // If a new genre is selected, pause current, set new genre, and play
+      // New genre selected, load and play first track
       pauseMusic(); // Pause current track immediately
       setCurrentGenre(genreId);
       setIsLoading(true);
       
-      // Initialize audio context on user interaction
-      await initializeAudioContext();
-      
-      // Give a small delay before playing the new track to ensure state updates
+      // Give a small delay for state to update
       setTimeout(async () => {
-        setIsLoading(false);
         await playMusic();
-      }, 200); // Short delay
+        setIsLoading(false);
+      }, 100);
     }
   };
 
+  // Next track function
+  const nextTrack = async () => {
+    if (!currentGenre || !currentTrack) return;
+    
+    const tracks = sampleTracks[currentGenre];
+    if (!tracks) return;
+    
+    const nextIndex = (currentTrackIndex + 1) % tracks.length;
+    const nextTrack = tracks[nextIndex];
+    
+    setCurrentTrack(nextTrack);
+    setCurrentTrackIndex(nextIndex);
+    
+    if (isPlaying) {
+      await playMusic();
+    }
+  };
+
+  // Toggle mute
   const toggleMute = () => {
     setIsMuted(!isMuted);
     if (gainNodeRef.current && audioContextRef.current) {
-      gainNodeRef.current.gain.setValueAtTime(isMuted ? 0 : volume * 0.5, audioContextRef.current.currentTime);
+      const newVolume = !isMuted ? 0 : volume * 0.8;
+      gainNodeRef.current.gain.setValueAtTime(newVolume, audioContextRef.current.currentTime);
     }
   };
 
+  // Handle volume change
   const handleVolumeChange = (newVolume: number) => {
     setVolume(newVolume);
     if (gainNodeRef.current && audioContextRef.current && !isMuted) {
-      gainNodeRef.current.gain.setValueAtTime(newVolume * 0.5, audioContextRef.current.currentTime);
+      gainNodeRef.current.gain.setValueAtTime(newVolume * 0.8, audioContextRef.current.currentTime);
     }
   };
 
-  const nextTrack = () => {
-    if (!currentGenre) return;
-    
-    const tracks = sampleTracks[currentGenre as keyof typeof sampleTracks];
-    if (tracks && tracks.length > 1) {
-      const currentIndex = tracks.findIndex(track => track.title === currentTrack?.title);
-      const nextIndex = (currentIndex + 1) % tracks.length;
-      const nextTrack = tracks[nextIndex];
-      
-      setCurrentTrack(nextTrack);
-      console.log('🎵 Next track loaded:', nextTrack.title);
-      
-      // If currently playing, restart with new track
-      if (isPlaying) {
-        playMusic();
+  // Effect to pause music when videos play
+  useEffect(() => {
+    if (shouldPauseMusic && isPlaying) {
+      pauseMusic();
+    }
+  }, [shouldPauseMusic, isPlaying]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (oscillatorRef.current) {
+        oscillatorRef.current.stop();
+        oscillatorRef.current.disconnect();
       }
-    }
-  };
-
-  const testAudio = async () => {
-    try {
-      console.log('🎵 Testing audio...');
-      
-      // Create a simple test oscillator
-      const testContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-      
-      if (testContext.state === 'suspended') {
-        console.log('🎵 Test context suspended, resuming...');
-        await testContext.resume();
+      if (gainNodeRef.current) {
+        gainNodeRef.current.disconnect();
       }
-      
-      console.log('🎵 Test context state:', testContext.state);
-      
-      const testOscillator = testContext.createOscillator();
-      const testGain = testContext.createGain();
-      
-      testOscillator.connect(testGain);
-      testGain.connect(testContext.destination);
-      
-      testOscillator.frequency.setValueAtTime(440, testContext.currentTime); // A4 note
-      testGain.gain.setValueAtTime(0.5, testContext.currentTime); // Louder test volume
-      
-      console.log('🎵 Starting test oscillator...');
-      testOscillator.start();
-      testOscillator.stop(testContext.currentTime + 1.0); // Play for 1 second
-      
-      console.log('🎵 Test audio played successfully');
-      
-      // Clean up test context after a delay
-      setTimeout(() => {
-        if (testContext.state !== 'closed') {
-          testContext.close();
-        }
-      }, 2000);
-    } catch (error) {
-      console.error('🎵 Test audio failed:', error);
-    }
-  };
-
-  if (!showPlayer) {
-    return (
-      <div className="fixed bottom-24 right-4 z-[9998]">
-        <Button
-          onClick={() => setShowPlayer(true)}
-          className="bg-cyan-500 hover:bg-cyan-600 text-white rounded-full p-3 shadow-lg"
-          size="sm"
-        >
-          <Music className="h-5 w-5" />
-        </Button>
-      </div>
-    );
-  }
+    };
+  }, []);
 
   return (
-    <div className="fixed bottom-24 right-4 z-[9998]">
-      <Card className="w-80 bg-gray-900/95 backdrop-blur-sm shadow-xl border border-gray-700">
-        <CardContent className="p-4">
-          {/* Header */}
+    <div className="fixed bottom-4 right-4 z-[9998]">
+      {!showPlayer ? (
+        <button
+          onClick={() => setShowPlayer(true)}
+          className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110 flex items-center justify-center"
+        >
+          <Music className="h-6 w-6 text-white" />
+        </button>
+      ) : (
+        <div className="bg-gray-900/95 backdrop-blur-sm border border-gray-700 rounded-lg shadow-xl p-4 w-80 max-w-sm">
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-2">
-              <Music className="h-5 w-5 text-cyan-500" />
-              <h3 className="font-semibold text-white">Background Music</h3>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
+            <h3 className="text-white font-semibold">Background Music</h3>
+            <button
               onClick={() => setShowPlayer(false)}
-              className="text-gray-400 hover:text-white hover:bg-gray-700 rounded-md transition-all duration-200 hover:scale-105"
+              className="text-gray-400 hover:text-white transition-colors"
             >
-              <X className="h-4 w-4" />
-            </Button>
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          {/* Genre Buttons */}
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            {genres.map((genre) => (
+              <button
+                key={genre.id}
+                onClick={() => selectGenre(genre.id)}
+                className={`px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200 hover:scale-105 shadow-md bg-gradient-to-r ${genre.color} text-white`}
+              >
+                {genre.name}
+              </button>
+            ))}
           </div>
 
           {/* Current Track Info */}
           {currentTrack && (
-            <div className="mb-4 p-3 bg-gradient-to-r from-gray-800 to-gray-900 rounded-lg border border-gray-700">
-              <div className="text-sm font-medium text-white">{currentTrack.title}</div>
-              <div className="text-xs text-gray-300">{currentTrack.artist}</div>
+            <div className="mb-4 p-3 bg-gray-800/50 rounded-lg">
+              <p className="text-white text-sm font-medium">{currentTrack.name}</p>
+              <p className="text-gray-400 text-xs">{genres.find(g => g.id === currentGenre)?.name}</p>
             </div>
           )}
 
-          {/* Genre Selection */}
-          <div className="mb-4">
-            <h4 className="text-sm font-medium text-gray-300 mb-2">Select Genre:</h4>
-            <div className="grid grid-cols-2 gap-2">
-              {genres.map((genre) => (
-                <Button
-                  key={genre.id}
-                  onClick={() => selectGenre(genre.id)}
-                  variant={currentGenre === genre.id ? "default" : "outline"}
-                  className={`text-xs h-8 transition-all duration-200 ${
-                    currentGenre === genre.id 
-                      ? genre.color + ' text-white shadow-lg scale-105' 
-                      : 'bg-gray-800 text-gray-200 border-gray-600 hover:bg-gray-700 hover:border-gray-500 hover:scale-105 hover:shadow-md'
-                  }`}
-                  size="sm"
-                >
-                  {genre.name}
-                </Button>
-              ))}
-            </div>
-          </div>
-
           {/* Controls */}
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-2">
-              <Button
-                onClick={isPlaying ? pauseMusic : playMusic}
-                disabled={!currentGenre}
-                className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
-                size="sm"
-              >
-                {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-              </Button>
-              
-              <Button
-                onClick={nextTrack}
-                disabled={!currentGenre}
-                variant="outline"
-                size="sm"
-                className="bg-gray-800 text-gray-200 border-gray-600 hover:bg-gray-700 hover:border-gray-500 hover:text-white transition-all duration-200 hover:scale-105 hover:shadow-md"
-              >
-                <SkipForward className="h-4 w-4" />
-              </Button>
-              
-              <Button
-                onClick={testAudio}
-                variant="outline"
-                size="sm"
-                className="bg-green-600 text-white border-green-600 hover:bg-green-700 hover:border-green-700 transition-all duration-200 hover:scale-105 hover:shadow-md"
-              >
-                Test
-              </Button>
-            </div>
-
-            <Button
-              onClick={toggleMute}
-              variant="ghost"
-              size="sm"
-              className="text-gray-400 hover:text-white hover:bg-gray-700 rounded-md transition-all duration-200 hover:scale-105"
+            <button
+              onClick={togglePlayPause}
+              disabled={!currentTrack || isLoading}
+              className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-            </Button>
+              {isLoading ? (
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              ) : isPlaying ? (
+                <Pause className="h-5 w-5 text-white" />
+              ) : (
+                <Play className="h-5 w-5 text-white" />
+              )}
+            </button>
+
+            <button
+              onClick={nextTrack}
+              disabled={!currentTrack}
+              className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <SkipForward className="h-4 w-4 text-white" />
+            </button>
+
+            <button
+              onClick={toggleMute}
+              className="w-8 h-8 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110 flex items-center justify-center"
+            >
+              {isMuted ? (
+                <VolumeX className="h-4 w-4 text-white" />
+              ) : (
+                <Volume2 className="h-4 w-4 text-white" />
+              )}
+            </button>
+
+            <button
+              onClick={testAudio}
+              className="px-3 py-1 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg text-xs font-medium text-white shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105"
+            >
+              Test
+            </button>
           </div>
 
           {/* Volume Slider */}
           <div className="flex items-center space-x-2">
-            <Volume2 className="h-4 w-4 text-cyan-400" />
+            <Volume2 className="h-4 w-4 text-gray-400" />
             <input
               type="range"
               min="0"
               max="1"
               step="0.1"
-              value={isMuted ? 0 : volume}
+              value={volume}
               onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
-              className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider hover:bg-gray-600 transition-colors duration-200"
+              className="slider flex-1"
             />
+            <span className="text-gray-400 text-xs w-8">{Math.round(volume * 100)}%</span>
           </div>
-
-          {/* Status */}
-          <div className="mt-3 text-xs text-gray-300">
-            {isLoading ? (
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></div>
-                <span>Loading • {currentGenre.toUpperCase()}</span>
-              </div>
-            ) : currentGenre ? (
-              <div className="flex items-center space-x-2">
-                <div className={`w-2 h-2 rounded-full ${isPlaying ? 'bg-green-500' : 'bg-gray-400'}`}></div>
-                <span>
-                  {isPlaying ? 'Playing' : 'Paused'} • {currentGenre.toUpperCase()}
-                </span>
-              </div>
-            ) : (
-              <span>Select a genre to start</span>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+        </div>
+      )}
     </div>
   );
 };
