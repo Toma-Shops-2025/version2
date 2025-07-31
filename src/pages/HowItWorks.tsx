@@ -16,6 +16,22 @@ const HowItWorks: React.FC = () => {
         <h1 className="text-3xl font-bold">🛍️ How TomaShops™ Works — Buy & Sell with Video Listings</h1>
       </div>
       <p className="mb-6 text-lg">TomaShops™ is the #1 video-first online marketplace for local and nationwide buying and selling. Our platform lets you post short product videos, connect with buyers or sellers instantly, and complete secure local or shipping-based transactions — all in one place.</p>
+      
+      {/* First Video Embed - Introduction */}
+      <div className="mb-8">
+        <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+          <iframe
+            className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
+            src="https://www.youtube.com/embed/72xUXyYISUQ?si=1CUlfurcdPTd0pM8"
+            title="TomaShops Introduction Video"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          ></iframe>
+        </div>
+        <p className="text-sm text-gray-600 mt-2 text-center">Watch how TomaShops™ revolutionizes online marketplace with video listings</p>
+      </div>
+
       <h2 className="text-2xl font-semibold mt-8 mb-2">📦 Selling on TomaShops™</h2>
       <ol className="list-decimal ml-6 mb-4 space-y-2">
         <li><b>Create a Free Seller Account:</b> Sign up in seconds and start posting listings right away.</li>
@@ -26,6 +42,22 @@ const HowItWorks: React.FC = () => {
         <li><b>Close the Sale:</b> Once the transaction is complete, mark your item as "Sold" and start listing your next product!</li>
       </ol>
       <div className="mb-6"><b>✅ Pro Tip:</b> Listings with clear videos and accurate descriptions rank higher and sell faster.</div>
+
+      {/* Second Video Embed - After Selling Section */}
+      <div className="mb-8">
+        <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+          <iframe
+            className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
+            src="https://www.youtube.com/embed/0XYtJzPZjUo?si=siJxDUzRAdk1LsDG"
+            title="TomaShops Platform Demo"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          ></iframe>
+        </div>
+        <p className="text-sm text-gray-600 mt-2 text-center">See the TomaShops™ platform in action</p>
+      </div>
+
       <h2 className="text-2xl font-semibold mt-8 mb-2">🛒 Buying on TomaShops™</h2>
       <ol className="list-decimal ml-6 mb-4 space-y-2">
         <li><b>Browse Video Listings Like a Social Feed:</b> Our TikTok-style video scroll makes it fun and fast to find what you want.</li>
