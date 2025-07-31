@@ -20,7 +20,7 @@ const Header: React.FC = () => {
       <div className="bg-black border-b border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
           <div className="flex items-center">
-            <h1 className="text-xl font-bold text-gray-900 flex flex-col leading-tight">
+            <h1 className="text-xl font-bold text-white flex flex-col leading-tight">
               <span>TomaShops™</span>
               <span className="text-cyan-400">Video 1st</span>
             </h1>
@@ -56,9 +56,9 @@ const Header: React.FC = () => {
           </form>
           <nav className="flex items-center space-x-8">
             {user ? (
-              <button onClick={handleLogout} className="text-gray-700 hover:text-teal-600 font-medium">Logout</button>
+              <button onClick={handleLogout} className="text-white hover:text-teal-600 font-medium">Logout</button>
             ) : (
-              <Link to="/login" className="text-gray-700 hover:text-teal-600 font-medium">Login</Link>
+              <Link to="/login" className="text-white hover:text-teal-600 font-medium">Login</Link>
             )}
           </nav>
         </div>
