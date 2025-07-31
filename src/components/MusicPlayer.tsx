@@ -100,6 +100,30 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
     };
   }, [isPlaying, currentGenre, shouldPauseMusic]);
 
+  const initializeAudioContext = async () => {
+    try {
+      if (!audioContextRef.current) {
+        console.log('🎵 Creating new audio context...');
+        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+        gainNodeRef.current = audioContextRef.current.createGain();
+        gainNodeRef.current.connect(audioContextRef.current.destination);
+        console.log('🎵 Audio context created successfully');
+      }
+
+      if (audioContextRef.current.state === 'suspended') {
+        console.log('🎵 Audio context suspended, resuming...');
+        await audioContextRef.current.resume();
+        console.log('🎵 Audio context resumed successfully');
+      }
+
+      console.log('🎵 Audio context state:', audioContextRef.current.state);
+      return audioContextRef.current.state === 'running';
+    } catch (error) {
+      console.error('🎵 Error initializing audio context:', error);
+      return false;
+    }
+  };
+
   const playMusic = async () => {
     if (!currentGenre || isLoading) {
       console.log('🎵 Cannot play: no genre selected or currently loading');
@@ -109,51 +133,44 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
     try {
       console.log('🎵 Attempting to play music:', currentGenre);
       
-      // Create audio context on first user interaction if not exists
-      if (!audioContextRef.current) {
-        console.log('🎵 Creating new audio context...');
-        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      // Initialize audio context
+      const audioReady = await initializeAudioContext();
+      if (!audioReady) {
+        console.error('🎵 Audio context not ready');
+        return;
       }
-      
-      // Resume audio context if suspended (required for user interaction)
-      if (audioContextRef.current.state === 'suspended') {
-        console.log('🎵 Resuming suspended audio context...');
-        await audioContextRef.current.resume();
-      }
-      
-      console.log('🎵 Audio context state:', audioContextRef.current.state);
       
       // Stop any existing oscillator
       if (oscillatorRef.current) {
         oscillatorRef.current.stop();
+        oscillatorRef.current.disconnect();
         oscillatorRef.current = null;
       }
-      if (gainNodeRef.current) {
-        gainNodeRef.current.disconnect();
-        gainNodeRef.current = null;
-      }
       
-      // Create new oscillator and gain node
-      const oscillator = audioContextRef.current.createOscillator();
-      const gainNode = audioContextRef.current.createGain();
+      // Create new oscillator
+      const oscillator = audioContextRef.current!.createOscillator();
+      oscillator.type = 'sine'; // Use sine wave for better sound
       
-      oscillator.connect(gainNode);
-      gainNode.connect(audioContextRef.current.destination);
+      // Connect oscillator to gain node
+      oscillator.connect(gainNodeRef.current!);
       
       // Set frequency based on current track
       if (currentTrack && currentTrack.frequency) {
-        oscillator.frequency.setValueAtTime(currentTrack.frequency, audioContextRef.current.currentTime);
+        oscillator.frequency.setValueAtTime(currentTrack.frequency, audioContextRef.current!.currentTime);
         console.log('🎵 Playing frequency:', currentTrack.frequency, 'Hz');
+      } else {
+        // Fallback frequency if no track
+        oscillator.frequency.setValueAtTime(440, audioContextRef.current!.currentTime);
+        console.log('🎵 Playing fallback frequency: 440 Hz');
       }
       
-      // Set volume - make it louder
-      const volumeLevel = isMuted ? 0 : volume * 0.8;
-      gainNode.gain.setValueAtTime(volumeLevel, audioContextRef.current.currentTime);
+      // Set volume - make it louder and ensure it's not muted
+      const volumeLevel = isMuted ? 0 : Math.max(volume * 1.0, 0.1); // Minimum volume of 0.1
+      gainNodeRef.current!.gain.setValueAtTime(volumeLevel, audioContextRef.current!.currentTime);
       console.log('🎵 Volume level:', volumeLevel);
       
-      // Store references
+      // Store reference
       oscillatorRef.current = oscillator;
-      gainNodeRef.current = gainNode;
       
       // Start oscillator
       oscillator.start();
@@ -199,34 +216,23 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
       if (isPlaying) {
         pauseMusic();
       } else {
-        playMusic();
+        await playMusic();
       }
-      return;
-    }
-    
-    // Set loading state to prevent multiple operations
-    setIsLoading(true);
-    setIsPlaying(false);
-    setMusicPlaying(false);
-    
-    setCurrentGenre(genreId);
-    
-    const tracks = sampleTracks[genreId as keyof typeof sampleTracks];
-    if (tracks && tracks.length > 0) {
-      const randomTrack = tracks[Math.floor(Math.random() * tracks.length)];
-      setCurrentTrack(randomTrack);
-      console.log('🎵 Track loaded:', randomTrack.title);
-      
-      // Track is ready to play
-      console.log('🎵 Track ready to play:', randomTrack.title);
-      
-      // Auto-play the new genre after a short delay
-      setTimeout(() => {
-        playMusic();
-        setIsLoading(false);
-      }, 200);
     } else {
-      setIsLoading(false);
+      // If a new genre is selected, pause current, set new genre, and play
+      pauseMusic(); // Pause current track immediately
+      setCurrentGenre(genreId);
+      setCurrentTrackIndex(0); // Reset to first track of new genre
+      setIsLoading(true);
+      
+      // Initialize audio context on user interaction
+      await initializeAudioContext();
+      
+      // Give a small delay before playing the new track to ensure state updates
+      setTimeout(async () => {
+        setIsLoading(false);
+        await playMusic();
+      }, 200); // Short delay
     }
   };
 
@@ -271,8 +277,11 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
       const testContext = new (window.AudioContext || (window as any).webkitAudioContext)();
       
       if (testContext.state === 'suspended') {
+        console.log('🎵 Test context suspended, resuming...');
         await testContext.resume();
       }
+      
+      console.log('🎵 Test context state:', testContext.state);
       
       const testOscillator = testContext.createOscillator();
       const testGain = testContext.createGain();
@@ -281,12 +290,20 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
       testGain.connect(testContext.destination);
       
       testOscillator.frequency.setValueAtTime(440, testContext.currentTime); // A4 note
-      testGain.gain.setValueAtTime(0.3, testContext.currentTime);
+      testGain.gain.setValueAtTime(0.5, testContext.currentTime); // Louder test volume
       
+      console.log('🎵 Starting test oscillator...');
       testOscillator.start();
-      testOscillator.stop(testContext.currentTime + 0.5); // Play for 0.5 seconds
+      testOscillator.stop(testContext.currentTime + 1.0); // Play for 1 second
       
       console.log('🎵 Test audio played successfully');
+      
+      // Clean up test context after a delay
+      setTimeout(() => {
+        if (testContext.state !== 'closed') {
+          testContext.close();
+        }
+      }, 2000);
     } catch (error) {
       console.error('🎵 Test audio failed:', error);
     }
