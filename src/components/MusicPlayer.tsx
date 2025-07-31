@@ -211,6 +211,20 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
   const selectGenre = async (genreId: string) => {
     console.log('🎵 Genre selected:', genreId);
     
+    // Get the selected genre and its tracks from sampleTracks
+    const selectedGenre = genres.find(g => g.id === genreId);
+    const genreTracks = sampleTracks[genreId as keyof typeof sampleTracks];
+    
+    if (!selectedGenre || !genreTracks || genreTracks.length === 0) {
+      console.error('🎵 No tracks found for genre:', genreId);
+      return;
+    }
+    
+    // Set the current track to the first track of the selected genre
+    const firstTrack = genreTracks[0];
+    setCurrentTrack(firstTrack);
+    console.log('🎵 Set current track:', firstTrack);
+    
     // If same genre is selected, just toggle play/pause
     if (currentGenre === genreId) {
       if (isPlaying) {
@@ -222,7 +236,6 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
       // If a new genre is selected, pause current, set new genre, and play
       pauseMusic(); // Pause current track immediately
       setCurrentGenre(genreId);
-      setCurrentTrackIndex(0); // Reset to first track of new genre
       setIsLoading(true);
       
       // Initialize audio context on user interaction
