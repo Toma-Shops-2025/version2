@@ -86,11 +86,26 @@ const MusicPlayer: React.FC = () => {
         audioRef.current = new Audio();
       }
       
+      console.log('🎵 Testing audio...');
       audioRef.current.src = 'https://www.soundjay.com/misc/sounds/bell-ringing-05.wav';
       audioRef.current.volume = 0.5;
-      await audioRef.current.play();
       
-      console.log('🎵 Test audio played successfully');
+      // Wait for audio to load
+      audioRef.current.addEventListener('canplaythrough', async () => {
+        try {
+          await audioRef.current!.play();
+          console.log('🎵 Test audio played successfully');
+        } catch (playError) {
+          console.error('🎵 Test play failed:', playError);
+        }
+      }, { once: true });
+
+      audioRef.current.addEventListener('error', (error) => {
+        console.error('🎵 Test audio failed:', error);
+      }, { once: true });
+
+      audioRef.current.load();
+      
     } catch (error) {
       console.error('🎵 Test audio failed:', error);
     }
@@ -108,12 +123,31 @@ const MusicPlayer: React.FC = () => {
         audioRef.current = new Audio();
       }
 
+      console.log('🎵 Loading audio from:', currentTrack.url);
       audioRef.current.src = currentTrack.url;
       audioRef.current.volume = isMuted ? 0 : volume;
       
-      await audioRef.current.play();
-      setIsPlaying(true);
-      console.log('🎵 Music playing:', currentTrack.name);
+      // Wait for audio to load before playing
+      audioRef.current.addEventListener('canplaythrough', async () => {
+        try {
+          await audioRef.current!.play();
+          setIsPlaying(true);
+          console.log('🎵 Music playing:', currentTrack.name);
+        } catch (playError) {
+          console.error('🎵 Play failed:', playError);
+          setIsPlaying(false);
+        }
+      }, { once: true });
+
+      // Handle loading errors
+      audioRef.current.addEventListener('error', (error) => {
+        console.error('🎵 Audio loading failed:', error);
+        setIsPlaying(false);
+        setIsLoading(false);
+      }, { once: true });
+
+      // Start loading
+      audioRef.current.load();
       
     } catch (error) {
       console.error('🎵 Audio playback failed:', error);
@@ -132,9 +166,15 @@ const MusicPlayer: React.FC = () => {
 
   // Toggle play/pause
   const togglePlayPause = async () => {
+    console.log('🎵 Toggle play/pause clicked. Current state:', { isPlaying, currentTrack, currentGenre });
+    
     if (isPlaying) {
       pauseMusic();
     } else {
+      if (!currentTrack) {
+        console.log('🎵 No track selected, cannot play');
+        return;
+      }
       await playMusic();
     }
   };
