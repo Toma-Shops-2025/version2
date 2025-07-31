@@ -46,29 +46,29 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
   // Sample music tracks for each genre (in production, you'd use a real music API)
   const sampleTracks = {
     country: [
-      { title: 'Country Roads', artist: 'Country Vibes', frequency: 220 },
-      { title: 'Southern Nights', artist: 'Country Vibes', frequency: 330 }
+      { title: 'Country Roads', artist: 'Country Vibes', frequency: 440 }, // A4
+      { title: 'Southern Nights', artist: 'Country Vibes', frequency: 523.25 } // C5
     ],
     rock: [
-      { title: 'Rock Anthem', artist: 'Rock Vibes', frequency: 440 },
-      { title: 'Electric Dreams', artist: 'Rock Vibes', frequency: 550 }
+      { title: 'Rock Anthem', artist: 'Rock Vibes', frequency: 659.25 }, // E5
+      { title: 'Electric Dreams', artist: 'Rock Vibes', frequency: 783.99 } // G5
     ],
     classicrock: [
-      { title: 'Classic Rock Revival', artist: 'Classic Rock Vibes', frequency: 660 },
-      { title: 'Timeless Rock', artist: 'Classic Rock Vibes', frequency: 770 },
-      { title: 'Golden Age Rock', artist: 'Classic Rock Vibes', frequency: 880 }
+      { title: 'Classic Rock Revival', artist: 'Classic Rock Vibes', frequency: 880 }, // A5
+      { title: 'Timeless Rock', artist: 'Classic Rock Vibes', frequency: 1046.50 }, // C6
+      { title: 'Golden Age Rock', artist: 'Classic Rock Vibes', frequency: 1174.66 } // D6
     ],
     hiphop: [
-      { title: 'Urban Flow', artist: 'Hip Hop Vibes', frequency: 110 },
-      { title: 'Street Beats', artist: 'Hip Hop Vibes', frequency: 165 }
+      { title: 'Urban Flow', artist: 'Hip Hop Vibes', frequency: 220 }, // A3
+      { title: 'Street Beats', artist: 'Hip Hop Vibes', frequency: 277.18 } // C#4
     ],
     rnb: [
-      { title: 'Smooth R&B', artist: 'R&B Vibes', frequency: 196 },
-      { title: 'Soulful Nights', artist: 'R&B Vibes', frequency: 293 }
+      { title: 'Smooth R&B', artist: 'R&B Vibes', frequency: 349.23 }, // F4
+      { title: 'Soulful Nights', artist: 'R&B Vibes', frequency: 415.30 } // G#4
     ],
     countryrap: [
-      { title: 'Country Rap Fusion', artist: 'Country Rap Vibes', frequency: 147 },
-      { title: 'Southern Hip Hop', artist: 'Country Rap Vibes', frequency: 220 }
+      { title: 'Country Rap Fusion', artist: 'Country Rap Vibes', frequency: 329.63 }, // E4
+      { title: 'Southern Hip Hop', artist: 'Country Rap Vibes', frequency: 392.00 } // G4
     ]
   };
 
@@ -134,7 +134,10 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
       // Resume audio context if suspended
       if (audioContextRef.current.state === 'suspended') {
         await audioContextRef.current.resume();
+        console.log('🎵 Audio context resumed from suspended state');
       }
+      
+      console.log('🎵 Audio context state:', audioContextRef.current.state);
       
       // Stop any existing oscillator
       if (oscillatorRef.current) {
@@ -156,10 +159,13 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
       // Set frequency based on current track
       if (currentTrack && currentTrack.frequency) {
         oscillator.frequency.setValueAtTime(currentTrack.frequency, audioContextRef.current.currentTime);
+        console.log('🎵 Playing frequency:', currentTrack.frequency, 'Hz');
       }
       
-      // Set volume
-      gainNode.gain.setValueAtTime(isMuted ? 0 : volume * 0.3, audioContextRef.current.currentTime);
+      // Set volume - much louder now
+      const volumeLevel = isMuted ? 0 : volume * 0.8; // Increased from 0.3 to 0.8
+      gainNode.gain.setValueAtTime(volumeLevel, audioContextRef.current.currentTime);
+      console.log('🎵 Volume level:', volumeLevel);
       
       // Store references
       oscillatorRef.current = oscillator;
@@ -167,6 +173,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
       
       // Start oscillator
       oscillator.start();
+      console.log('🎵 Oscillator started successfully');
       
       setIsPlaying(true);
       setMusicPlaying(true);
@@ -243,14 +250,14 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
   const toggleMute = () => {
     setIsMuted(!isMuted);
     if (gainNodeRef.current && audioContextRef.current) {
-      gainNodeRef.current.gain.setValueAtTime(isMuted ? 0 : volume * 0.3, audioContextRef.current.currentTime);
+      gainNodeRef.current.gain.setValueAtTime(isMuted ? 0 : volume * 0.8, audioContextRef.current.currentTime);
     }
   };
 
   const handleVolumeChange = (newVolume: number) => {
     setVolume(newVolume);
     if (gainNodeRef.current && audioContextRef.current && !isMuted) {
-      gainNodeRef.current.gain.setValueAtTime(newVolume * 0.3, audioContextRef.current.currentTime);
+      gainNodeRef.current.gain.setValueAtTime(newVolume * 0.8, audioContextRef.current.currentTime);
     }
   };
 
