@@ -283,7 +283,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
               variant="ghost"
               size="sm"
               onClick={() => setShowPlayer(false)}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-gray-400 hover:text-white hover:bg-gray-700 rounded-md transition-all duration-200 hover:scale-105"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -291,9 +291,9 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
 
           {/* Current Track Info */}
           {currentTrack && (
-            <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-              <div className="text-sm font-medium text-gray-900">{currentTrack.title}</div>
-              <div className="text-xs text-gray-600">{currentTrack.artist}</div>
+            <div className="mb-4 p-3 bg-gradient-to-r from-gray-800 to-gray-900 rounded-lg border border-gray-700">
+              <div className="text-sm font-medium text-white">{currentTrack.title}</div>
+              <div className="text-xs text-gray-300">{currentTrack.artist}</div>
             </div>
           )}
 
@@ -306,10 +306,10 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
                   key={genre.id}
                   onClick={() => selectGenre(genre.id)}
                   variant={currentGenre === genre.id ? "default" : "outline"}
-                  className={`text-xs h-8 ${
+                  className={`text-xs h-8 transition-all duration-200 ${
                     currentGenre === genre.id 
-                      ? genre.color + ' text-white' 
-                      : 'hover:bg-gray-50'
+                      ? genre.color + ' text-white shadow-lg scale-105' 
+                      : 'bg-gray-800 text-gray-200 border-gray-600 hover:bg-gray-700 hover:border-gray-500 hover:scale-105 hover:shadow-md'
                   }`}
                   size="sm"
                 >
@@ -325,7 +325,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
               <Button
                 onClick={isPlaying ? pauseMusic : playMusic}
                 disabled={!currentGenre}
-                className="bg-cyan-500 hover:bg-cyan-600 text-white"
+                className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
                 size="sm"
               >
                 {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
@@ -336,6 +336,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
                 disabled={!currentGenre}
                 variant="outline"
                 size="sm"
+                className="bg-gray-800 text-gray-200 border-gray-600 hover:bg-gray-700 hover:border-gray-500 hover:text-white transition-all duration-200 hover:scale-105 hover:shadow-md"
               >
                 <SkipForward className="h-4 w-4" />
               </Button>
@@ -345,7 +346,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
               onClick={toggleMute}
               variant="ghost"
               size="sm"
-              className="text-gray-500 hover:text-gray-700"
+              className="text-gray-400 hover:text-white hover:bg-gray-700 rounded-md transition-all duration-200 hover:scale-105"
             >
               {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
             </Button>
@@ -353,7 +354,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
 
           {/* Volume Slider */}
           <div className="flex items-center space-x-2">
-            <Volume2 className="h-4 w-4 text-gray-500" />
+            <Volume2 className="h-4 w-4 text-cyan-400" />
             <input
               type="range"
               min="0"
@@ -361,7 +362,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
               step="0.1"
               value={isMuted ? 0 : volume}
               onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
-              className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+              className="flex-1 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider hover:bg-gray-600 transition-colors duration-200"
             />
           </div>
 

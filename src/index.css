@@ -321,46 +321,50 @@ elevenlabs-convai [class*="profile-area"] {
   cursor: pointer;
 }
 
-.slider::-webkit-slider-track {
-  background: #e5e7eb;
-  height: 8px;
-  border-radius: 4px;
-}
-
+/* Custom volume slider styling */
 .slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
   appearance: none;
-  background: #06b6d4;
   height: 16px;
   width: 16px;
   border-radius: 50%;
+  background: linear-gradient(45deg, #06b6d4, #3b82f6);
   cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   transition: all 0.2s ease;
 }
 
 .slider::-webkit-slider-thumb:hover {
-  background: #0891b2;
-  transform: scale(1.1);
-}
-
-.slider::-moz-range-track {
-  background: #e5e7eb;
-  height: 8px;
-  border-radius: 4px;
-  border: none;
+  transform: scale(1.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
 .slider::-moz-range-thumb {
-  background: #06b6d4;
   height: 16px;
   width: 16px;
   border-radius: 50%;
+  background: linear-gradient(45deg, #06b6d4, #3b82f6);
   cursor: pointer;
   border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   transition: all 0.2s ease;
 }
 
 .slider::-moz-range-thumb:hover {
-  background: #0891b2;
-  transform: scale(1.1);
+  transform: scale(1.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.slider::-webkit-slider-track {
+  background: linear-gradient(to right, #06b6d4, #3b82f6);
+  height: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.slider::-moz-range-track {
+  background: linear-gradient(to right, #06b6d4, #3b82f6);
+  height: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: none;
 }
