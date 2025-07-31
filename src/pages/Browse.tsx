@@ -53,7 +53,7 @@ const Browse = () => {
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {listings.map(listing => (
-              <div key={listing.id} className="bg-gray-900 rounded-lg shadow p-4">
+              <div key={listing.id} className="bg-gray-950 rounded-lg shadow p-4">
                 {listing.images && listing.images.length > 0 && (
                   <img src={listing.images[0]} alt={listing.title} className="w-full h-40 object-cover rounded mb-2" crossOrigin="anonymous" />
                 )}

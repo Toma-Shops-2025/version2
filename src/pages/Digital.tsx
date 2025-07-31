@@ -186,7 +186,7 @@ const Digital = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {listings.map(listing => (
               <Link key={listing.id} to={`/digital/${listing.id}`} className="block">
-                <div className="bg-gray-900 rounded-lg shadow p-4 hover:ring-2 hover:ring-blue-400 transition">
+                <div className="bg-gray-950 rounded-lg shadow p-4 hover:ring-2 hover:ring-blue-400 transition">
                   <h2 className="text-xl font-semibold mb-1 text-white">{listing.title}</h2>
                   <div className="text-blue-400 font-bold mb-1">${listing.price}</div>
                   <div className="text-gray-300 mt-2 line-clamp-2">{listing.description}</div>

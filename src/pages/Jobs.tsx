@@ -192,7 +192,7 @@ const Jobs = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {listings.map(listing => (
               <Link key={listing.id} to={`/jobs/${listing.id}`} className="block">
-                <div className="bg-gray-900 rounded-lg shadow p-4 hover:ring-2 hover:ring-green-400 transition">
+                <div className="bg-gray-950 rounded-lg shadow p-4 hover:ring-2 hover:ring-green-400 transition">
                   {listing.images && listing.images.length > 0 && (
                     <img src={listing.images[0]} alt={listing.title} className="w-full h-40 object-cover rounded mb-2" crossOrigin="anonymous" />
                   )}

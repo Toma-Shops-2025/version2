@@ -169,7 +169,7 @@ const Handyman = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {listings.map(listing => (
               <Link key={listing.id} to={`/handyman/${listing.id}`} className="block">
-                <div className="bg-gray-900 rounded-lg shadow p-4 hover:ring-2 hover:ring-yellow-400 transition">
+                <div className="bg-gray-950 rounded-lg shadow p-4 hover:ring-2 hover:ring-yellow-400 transition">
                   {listing.images && listing.images.length > 0 && (
                     <img src={listing.images[0]} alt={listing.title} className="w-full h-40 object-cover rounded mb-2" crossOrigin="anonymous" />
                   )}
