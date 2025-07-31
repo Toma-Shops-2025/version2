@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@/components/theme-provider";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -48,6 +48,71 @@ import { AudioProvider } from './hooks/use-audio-context.tsx';
 
 const queryClient = new QueryClient();
 
+// Custom hook to handle back button
+const useBackButtonHandler = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Track navigation history
+    let navigationHistory: string[] = [];
+    
+    const handleNavigation = () => {
+      navigationHistory.push(location.pathname);
+      // Keep only last 10 entries
+      if (navigationHistory.length > 10) {
+        navigationHistory.shift();
+      }
+    };
+
+    const handleBackButton = () => {
+      // If we're on home page, prevent exit
+      if (location.pathname === '/' || location.pathname === '/index') {
+        // Show a toast or alert that user is on home page
+        console.log('Already on home page');
+        return;
+      }
+      
+      // Navigate to home page instead of exiting
+      navigate('/', { replace: true });
+    };
+
+    // Handle browser back button
+    const handlePopState = (event: PopStateEvent) => {
+      event.preventDefault();
+      handleBackButton();
+    };
+
+    // Handle beforeunload to prevent app exit
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (location.pathname !== '/' && location.pathname !== '/index') {
+        event.preventDefault();
+        event.returnValue = '';
+        navigate('/', { replace: true });
+        return '';
+      }
+    };
+
+    // Add event listeners
+    window.addEventListener('popstate', handlePopState);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    // Track current navigation
+    handleNavigation();
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [navigate, location.pathname]);
+};
+
+// Component to handle back button logic
+const BackButtonHandler: React.FC = () => {
+  useBackButtonHandler();
+  return null;
+};
+
 const App = () => {
   useEffect(() => {
     // Global error handler for Video.js and other errors
@@ -92,10 +157,10 @@ const App = () => {
         const widget = document.createElement('elevenlabs-convai');
         widget.setAttribute('agent-id', 'agent_4701k1a2btwdegysfzxgjhts8wvg');
         widget.id = 'elevenlabs-convai-widget';
-        widget.style.position = 'fixed';
-        widget.style.bottom = '24px';
-        widget.style.right = '24px';
-        widget.style.zIndex = '9999';
+        (widget as HTMLElement).style.position = 'fixed';
+        (widget as HTMLElement).style.bottom = '24px';
+        (widget as HTMLElement).style.right = '24px';
+        (widget as HTMLElement).style.zIndex = '9999';
         // Remove custom avatar styling to allow ElevenLabs avatar to show
         // widget.style.setProperty('--convai-widget-avatar', 'url("/tomabot-avatar.png")');
         // widget.style.setProperty('--convai-widget-avatar-size', '40px');
@@ -366,6 +431,7 @@ const App = () => {
               <Toaster />
               <Sonner />
               <BrowserRouter>
+                <BackButtonHandler />
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/how-it-works" element={<HowItWorks />} />
