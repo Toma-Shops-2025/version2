@@ -53,12 +53,10 @@ const AuthPage: React.FC = () => {
     }}>
       <form onSubmit={handleAuth} className="bg-gray-900 p-8 rounded shadow-md w-full max-w-sm space-y-6 flex flex-col items-center">
         <Link to="/" className="block w-full flex flex-col items-center mb-2">
-          <img
-            src="/logo.png"
-            alt="TomaShops Logo"
-            className="mb-2"
-            style={{ maxWidth: '320px', width: '100%', height: 'auto', objectFit: 'contain' }}
-          />
+          <h1 className="text-3xl font-bold text-white flex flex-col leading-tight text-center">
+            <span>TomaShops™</span>
+            <span className="text-cyan-400">Video 1st</span>
+          </h1>
         </Link>
         <h2 className="text-2xl font-bold text-center mb-2">{isSignUp ? 'Sign Up' : 'Login'}</h2>
         <Input
