@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Play, Pause, SkipForward, Volume2, VolumeX, X, Music } from 'lucide-react';
-import { useAudioContext } from './hooks/use-audio-context';
+import { useAudioContext } from '../hooks/use-audio-context';
 
 interface Track {
   id: string;
