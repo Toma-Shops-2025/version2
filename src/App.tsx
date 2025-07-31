@@ -126,6 +126,28 @@ const App = () => {
 
     window.addEventListener('error', handleGlobalError);
     
+    // Handle mobile back button to prevent app exit
+    const handleBackButton = (event: KeyboardEvent) => {
+      if (event.key === 'Backspace' || event.key === 'Escape') {
+        event.preventDefault();
+        // Navigate to home instead of exiting
+        window.location.href = '/';
+        return false;
+      }
+    };
+
+    // Handle browser back button
+    const handlePopState = (event: PopStateEvent) => {
+      event.preventDefault();
+      // Navigate to home instead of exiting
+      window.location.href = '/';
+      return false;
+    };
+
+    // Add event listeners for back button handling
+    window.addEventListener('keydown', handleBackButton);
+    window.addEventListener('popstate', handlePopState);
+    
     // Inject the ElevenLabs Convai script only once
     if (!document.getElementById('elevenlabs-convai-script')) {
       const script = document.createElement('script');
