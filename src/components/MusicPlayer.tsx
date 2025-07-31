@@ -28,11 +28,9 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
   const [showPlayer, setShowPlayer] = useState(true);
   const [currentTrack, setCurrentTrack] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
   const oscillatorRef = useRef<OscillatorNode | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
-  const [audioContextReady, setAudioContextReady] = useState(false);
 
   const genres = [
     { id: 'country', name: 'COUNTRY', color: 'bg-green-500' },
@@ -102,41 +100,10 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
     };
   }, [isPlaying, currentGenre, shouldPauseMusic]);
 
-  // Function to initialize audio context on user interaction
-  const initializeAudioContext = async () => {
-    try {
-      if (!audioContextRef.current) {
-        audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-        console.log('🎵 Audio context created');
-      }
-      
-      if (audioContextRef.current.state === 'suspended') {
-        await audioContextRef.current.resume();
-        console.log('🎵 Audio context resumed from suspended state');
-      }
-      
-      console.log('🎵 Audio context state:', audioContextRef.current.state);
-      setAudioContextReady(true);
-      return true;
-    } catch (error) {
-      console.error('🎵 Error initializing audio context:', error);
-      return false;
-    }
-  };
-
   const playMusic = async () => {
-    if (!currentGenre || isLoading) {
-      console.log('🎵 Cannot play: no genre selected or currently loading');
+    if (!audioContextRef.current || !currentGenre || isLoading) {
+      console.log('🎵 Cannot play: no audio context, genre selected, or currently loading');
       return;
-    }
-    
-    // Always try to initialize audio context if not ready
-    if (!audioContextRef.current || !audioContextReady) {
-      const success = await initializeAudioContext();
-      if (!success) {
-        console.log('🎵 Failed to initialize audio context');
-        return;
-      }
     }
 
     try {
@@ -147,8 +114,6 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
         await audioContextRef.current.resume();
         console.log('🎵 Audio context resumed from suspended state');
       }
-      
-      console.log('🎵 Audio context state:', audioContextRef.current.state);
       
       // Stop any existing oscillator
       if (oscillatorRef.current) {
@@ -173,8 +138,8 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
         console.log('🎵 Playing frequency:', currentTrack.frequency, 'Hz');
       }
       
-      // Set volume - much louder now
-      const volumeLevel = isMuted ? 0 : volume * 0.8; // Increased from 0.3 to 0.8
+      // Set volume
+      const volumeLevel = isMuted ? 0 : volume * 0.5;
       gainNode.gain.setValueAtTime(volumeLevel, audioContextRef.current.currentTime);
       console.log('🎵 Volume level:', volumeLevel);
       
@@ -199,18 +164,23 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
   };
 
   const pauseMusic = () => {
-    if (oscillatorRef.current) {
-      oscillatorRef.current.stop();
-      oscillatorRef.current = null;
+    try {
+      if (oscillatorRef.current) {
+        oscillatorRef.current.stop();
+        oscillatorRef.current = null;
+      }
+      if (gainNodeRef.current) {
+        gainNodeRef.current.disconnect();
+        gainNodeRef.current = null;
+      }
+      
+      setIsPlaying(false);
+      setMusicPlaying(false);
+      onAudioStateChange?.(false);
+      console.log('🎵 Music paused successfully');
+    } catch (error) {
+      console.error('🎵 Error pausing music:', error);
     }
-    if (gainNodeRef.current) {
-      gainNodeRef.current.disconnect();
-      gainNodeRef.current = null;
-    }
-    setIsPlaying(false);
-    setMusicPlaying(false);
-    onAudioStateChange?.(false);
-    console.log('🎵 Music paused');
   };
 
   const selectGenre = async (genreId: string) => {
@@ -239,6 +209,9 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
       setCurrentTrack(randomTrack);
       console.log('🎵 Track loaded:', randomTrack.title);
       
+      // Track is ready to play
+      console.log('🎵 Track ready to play:', randomTrack.title);
+      
       // Auto-play the new genre after a short delay
       setTimeout(() => {
         playMusic();
@@ -252,14 +225,14 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
   const toggleMute = () => {
     setIsMuted(!isMuted);
     if (gainNodeRef.current && audioContextRef.current) {
-      gainNodeRef.current.gain.setValueAtTime(isMuted ? 0 : volume * 0.8, audioContextRef.current.currentTime);
+      gainNodeRef.current.gain.setValueAtTime(isMuted ? 0 : volume * 0.5, audioContextRef.current.currentTime);
     }
   };
 
   const handleVolumeChange = (newVolume: number) => {
     setVolume(newVolume);
     if (gainNodeRef.current && audioContextRef.current && !isMuted) {
-      gainNodeRef.current.gain.setValueAtTime(newVolume * 0.8, audioContextRef.current.currentTime);
+      gainNodeRef.current.gain.setValueAtTime(newVolume * 0.5, audioContextRef.current.currentTime);
     }
   };
 
@@ -273,11 +246,11 @@ const MusicPlayer: React.FC<MusicPlayerProps> = ({ onAudioStateChange }) => {
       const nextTrack = tracks[nextIndex];
       
       setCurrentTrack(nextTrack);
-      if (audioRef.current) {
-        audioRef.current.src = `data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT`; // Placeholder for actual audio data
-        if (isPlaying) {
-          audioRef.current.play();
-        }
+      console.log('🎵 Next track loaded:', nextTrack.title);
+      
+      // If currently playing, restart with new track
+      if (isPlaying) {
+        playMusic();
       }
     }
   };
