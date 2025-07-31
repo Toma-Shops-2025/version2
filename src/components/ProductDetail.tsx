@@ -361,21 +361,21 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
         </div>
       </div>
       
-      <div className="p-4 space-y-8 bg-gray-100">
+      <div className="p-4 space-y-8 bg-black">
         <div>
-          <h3 className="text-lg font-semibold mb-2">Seller Reviews</h3>
+          <h3 className="text-lg font-semibold mb-2 text-white">Seller Reviews</h3>
           {reviews.length === 0 ? (
-            <p className="text-sm text-gray-500">No reviews for this seller yet.</p>
+            <p className="text-sm text-gray-400">No reviews for this seller yet.</p>
           ) : (
             <div className="space-y-4">
               {reviews.map((review: any) => (
-                <div key={review.id} className="border-b pb-2">
+                <div key={review.id} className="border-b border-gray-800 pb-2">
                   <div className="flex items-center mb-1">
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className={`w-4 h-4 ${i < review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} />
+                      <Star key={i} className={`w-4 h-4 ${i < review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'}`} />
                     ))}
                   </div>
-                  <p className="text-sm">{review.comment}</p>
+                  <p className="text-sm text-gray-300">{review.comment}</p>
                 </div>
               ))}
             </div>
@@ -383,18 +383,18 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
         </div>
 
         <div>
-          <h3 className="text-lg font-semibold mb-2">More from this Seller</h3>
+          <h3 className="text-lg font-semibold mb-2 text-white">More from this Seller</h3>
           {sellerListings.length === 0 ? (
-            <div className="text-gray-500">No other listings from this seller.</div>
+            <div className="text-gray-400">No other listings from this seller.</div>
           ) : (
             <ListingsGrid listings={sellerListings} />
           )}
         </div>
 
         <div>
-          <h3 className="text-lg font-semibold mb-2">Similar Listings</h3>
+          <h3 className="text-lg font-semibold mb-2 text-white">Similar Listings</h3>
           {similarListings.length === 0 ? (
-            <div className="text-gray-500">No similar listings found.</div>
+            <div className="text-gray-400">No similar listings found.</div>
           ) : (
             <ListingsGrid listings={similarListings} />
           )}
