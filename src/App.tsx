@@ -43,8 +43,8 @@ import DeleteAccountPage from './pages/DeleteAccount';
 import SuggestionBox from './pages/SuggestionBox';
 import React, { useEffect } from 'react';
 import './tomabot-widget.css';
-import MusicPlayer from './components/MusicPlayer';
 import { AudioProvider } from './hooks/use-audio-context.tsx';
+import MusicPlatformIntegration from './components/MusicPlatformIntegration';
 
 const queryClient = new QueryClient();
 
@@ -491,7 +491,7 @@ const App = () => {
                   <Route path="/suggestion-box" element={<SuggestionBox />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
-                <MusicPlayer />
+                <MusicPlatformIntegration />
               </BrowserRouter>
             </TooltipProvider>
           </QueryClientProvider>
