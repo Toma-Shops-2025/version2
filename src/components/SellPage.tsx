@@ -12,6 +12,7 @@ import mapboxgl from 'mapbox-gl';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import VideoZipper from 'video-zipper';
+import { useAudioContext } from '../hooks/use-audio-context';
 
 interface SellPageProps {
   onBack: () => void;
@@ -90,6 +91,7 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const geocoderRef = useRef<any>(null);
+  const { pauseMusic, resumeMusic } = useAudioContext();
 
   useEffect(() => {
     if (!mapContainer.current) return;
@@ -156,6 +158,9 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
       if (!user) throw new Error('You must be logged in to create a listing.');
       if (!videoFile) throw new Error('A video is required for every listing.');
 
+      // Pause music before upload
+      pauseMusic();
+
       // Compress the video before uploading
       setCompressionProgress(0);
       const videoZipper = new VideoZipper({ quality: 'medium' });
@@ -174,6 +179,9 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
         // Upload compressed video and photos
         const videoUrl = await uploadToSupabase(compressedFile, 'videos');
         const imageUrls = await Promise.all(photoFiles.map(file => uploadToSupabase(file, 'images')));
+        
+        // Resume music after upload completes
+        resumeMusic();
         
         const { error: insertError } = await supabase.from('listings').insert({
           seller_id: user.id,

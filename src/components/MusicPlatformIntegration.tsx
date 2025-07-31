@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Music, ExternalLink, Settings, Play, Pause } from 'lucide-react';
+import { Music, ExternalLink, Settings, Play, Pause, VolumeX, Volume2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { useAudioContext } from '../hooks/use-audio-context';
 
 interface MusicPlatform {
   id: string;
@@ -14,6 +15,7 @@ interface MusicPlatform {
 const MusicPlatformIntegration: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState<MusicPlatform | null>(null);
+  const { shouldPauseMusic, isUploading, videoPlaying } = useAudioContext();
 
   const musicPlatforms: MusicPlatform[] = [
     {
@@ -72,6 +74,38 @@ const MusicPlatformIntegration: React.FC = () => {
     }
   };
 
+  // Determine the icon and status based on current state
+  const getStatusInfo = () => {
+    if (videoPlaying) {
+      return {
+        icon: <VolumeX className="h-6 w-6 text-orange-400" />,
+        status: "Music paused - Video playing",
+        color: "from-orange-500 to-orange-600"
+      };
+    }
+    if (isUploading) {
+      return {
+        icon: <VolumeX className="h-6 w-6 text-red-400" />,
+        status: "Music paused - Uploading",
+        color: "from-red-500 to-red-600"
+      };
+    }
+    if (shouldPauseMusic) {
+      return {
+        icon: <VolumeX className="h-6 w-6 text-yellow-400" />,
+        status: "Music paused",
+        color: "from-yellow-500 to-yellow-600"
+      };
+    }
+    return {
+      icon: <Music className="h-6 w-6 text-green-400" />,
+      status: "Music ready",
+      color: "from-purple-500 to-purple-600"
+    };
+  };
+
+  const statusInfo = getStatusInfo();
+
   return (
     <div className="fixed bottom-4 right-4 z-[10000]">
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -79,9 +113,14 @@ const MusicPlatformIntegration: React.FC = () => {
           <Button
             variant="outline"
             size="icon"
-            className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110"
+            className={`w-12 h-12 bg-gradient-to-r ${statusInfo.color} hover:from-purple-600 hover:to-purple-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110 relative`}
+            title={statusInfo.status}
           >
-            <Music className="h-6 w-6" />
+            {statusInfo.icon}
+            {/* Status indicator dot */}
+            {(videoPlaying || isUploading || shouldPauseMusic) && (
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+            )}
           </Button>
         </DialogTrigger>
         
@@ -94,6 +133,19 @@ const MusicPlatformIntegration: React.FC = () => {
           </DialogHeader>
           
           <div className="space-y-4">
+            {/* Status Display */}
+            <div className="p-3 bg-gray-800 rounded-lg border border-gray-600">
+              <div className="flex items-center gap-2">
+                {statusInfo.icon}
+                <span className="text-sm font-medium">{statusInfo.status}</span>
+              </div>
+              {(videoPlaying || isUploading) && (
+                <p className="text-xs text-gray-400 mt-1">
+                  {videoPlaying ? "Music will resume when video ends" : "Music will resume when upload completes"}
+                </p>
+              )}
+            </div>
+
             <p className="text-gray-300 text-sm">
               Connect your favorite music platform to enjoy music while browsing TomaShops, just like Google Maps!
             </p>
@@ -138,7 +190,7 @@ const MusicPlatformIntegration: React.FC = () => {
             )}
             
             <div className="text-xs text-gray-500 text-center mt-4">
-              💡 Tip: Open your music platform in a new tab and keep it running while you browse TomaShops!
+              💡 Tip: Music automatically pauses when videos play or during uploads!
             </div>
           </div>
         </DialogContent>
