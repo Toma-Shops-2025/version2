@@ -102,7 +102,7 @@ const MusicPlayer: React.FC = () => {
       testGain.connect(testContext.destination);
       
       testOscillator.start(testContext.currentTime);
-      testOscillator.stop(testContext.currentTime + 1.0);
+      testOscillator.stop(testContext.currentTime + 0.5); // Stop after 0.5 seconds
       
       console.log('🎵 Test audio played successfully');
     } catch (error) {
@@ -131,11 +131,13 @@ const MusicPlayer: React.FC = () => {
       oscillator.frequency.setValueAtTime(currentTrack.frequency, audioContextRef.current!.currentTime);
       oscillator.type = 'sine';
 
-      // Configure gain
+      // Configure gain with fade in/out
       const volumeLevel = isMuted ? 0 : volume * 0.8;
-      gainNode.gain.setValueAtTime(volumeLevel, audioContextRef.current!.currentTime);
+      gainNode.gain.setValueAtTime(0, audioContextRef.current!.currentTime);
+      gainNode.gain.linearRampToValueAtTime(volumeLevel, audioContextRef.current!.currentTime + 0.1);
+      gainNode.gain.linearRampToValueAtTime(0, audioContextRef.current!.currentTime + 2.9);
 
-      // Connect nodes - use the correct connection method
+      // Connect nodes
       oscillator.connect(gainNode);
       gainNode.connect(audioContextRef.current!.destination);
 
@@ -143,11 +145,20 @@ const MusicPlayer: React.FC = () => {
       oscillatorRef.current = oscillator;
       gainNodeRef.current = gainNode;
 
-      // Start playback
-      oscillator.start();
+      // Start playback with automatic stop
+      oscillator.start(audioContextRef.current!.currentTime);
+      oscillator.stop(audioContextRef.current!.currentTime + 3.0); // Stop after 3 seconds
       
       setIsPlaying(true);
       console.log('🎵 Music playing:', currentTrack.name, 'at', currentTrack.frequency, 'Hz');
+      
+      // Auto-stop after 3 seconds
+      setTimeout(() => {
+        setIsPlaying(false);
+        oscillatorRef.current = null;
+        gainNodeRef.current = null;
+      }, 3000);
+      
     } catch (error) {
       console.error('🎵 Audio playback failed:', error);
       setIsPlaying(false);
