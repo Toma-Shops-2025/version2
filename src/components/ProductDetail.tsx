@@ -387,7 +387,27 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
           {sellerListings.length === 0 ? (
             <div className="text-gray-400">No other listings from this seller.</div>
           ) : (
-            <ListingsGrid listings={sellerListings} />
+            <ListingsGrid 
+              listings={sellerListings} 
+              onListingClick={(id) => {
+                // Navigate to the appropriate detail page based on category
+                const listing = sellerListings.find(l => l.id === id);
+                if (listing) {
+                  if (listing.category === 'job') {
+                    window.location.href = `/jobs/${id}`;
+                  } else if (listing.category === 'rental') {
+                    window.location.href = `/rentals/${id}`;
+                  } else if (listing.category === 'digital') {
+                    window.location.href = `/digital/${id}`;
+                  } else if (listing.category === 'ad') {
+                    window.location.href = `/ads/${id}`;
+                  } else {
+                    // For regular listings, we need to navigate back to home and select the listing
+                    window.location.href = `/?listing=${id}`;
+                  }
+                }
+              }}
+            />
           )}
         </div>
 
@@ -396,7 +416,27 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
           {similarListings.length === 0 ? (
             <div className="text-gray-400">No similar listings found.</div>
           ) : (
-            <ListingsGrid listings={similarListings} />
+            <ListingsGrid 
+              listings={similarListings} 
+              onListingClick={(id) => {
+                // Navigate to the appropriate detail page based on category
+                const listing = similarListings.find(l => l.id === id);
+                if (listing) {
+                  if (listing.category === 'job') {
+                    window.location.href = `/jobs/${id}`;
+                  } else if (listing.category === 'rental') {
+                    window.location.href = `/rentals/${id}`;
+                  } else if (listing.category === 'digital') {
+                    window.location.href = `/digital/${id}`;
+                  } else if (listing.category === 'ad') {
+                    window.location.href = `/ads/${id}`;
+                  } else {
+                    // For regular listings, we need to navigate back to home and select the listing
+                    window.location.href = `/?listing=${id}`;
+                  }
+                }
+              }}
+            />
           )}
         </div>
       </div>
