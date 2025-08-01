@@ -18,9 +18,6 @@ android {
         
         // Enable multidex for large apps
         multiDexEnabled true
-        
-        // Enable debugging for release builds (remove for production)
-        debuggable false
     }
     buildTypes {
         release {
