@@ -9,7 +9,7 @@ import Map from './Map';
 import { supabase } from '@/lib/supabase';
 import { useAppContext } from '@/contexts/AppContext';
 import ListingsGrid from './ListingsGrid';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface ProductDetailProps {
   listing: Listing;
@@ -33,6 +33,7 @@ interface Listing {
 
 const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
   const { user } = useAppContext();
+  const navigate = useNavigate();
   const [isFavorite, setIsFavorite] = useState(false);
   const [favoriteId, setFavoriteId] = useState<string | null>(null);
   const [modalImg, setModalImg] = useState<string | null>(null);
@@ -394,16 +395,16 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
                 const listing = sellerListings.find(l => l.id === id);
                 if (listing) {
                   if (listing.category === 'job') {
-                    window.location.href = `/jobs/${id}`;
+                    navigate(`/jobs/${id}`);
                   } else if (listing.category === 'rental') {
-                    window.location.href = `/rentals/${id}`;
+                    navigate(`/rentals/${id}`);
                   } else if (listing.category === 'digital') {
-                    window.location.href = `/digital/${id}`;
+                    navigate(`/digital/${id}`);
                   } else if (listing.category === 'ad') {
-                    window.location.href = `/ads/${id}`;
+                    navigate(`/ads/${id}`);
                   } else {
-                    // For regular listings, we need to navigate back to home and select the listing
-                    window.location.href = `/?listing=${id}`;
+                    // For regular listings, navigate to home with the listing selected
+                    navigate(`/?listing=${id}`);
                   }
                 }
               }}
@@ -423,16 +424,16 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
                 const listing = similarListings.find(l => l.id === id);
                 if (listing) {
                   if (listing.category === 'job') {
-                    window.location.href = `/jobs/${id}`;
+                    navigate(`/jobs/${id}`);
                   } else if (listing.category === 'rental') {
-                    window.location.href = `/rentals/${id}`;
+                    navigate(`/rentals/${id}`);
                   } else if (listing.category === 'digital') {
-                    window.location.href = `/digital/${id}`;
+                    navigate(`/digital/${id}`);
                   } else if (listing.category === 'ad') {
-                    window.location.href = `/ads/${id}`;
+                    navigate(`/ads/${id}`);
                   } else {
-                    // For regular listings, we need to navigate back to home and select the listing
-                    window.location.href = `/?listing=${id}`;
+                    // For regular listings, navigate to home with the listing selected
+                    navigate(`/?listing=${id}`);
                   }
                 }
               }}
