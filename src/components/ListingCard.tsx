@@ -62,21 +62,20 @@ const ListingCard: React.FC<ListingCardProps> = ({
     <Card className="cursor-pointer hover:shadow-md transition-shadow border-0 shadow-sm" onClick={onClick}>
       <div className="relative">
         {/* Media section for all listings, including jobs */}
-        {video ? (
+        {image ? (
+          <img
+            src={image}
+            alt={title}
+            className="w-full aspect-square object-cover rounded-t-lg"
+            crossOrigin="anonymous"
+          />
+        ) : video ? (
           <video
             src={video}
             muted
             playsInline
             className="w-full aspect-square object-cover rounded-t-lg"
             style={{ objectFit: 'cover' }}
-            crossOrigin="anonymous"
-            poster={image}
-          />
-        ) : image ? (
-          <img
-            src={image}
-            alt={title}
-            className="w-full aspect-square object-cover rounded-t-lg"
             crossOrigin="anonymous"
           />
         ) : (
