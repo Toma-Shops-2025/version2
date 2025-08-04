@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Fingerprint, Eye, Smartphone, Shield } from 'lucide-react';
+import { NativeBiometric } from '@capgo/capacitor-native-biometric';
 
 interface BiometricAuthProps {
   onSuccess: (credentials: any) => void;
@@ -19,25 +20,13 @@ const BiometricAuth: React.FC<BiometricAuthProps> = ({ onSuccess, onError, loadi
 
   const checkBiometricSupport = async () => {
     try {
-      // Check if WebAuthn is supported
-      if (!window.PublicKeyCredential) {
-        setIsSupported(false);
-        return;
-      }
-
       // Check if biometric authentication is available
-      const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-      setIsSupported(available);
+      const result = await NativeBiometric.isAvailable();
+      setIsSupported(result.isAvailable);
 
-      if (available) {
-        // Determine biometric type based on device capabilities
-        if (navigator.userAgent.includes('iPhone') || navigator.userAgent.includes('iPad')) {
-          setBiometricType('face');
-        } else if (navigator.userAgent.includes('Android')) {
-          setBiometricType('fingerprint');
-        } else {
-          setBiometricType('fingerprint');
-        }
+      if (result.isAvailable) {
+        // Determine biometric type based on available biometry
+        setBiometricType(result.biometryType === 'face' ? 'face' : 'fingerprint');
 
         // Check if user has biometric credentials stored
         const hasCredentials = await checkForStoredCredentials();
@@ -62,12 +51,15 @@ const BiometricAuth: React.FC<BiometricAuthProps> = ({ onSuccess, onError, loadi
 
   const handleBiometricAuth = async () => {
     try {
-      // For demo purposes, we'll simulate biometric authentication
-      // In a real implementation, you would use the WebAuthn API
-      
-      // Simulate biometric authentication delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      // Verify biometric authentication
+      await NativeBiometric.verifyIdentity({
+        reason: 'Please authenticate to access your account',
+        title: 'Biometric Authentication',
+        subtitle: 'Use your biometric to sign in',
+        description: 'Authenticate using your fingerprint or face ID'
+      });
+
+      // If we reach here, authentication was successful
       // Get stored credentials
       const storedCredentials = localStorage.getItem('tomashops_biometric_credentials');
       
@@ -85,13 +77,15 @@ const BiometricAuth: React.FC<BiometricAuthProps> = ({ onSuccess, onError, loadi
 
   const setupBiometricAuth = async () => {
     try {
-      // For demo purposes, we'll simulate setting up biometric authentication
-      // In a real implementation, you would use the WebAuthn API to create credentials
-      
-      // Simulate setup delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Store demo credentials
+      // Verify biometric authentication first
+      await NativeBiometric.verifyIdentity({
+        reason: 'Please authenticate to set up biometric login',
+        title: 'Setup Biometric Auth',
+        subtitle: 'Verify your identity to enable biometric login',
+        description: 'Use your fingerprint or face ID to complete setup'
+      });
+
+      // Store demo credentials (in a real app, you'd store actual user credentials)
       const demoCredentials = {
         email: 'demo@tomashops.com',
         userId: 'demo-user-id',
