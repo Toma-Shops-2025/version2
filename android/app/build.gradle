@@ -19,7 +19,7 @@ android {
         // Enable multidex for large apps
         multiDexEnabled true
     }
-    buildTypes {
+     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
