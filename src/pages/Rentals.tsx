@@ -97,19 +97,19 @@ const RentalForm = ({ onClose }: { onClose: () => void }) => {
         {error && <div className="mb-2 text-red-600">{error}</div>}
         <div className="mb-2">
           <label className="block mb-1">Title</label>
-          <input className="w-full p-2 border rounded" value={title} onChange={e => setTitle(e.target.value)} required />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={title} onChange={e => setTitle(e.target.value)} required />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Rent</label>
-          <input className="w-full p-2 border rounded" type="number" value={rent} onChange={e => setRent(e.target.value)} required />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" type="number" value={rent} onChange={e => setRent(e.target.value)} required />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Deposit</label>
-          <input className="w-full p-2 border rounded" type="number" value={deposit} onChange={e => setDeposit(e.target.value)} />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" type="number" value={deposit} onChange={e => setDeposit(e.target.value)} />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Description</label>
-          <textarea className="w-full p-2 border rounded" value={description} onChange={e => setDescription(e.target.value)} required />
+          <textarea className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={description} onChange={e => setDescription(e.target.value)} required />
         </div>
         <div className="mb-4">
           <label className="block mb-1 font-semibold">Location</label>
@@ -127,28 +127,28 @@ const RentalForm = ({ onClose }: { onClose: () => void }) => {
         <div className="flex gap-2 mb-2">
           <div className="flex-1">
             <label className="block mb-1">Bedrooms</label>
-            <input className="w-full p-2 border rounded" type="number" value={bedrooms} onChange={e => setBedrooms(e.target.value)} />
+            <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" type="number" value={bedrooms} onChange={e => setBedrooms(e.target.value)} />
           </div>
           <div className="flex-1">
             <label className="block mb-1">Bathrooms</label>
-            <input className="w-full p-2 border rounded" type="number" value={bathrooms} onChange={e => setBathrooms(e.target.value)} />
+            <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" type="number" value={bathrooms} onChange={e => setBathrooms(e.target.value)} />
           </div>
         </div>
         <div className="mb-2">
           <label className="block mb-1">Square Feet <span className='text-xs text-gray-400'>(optional)</span></label>
-          <input className="w-full p-2 border rounded" type="number" value={squareFeet} onChange={e => setSquareFeet(e.target.value)} />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" type="number" value={squareFeet} onChange={e => setSquareFeet(e.target.value)} />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Property Type</label>
-          <input className="w-full p-2 border rounded" value={propertyType} onChange={e => setPropertyType(e.target.value)} />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={propertyType} onChange={e => setPropertyType(e.target.value)} />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Available From</label>
-          <input className="w-full p-2 border rounded" type="date" value={availableFrom} onChange={e => setAvailableFrom(e.target.value)} />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" type="date" value={availableFrom} onChange={e => setAvailableFrom(e.target.value)} />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Lease Length</label>
-          <input className="w-full p-2 border rounded" value={leaseLength} onChange={e => setLeaseLength(e.target.value)} />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={leaseLength} onChange={e => setLeaseLength(e.target.value)} />
         </div>
         <div className="flex gap-2 mb-2">
           <label className="flex items-center gap-2">

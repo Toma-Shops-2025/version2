@@ -103,15 +103,15 @@ const DigitalForm = ({ onClose }: { onClose: () => void }) => {
         {error && <div className="mb-2 text-red-600">{error}</div>}
         <div className="mb-2">
           <label className="block mb-1">Title</label>
-          <input className="w-full p-2 border rounded" value={title} onChange={e => setTitle(e.target.value)} required />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={title} onChange={e => setTitle(e.target.value)} required />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Price</label>
-          <input className="w-full p-2 border rounded" type="number" value={price} onChange={e => setPrice(e.target.value)} required />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" type="number" value={price} onChange={e => setPrice(e.target.value)} required />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Description</label>
-          <textarea className="w-full p-2 border rounded" value={description} onChange={e => setDescription(e.target.value)} required />
+          <textarea className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={description} onChange={e => setDescription(e.target.value)} required />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Digital File(s)</label>

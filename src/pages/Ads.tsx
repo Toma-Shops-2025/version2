@@ -93,18 +93,18 @@ const AdForm = ({ onClose }: { onClose: () => void }) => {
         {error && <div className="mb-2 text-red-600">{error}</div>}
         <div className="mb-2">
           <label className="block mb-1">Title</label>
-          <input className="w-full p-2 border rounded" value={title} onChange={e => setTitle(e.target.value)} required />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={title} onChange={e => setTitle(e.target.value)} required />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Category</label>
-          <select className="w-full p-2 border rounded" value={category} onChange={e => setCategory(e.target.value)} required>
+          <select className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={category} onChange={e => setCategory(e.target.value)} required>
             <option value="">Select a category</option>
             {AD_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
           </select>
         </div>
         <div className="mb-2">
           <label className="block mb-1">Description</label>
-          <textarea className="w-full p-2 border rounded" value={description} onChange={e => setDescription(e.target.value)} required />
+          <textarea className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={description} onChange={e => setDescription(e.target.value)} required />
         </div>
         <div className="mb-4">
           <label className="block mb-1 font-semibold">Location</label>
@@ -121,11 +121,11 @@ const AdForm = ({ onClose }: { onClose: () => void }) => {
         </div>
         <div className="mb-2">
           <label className="block mb-1">Contact Info <span className='text-xs text-gray-400'>(optional)</span></label>
-          <input className="w-full p-2 border rounded" value={contactInfo} onChange={e => setContactInfo(e.target.value)} />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={contactInfo} onChange={e => setContactInfo(e.target.value)} />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Price/Rate <span className='text-xs text-gray-400'>(optional)</span></label>
-          <input className="w-full p-2 border rounded" type="text" value={price} onChange={e => setPrice(e.target.value)} />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" type="text" value={price} onChange={e => setPrice(e.target.value)} />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Images <span className='text-xs text-gray-400'>(optional)</span></label>

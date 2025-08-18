@@ -75,19 +75,19 @@ const HandymanForm = ({ onClose }: { onClose: () => void }) => {
         {error && <div className="mb-2 text-red-600">{error}</div>}
         <div className="mb-2">
           <label className="block mb-1">Title</label>
-          <input className="w-full p-2 border rounded" value={title} onChange={e => setTitle(e.target.value)} required />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={title} onChange={e => setTitle(e.target.value)} required />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Service Type</label>
-          <input className="w-full p-2 border rounded" value={serviceType} onChange={e => setServiceType(e.target.value)} placeholder="Plumbing, Electrical, etc." />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={serviceType} onChange={e => setServiceType(e.target.value)} placeholder="Plumbing, Electrical, etc." />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Rate</label>
-          <input className="w-full p-2 border rounded" value={rate} onChange={e => setRate(e.target.value)} placeholder="$ per hour or flat rate" />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={rate} onChange={e => setRate(e.target.value)} placeholder="$ per hour or flat rate" />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Experience (years)</label>
-          <input className="w-full p-2 border rounded" type="number" value={experienceYears} onChange={e => setExperienceYears(e.target.value)} />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" type="number" value={experienceYears} onChange={e => setExperienceYears(e.target.value)} />
         </div>
         <div className="mb-2">
           <label className="flex items-center gap-2">
@@ -96,7 +96,7 @@ const HandymanForm = ({ onClose }: { onClose: () => void }) => {
         </div>
         <div className="mb-2">
           <label className="block mb-1">Description</label>
-          <textarea className="w-full p-2 border rounded" value={description} onChange={e => setDescription(e.target.value)} required />
+          <textarea className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={description} onChange={e => setDescription(e.target.value)} required />
         </div>
         <div className="mb-4">
           <label className="block mb-1 font-semibold">Location</label>
@@ -113,7 +113,7 @@ const HandymanForm = ({ onClose }: { onClose: () => void }) => {
         </div>
         <div className="mb-2">
           <label className="block mb-1">Phone Number <span className='text-xs text-gray-400'>(optional)</span></label>
-          <input className="w-full p-2 border rounded" value={phone} onChange={e => setPhone(e.target.value)} />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={phone} onChange={e => setPhone(e.target.value)} />
         </div>
         <div className="flex justify-end gap-2 mt-4">
           <button type="button" className="px-4 py-2 rounded bg-gray-200" onClick={onClose} disabled={loading}>Cancel</button>

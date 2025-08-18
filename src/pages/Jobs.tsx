@@ -87,27 +87,27 @@ const JobForm = ({ onClose }: { onClose: () => void }) => {
         {error && <div className="mb-2 text-red-600">{error}</div>}
         <div className="mb-2">
           <label className="block mb-1">Job Title</label>
-          <input className="w-full p-2 border rounded" value={jobTitle} onChange={e => setJobTitle(e.target.value)} required />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={jobTitle} onChange={e => setJobTitle(e.target.value)} required />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Company Name</label>
-          <input className="w-full p-2 border rounded" value={companyName} onChange={e => setCompanyName(e.target.value)} required />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={companyName} onChange={e => setCompanyName(e.target.value)} required />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Job Type</label>
-          <input className="w-full p-2 border rounded" value={jobType} onChange={e => setJobType(e.target.value)} placeholder="Full-time, Part-time, Contract, etc." />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={jobType} onChange={e => setJobType(e.target.value)} placeholder="Full-time, Part-time, Contract, etc." />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Salary</label>
-          <input className="w-full p-2 border rounded" value={salary} onChange={e => setSalary(e.target.value)} />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={salary} onChange={e => setSalary(e.target.value)} />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Description</label>
-          <textarea className="w-full p-2 border rounded" value={description} onChange={e => setDescription(e.target.value)} required />
+          <textarea className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={description} onChange={e => setDescription(e.target.value)} required />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Requirements</label>
-          <textarea className="w-full p-2 border rounded" value={requirements} onChange={e => setRequirements(e.target.value)} />
+          <textarea className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={requirements} onChange={e => setRequirements(e.target.value)} />
         </div>
         <div className="mb-4">
           <label className="block mb-1 font-semibold">Location</label>
@@ -124,11 +124,11 @@ const JobForm = ({ onClose }: { onClose: () => void }) => {
         </div>
         <div className="mb-2">
           <label className="block mb-1">Application URL <span className='text-xs text-gray-400'>(optional)</span></label>
-          <input className="w-full p-2 border rounded" value={applicationUrl} onChange={e => setApplicationUrl(e.target.value)} />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={applicationUrl} onChange={e => setApplicationUrl(e.target.value)} />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Contact Info <span className='text-xs text-gray-400'>(optional)</span></label>
-          <input className="w-full p-2 border rounded" value={contactInfo} onChange={e => setContactInfo(e.target.value)} placeholder="Phone, email, or other" />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={contactInfo} onChange={e => setContactInfo(e.target.value)} placeholder="Phone, email, or other" />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Images <span className='text-xs text-gray-400'>(optional)</span></label>
