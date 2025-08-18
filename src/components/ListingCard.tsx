@@ -20,6 +20,7 @@ interface ListingCardProps {
   onDelete?: () => void;
   onRestore?: () => void;
   onPermanentDelete?: () => void;
+  onEdit?: () => void;
   // Job-specific fields
   category?: string;
   company_name?: string;
@@ -47,6 +48,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
   onDelete,
   onRestore,
   onPermanentDelete,
+  onEdit,
   // Job-specific fields
   category,
   company_name,
@@ -91,7 +93,12 @@ const ListingCard: React.FC<ListingCardProps> = ({
         )}
         {status === 'sold' && (
           <Badge className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 shadow-sm">
-            SOLD
+            {category === 'rental' ? 'RENTED' : 
+             category === 'job' ? 'FILLED' : 
+             category === 'handyman' ? 'COMPLETED' :
+             category === 'digital' ? 'SOLD' :
+             category === 'ad' ? 'COMPLETED' :
+             'SOLD'}
           </Badge>
         )}
         {category === 'job' && (
@@ -134,15 +141,31 @@ const ListingCard: React.FC<ListingCardProps> = ({
       {isOwner && (
         <CardContent className="p-3">
           {status === 'active' && (
-            <button
-              className="mt-2 px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition mr-2"
-              onClick={e => {
-                e.stopPropagation();
-                onMarkAsSold && onMarkAsSold();
-              }}
-            >
-              Mark as Sold
-            </button>
+            <>
+              <button
+                className="mt-2 px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition mr-2"
+                onClick={e => {
+                  e.stopPropagation();
+                  onEdit && onEdit();
+                }}
+              >
+                Edit
+              </button>
+              <button
+                className="mt-2 px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition mr-2"
+                onClick={e => {
+                  e.stopPropagation();
+                  onMarkAsSold && onMarkAsSold();
+                }}
+              >
+                {category === 'rental' ? 'Mark as Rented' : 
+                 category === 'job' ? 'Mark Position Filled' : 
+                 category === 'handyman' ? 'Mark Job Complete' :
+                 category === 'digital' ? 'Mark as Sold' :
+                 category === 'ad' ? 'Mark as Completed' :
+                 'Mark as Sold'}
+              </button>
+            </>
           )}
           {status !== 'trashed' && (
             <button

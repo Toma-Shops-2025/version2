@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Camera, MapPin } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useAppContext } from '@/contexts/AppContext';
+import { useNavigate } from 'react-router-dom';
 import Map from './Map';
 import mapboxgl from 'mapbox-gl';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
@@ -69,6 +70,7 @@ async function uploadToSupabase(file: File, folder: string = ''): Promise<string
 }
 
 const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
+  const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
   const [category, setCategory] = useState('');
@@ -91,7 +93,7 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const geocoderRef = useRef<any>(null);
-  const { pauseMusic, resumeMusic } = useAudioContext();
+  const { pauseMusicForUpload, resumeMusicAfterUpload } = useAudioContext();
 
   useEffect(() => {
     if (!mapContainer.current) return;
@@ -159,7 +161,7 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
       if (!videoFile) throw new Error('A video is required for every listing.');
 
       // Pause music before upload
-      pauseMusic();
+      pauseMusicForUpload();
 
       // Compress the video before uploading
       setCompressionProgress(0);
@@ -180,8 +182,8 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
         const videoUrl = await uploadToSupabase(compressedFile, 'videos');
         const imageUrls = await Promise.all(photoFiles.map(file => uploadToSupabase(file, 'images')));
         
-        // Resume music after upload completes
-        resumeMusic();
+              // Resume music after upload completes
+      resumeMusicAfterUpload();
         
         const { error: insertError } = await supabase.from('listings').insert({
           seller_id: user.id,
@@ -221,7 +223,14 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
             Back
           </Button>
           <h1 className="text-lg font-semibold">Create listing</h1>
-          <div className="w-16" /> {/* Spacer */}
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => navigate('/my-listings')}
+            className="text-blue-400 border-blue-400 hover:bg-blue-400 hover:text-white"
+          >
+            My Listings
+          </Button>
         </div>
       </div>
 

@@ -166,9 +166,9 @@ const RentalForm = ({ onClose }: { onClose: () => void }) => {
           <label className="block mb-1">Video</label>
           <input className="w-full" type="file" accept="video/*" onChange={e => setVideo(e.target.files?.[0] || null)} required />
         </div>
-        <div className="flex justify-end gap-2 mt-4">
-          <button type="button" className="px-4 py-2 rounded bg-gray-200" onClick={onClose} disabled={loading}>Cancel</button>
+        <div className="flex justify-start gap-2 mt-4">
           <button type="submit" className="px-4 py-2 rounded bg-blue-600 text-white" disabled={loading}>{loading ? 'Submitting...' : 'Submit'}</button>
+          <button type="button" className="px-4 py-2 rounded bg-gray-200" onClick={onClose} disabled={loading}>Cancel</button>
         </div>
       </form>
     </div>

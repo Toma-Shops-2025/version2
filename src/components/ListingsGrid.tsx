@@ -29,9 +29,11 @@ interface ListingsGridProps {
   onMarkAsSold?: (id: string) => void;
   onDelete?: (id: string) => void;
   onRestore?: (id: string) => void;
+  onEdit?: (id: string) => void;
+  onPermanentDelete?: (id: string) => void;
 }
 
-const ListingsGrid: React.FC<ListingsGridProps> = ({ listings, onListingClick, isOwner = false, onMarkAsSold, onDelete, onRestore }) => {
+const ListingsGrid: React.FC<ListingsGridProps> = ({ listings, onListingClick, isOwner = false, onMarkAsSold, onDelete, onRestore, onEdit, onPermanentDelete }) => {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-4 px-2 md:px-4">
       {listings.map((listing) => (
@@ -50,6 +52,8 @@ const ListingsGrid: React.FC<ListingsGridProps> = ({ listings, onListingClick, i
           onMarkAsSold={onMarkAsSold ? () => onMarkAsSold(listing.id) : undefined}
           onDelete={onDelete ? () => onDelete(listing.id) : undefined}
           onRestore={onRestore ? () => onRestore(listing.id) : undefined}
+          onEdit={onEdit ? () => onEdit(listing.id) : undefined}
+          onPermanentDelete={onPermanentDelete ? () => onPermanentDelete(listing.id) : undefined}
           onClick={() => onListingClick?.(listing.id)}
           // Pass all job-specific fields
           category={listing.category}
