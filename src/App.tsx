@@ -1,6 +1,7 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { preventBackspaceNavigation } from '@/lib/utils';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -144,6 +145,9 @@ const App = () => {
   useEffect(() => {
     // Scroll to top immediately when app loads
     window.scrollTo(0, 0);
+    
+    // Prevent backspace from navigating back when typing in forms
+    const cleanupBackspaceHandler = preventBackspaceNavigation();
     
     // Global error handler for Video.js and other errors
     const handleGlobalError = (event: ErrorEvent) => {
@@ -582,6 +586,7 @@ const App = () => {
     
     return () => {
       window.removeEventListener('error', handleGlobalError);
+      cleanupBackspaceHandler();
     };
   }, []);
 
