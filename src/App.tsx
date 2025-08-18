@@ -90,26 +90,26 @@ const useBackButtonHandler = () => {
       handleBackButton();
     };
 
-    // Handle beforeunload to prevent app exit
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      if (location.pathname !== '/' && location.pathname !== '/index') {
-        event.preventDefault();
-        event.returnValue = '';
-        navigate('/', { replace: true });
-        return '';
-      }
-    };
+    // Handle beforeunload to prevent app exit - DISABLED to fix backspace navigation issue
+    // const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+    //   if (location.pathname !== '/' && location.pathname !== '/index') {
+    //     event.preventDefault();
+    //     event.returnValue = '';
+    //     navigate('/', { replace: true });
+    //     return '';
+    //   }
+    // };
 
     // Add event listeners
     window.addEventListener('popstate', handlePopState);
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    // window.addEventListener('beforeunload', handleBeforeUnload); // DISABLED to fix backspace popup
     
     // Track current navigation
     handleNavigation();
 
     return () => {
       window.removeEventListener('popstate', handlePopState);
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      // window.removeEventListener('beforeunload', handleBeforeUnload); // DISABLED
     };
   }, [navigate, location.pathname]);
 };
@@ -131,7 +131,7 @@ const ScrollToTopHandler: React.FC = () => {
       window.scrollTo(0, 0);
     };
     
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    // window.addEventListener('beforeunload', handleBeforeUnload); // DISABLED to fix backspace popup
     
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);

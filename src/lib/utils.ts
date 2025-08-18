@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-// Prevent backspace from navigating back when typing in form fields
+// Prevent backspace navigation and form leave warnings
 export const preventBackspaceNavigation = () => {
   const handleKeyDown = (e: KeyboardEvent) => {
     // Only prevent if backspace is pressed
@@ -29,11 +29,37 @@ export const preventBackspaceNavigation = () => {
     }
   };
 
-  // Add the event listener
+  // Completely disable beforeunload warnings globally
+  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+    // Always prevent the warning dialog
+    e.preventDefault();
+    delete e.returnValue;
+    return;
+  };
+
+  // Override any existing beforeunload handlers
+  const originalBeforeUnload = window.onbeforeunload;
+  window.onbeforeunload = null;
+
+  // Add the event listeners
   document.addEventListener('keydown', handleKeyDown);
+  window.addEventListener('beforeunload', handleBeforeUnload, true); // Use capture phase
+  
+  // Also prevent the default browser behavior for navigation
+  const handlePopState = (e: PopStateEvent) => {
+    // Don't prevent actual navigation, just the warning
+  };
+  
+  window.addEventListener('popstate', handlePopState);
   
   // Return cleanup function
   return () => {
     document.removeEventListener('keydown', handleKeyDown);
+    window.removeEventListener('beforeunload', handleBeforeUnload, true);
+    window.removeEventListener('popstate', handlePopState);
+    // Restore original beforeunload handler if it existed
+    if (originalBeforeUnload) {
+      window.onbeforeunload = originalBeforeUnload;
+    }
   };
 };
