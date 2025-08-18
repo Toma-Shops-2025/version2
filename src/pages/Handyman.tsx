@@ -6,21 +6,20 @@ import { Link } from 'react-router-dom';
 import BackButton from '@/components/BackButton';
 import LocationPicker from '@/components/LocationPicker';
 
-const CLOUDINARY_CLOUD_NAME = 'dumnzljgn';
-const CLOUDINARY_UPLOAD_PRESET = 'unsigned_preset';
-
-async function uploadToCloudinary(file: File) {
-  const url = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
-  const formData = new FormData();
-  formData.append('file', file);
-  formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-  const res = await fetch(url, {
-    method: 'POST',
-    body: formData,
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error?.message || 'Cloudinary upload failed');
-  return data.secure_url;
+async function uploadToSupabase(file: File, folder: string = ''): Promise<string> {
+  const fileExt = file.name.split('.').pop();
+  const filePath = `${folder}/${Date.now()}_${file.name}`;
+  const { data, error } = await supabase.storage
+    .from('uploads')
+    .upload(filePath, file, {
+      cacheControl: '3600',
+      upsert: false,
+      contentType: file.type,
+    });
+  if (error) throw new Error(error.message);
+  const { data: publicUrlData } = supabase.storage.from('uploads').getPublicUrl(filePath);
+  if (!publicUrlData?.publicUrl) throw new Error('Failed to get public URL');
+  return publicUrlData.publicUrl;
 }
 
 const HandymanForm = ({ onClose }: { onClose: () => void }) => {
@@ -35,6 +34,8 @@ const HandymanForm = ({ onClose }: { onClose: () => void }) => {
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
   const [phone, setPhone] = useState('');
+  const [images, setImages] = useState<FileList | null>(null);
+  const [video, setVideo] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -44,7 +45,17 @@ const HandymanForm = ({ onClose }: { onClose: () => void }) => {
     setError(null);
     try {
       if (!user) throw new Error('You must be logged in to create a handyman listing.');
-      // Remove video requirement and image upload
+      
+      // Upload images if present
+      let imageUrls: string[] = [];
+      if (images && images.length > 0) {
+        imageUrls = await Promise.all(Array.from(images).map(file => uploadToSupabase(file, 'images')));
+      }
+      
+      // Upload video if present
+      let videoUrl = '';
+      if (video) videoUrl = await uploadToSupabase(video, 'videos');
+      
       const { error: insertError } = await supabase.from('listings').insert({
         seller_id: user.id,
         title,
@@ -57,7 +68,9 @@ const HandymanForm = ({ onClose }: { onClose: () => void }) => {
         latitude,
         longitude,
         phone: phone || null,
-        category: 'handyman'
+        category: 'handyman',
+        image_url: imageUrls.length > 0 ? imageUrls[0] : null,
+        video_url: videoUrl || null
       });
       if (insertError) throw insertError;
       onClose();
@@ -110,6 +123,14 @@ const HandymanForm = ({ onClose }: { onClose: () => void }) => {
           {location && (
             <div className="text-xs text-gray-600 mt-1">Selected: {location}</div>
           )}
+        </div>
+        <div className="mb-2">
+          <label className="block mb-1">Images <span className='text-xs text-gray-400'>(optional)</span></label>
+          <input className="w-full" type="file" multiple onChange={e => setImages(e.target.files)} accept="image/*" />
+        </div>
+        <div className="mb-2">
+          <label className="block mb-1">Video <span className='text-xs text-gray-400'>(optional)</span></label>
+          <input className="w-full" type="file" accept="video/*" onChange={e => setVideo(e.target.files?.[0] || null)} />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Phone Number <span className='text-xs text-gray-400'>(optional)</span></label>
@@ -170,8 +191,14 @@ const Handyman = () => {
             {listings.map(listing => (
               <Link key={listing.id} to={`/handyman/${listing.id}`} className="block">
                 <div className="bg-gray-950 rounded-lg shadow p-4 hover:ring-2 hover:ring-yellow-400 transition">
-                  {listing.images && listing.images.length > 0 && (
-                    <img src={listing.images[0]} alt={listing.title} className="w-full h-40 object-cover rounded mb-2" crossOrigin="anonymous" />
+                  {listing.image_url ? (
+                    <img src={listing.image_url} alt={listing.title} className="w-full h-40 object-cover rounded mb-2" crossOrigin="anonymous" />
+                  ) : listing.video_url ? (
+                    <video src={listing.video_url} controls={false} muted className="w-full h-40 object-cover rounded mb-2" crossOrigin="anonymous" />
+                  ) : (
+                    <div className="w-full h-40 flex items-center justify-center bg-gray-800 rounded mb-2">
+                      <span className="text-gray-400 text-2xl">🔧</span>
+                    </div>
                   )}
                   <h2 className="text-xl font-semibold mb-1">{listing.title}</h2>
                   <div className="text-yellow-700 font-bold mb-1">{listing.service_type}</div>
@@ -180,9 +207,6 @@ const Handyman = () => {
                   <div className="text-sm text-gray-500 mb-1">Experience: {listing.experience_years ? `${listing.experience_years} yrs` : 'N/A'}</div>
                   <div className="text-sm text-gray-500 mb-1">{listing.certified ? 'Certified' : 'Not Certified'}</div>
                   <div className="text-gray-600 mt-2 line-clamp-2">{listing.description}</div>
-                  {listing.video && (
-                    <video src={listing.video} controls className="w-full mt-2 rounded" style={{ maxHeight: 120 }} crossOrigin="anonymous" />
-                  )}
                 </div>
               </Link>
             ))}

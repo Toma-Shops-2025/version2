@@ -225,6 +225,7 @@ const HomePage: React.FC = () => {
               <Link to="/jobs" className="text-white hover:underline">Jobs</Link>
               <Link to="/digital" className="text-white hover:underline">Digital</Link>
               <Link to="/ads" className="text-white hover:underline">Ads</Link>
+              <Link to="/handyman" className="text-white hover:underline">Handyman</Link>
             </div>
           </div>
           

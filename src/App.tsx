@@ -32,6 +32,8 @@ import DigitalDetail from './pages/DigitalDetail';
 import DigitalProductDetail from './pages/DigitalProductDetail';
 import Digital from './pages/Digital';
 import Ads from './pages/Ads';
+import Handyman from './pages/Handyman';
+import HandymanDetail from './pages/HandymanDetail';
 import MyListings from './pages/MyListings';
 import MyOrders from './pages/MyOrders';
 import MessagesPage from './components/MessagesPage';
@@ -621,11 +623,13 @@ const App = () => {
                   <Route path="/digital/:id" element={<DigitalProductDetail />} />
                   <Route path="/digital" element={<Digital />} />
                   <Route path="/ads" element={<Ads />} />
+                  <Route path="/handyman" element={<Handyman />} />
                   <Route path="/my-listings" element={<MyListings />} />
                   <Route path="/my-orders" element={<MyOrders />} />
                   <Route path="/seller-orders" element={<SellerOrders />} />
                   <Route path="/rentals/:id" element={<RentalDetail />} />
                   <Route path="/ads/:id" element={<AdDetail />} />
+                  <Route path="/handyman/:id" element={<HandymanDetail />} />
                   <Route path="/delete-account" element={<DeleteAccountPage onBack={() => window.history.back()} />} />
                   <Route path="/suggestion-box" element={<SuggestionBox />} />
                   <Route path="*" element={<NotFound />} />

@@ -106,6 +106,9 @@ const ListingCard: React.FC<ListingCardProps> = ({
         {category === 'ad' && (
           <Badge className="absolute top-2 right-2 bg-yellow-500 text-black text-xs px-2 py-1 shadow-sm">Ad</Badge>
         )}
+        {category === 'handyman' && (
+          <Badge className="absolute top-2 right-2 bg-orange-600 text-white text-xs px-2 py-1 shadow-sm">Handyman</Badge>
+        )}
         <CardContent className="p-3">
           <div className="mb-1">
             <h3 className="font-bold text-lg text-white">
