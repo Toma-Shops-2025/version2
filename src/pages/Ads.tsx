@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import LocationPicker from '@/components/LocationPicker';
 import BackButton from '@/components/BackButton';
 import ListingsGrid from '@/components/ListingsGrid';
+import Map from '@/components/Map';
 
 const AD_CATEGORIES = [
   'Dog Walking',
@@ -190,6 +191,7 @@ const Ads = () => {
           <ListingsGrid listings={ads} onListingClick={id => navigate(`/ads/${id}`)} />
         )}
       </div>
+      <Map listings={ads} />
       {showForm && <AdForm onClose={() => setShowForm(false)} />}
     </div>
   );

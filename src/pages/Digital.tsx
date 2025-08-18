@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { useAppContext } from '@/contexts/AppContext';
 import { Link } from 'react-router-dom';
 import BackButton from '@/components/BackButton';
+import Map from '@/components/Map';
 
 async function uploadToSupabase(file: File, folder: string = ''): Promise<string> {
   const fileExt = file.name.split('.').pop();
@@ -199,6 +200,7 @@ const Digital = () => {
           </div>
         )}
       </div>
+      <Map listings={listings} />
       {showForm && <DigitalForm onClose={() => setShowForm(false)} />}
     </div>
   );
