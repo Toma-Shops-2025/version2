@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import Map from '@/components/Map';
 import MessageButton from '@/components/MessageButton';
 import OfferButton from '@/components/OfferButton';
+import ApplyButton from '@/components/ApplyButton';
 import ListingsGrid from '@/components/ListingsGrid';
 
 interface Listing {
@@ -399,6 +400,7 @@ const JobsDetail = () => {
         )}
 
         <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+          <ApplyButton jobListing={listing} className="flex-1" />
           <MessageButton listingId={listing.id} sellerId={listing.seller_id} listingTitle={listing.title} />
           {listing.price > 0 && (
             <OfferButton listingId={listing.id} sellerId={listing.seller_id} currentPrice={listing.price} listingTitle={listing.title} />

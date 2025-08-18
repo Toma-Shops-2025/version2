@@ -39,6 +39,13 @@ const JobForm = ({ onClose }: { onClose: () => void }) => {
   const [video, setVideo] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Application system settings
+  const [useBuiltinApplication, setUseBuiltinApplication] = useState(true);
+  const [allowResumeUpload, setAllowResumeUpload] = useState(true);
+  const [requireCoverLetter, setRequireCoverLetter] = useState(false);
+  const [autoReplyMessage, setAutoReplyMessage] = useState('');
+  const [customQuestions, setCustomQuestions] = useState<{text: string, required: boolean, type: string}[]>([]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,13 +72,33 @@ const JobForm = ({ onClose }: { onClose: () => void }) => {
         location,
         latitude,
         longitude,
-        application_url: applicationUrl || null,
+        application_url: useBuiltinApplication ? null : (applicationUrl || null),
         contact_info: contactInfo || null,
         category: 'job',
-        images: imageUrls,
-        video: videoUrl || null
+        image_url: imageUrls.length > 0 ? imageUrls[0] : null,
+        video_url: videoUrl || null,
+        use_builtin_application: useBuiltinApplication,
+        allow_resume_upload: allowResumeUpload,
+        require_cover_letter: requireCoverLetter,
+        auto_reply_message: autoReplyMessage || null
       });
       if (insertError) throw insertError;
+      
+      // If using builtin application and has custom questions, save them
+      if (useBuiltinApplication && customQuestions.length > 0) {
+        const { data: listing } = await supabase.from('listings').select('id').eq('seller_id', user.id).order('created_at', { ascending: false }).limit(1).single();
+        if (listing) {
+          const questionInserts = customQuestions.map((q, index) => ({
+            job_listing_id: listing.id,
+            question_text: q.text,
+            question_type: q.type,
+            required: q.required,
+            order_index: index
+          }));
+          await supabase.from('application_questions').insert(questionInserts);
+        }
+      }
+      
       onClose();
     } catch (err: any) {
       setError(err.message);
@@ -122,9 +149,88 @@ const JobForm = ({ onClose }: { onClose: () => void }) => {
             <div className="text-xs text-gray-600 mt-1">Selected: {location}</div>
           )}
         </div>
-        <div className="mb-2">
-          <label className="block mb-1">Application URL <span className='text-xs text-gray-400'>(optional)</span></label>
-          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={applicationUrl} onChange={e => setApplicationUrl(e.target.value)} />
+        {/* Application System Settings */}
+        <div className="mb-4 p-4 border-2 border-blue-500 rounded-lg bg-blue-50 dark:bg-blue-900/20">
+          <h3 className="text-lg font-semibold mb-3 text-blue-700 dark:text-blue-300">Application System</h3>
+          
+          <div className="mb-3">
+            <label className="flex items-center gap-2">
+              <input 
+                type="radio" 
+                name="applicationSystem" 
+                checked={useBuiltinApplication} 
+                onChange={() => setUseBuiltinApplication(true)}
+                className="text-blue-600"
+              />
+              <span className="font-medium">Use TomaShops built-in application system</span>
+            </label>
+            <p className="text-sm text-gray-600 dark:text-gray-400 ml-6">Collect applications directly through TomaShops with resume uploads, custom questions, and applicant management.</p>
+          </div>
+          
+          <div className="mb-3">
+            <label className="flex items-center gap-2">
+              <input 
+                type="radio" 
+                name="applicationSystem" 
+                checked={!useBuiltinApplication} 
+                onChange={() => setUseBuiltinApplication(false)}
+                className="text-blue-600"
+              />
+              <span className="font-medium">Use external application URL</span>
+            </label>
+            <p className="text-sm text-gray-600 dark:text-gray-400 ml-6">Direct applicants to your own website or application portal.</p>
+          </div>
+          
+          {!useBuiltinApplication && (
+            <div className="ml-6 mt-2">
+              <label className="block mb-1 text-sm font-medium">Application URL</label>
+              <input 
+                className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" 
+                value={applicationUrl} 
+                onChange={e => setApplicationUrl(e.target.value)}
+                placeholder="https://company.com/careers/apply"
+              />
+            </div>
+          )}
+          
+          {useBuiltinApplication && (
+            <div className="ml-6 mt-3 space-y-3">
+              <div>
+                <label className="flex items-center gap-2">
+                  <input 
+                    type="checkbox" 
+                    checked={allowResumeUpload} 
+                    onChange={e => setAllowResumeUpload(e.target.checked)}
+                    className="text-blue-600"
+                  />
+                  <span className="text-sm">Allow resume uploads</span>
+                </label>
+              </div>
+              
+              <div>
+                <label className="flex items-center gap-2">
+                  <input 
+                    type="checkbox" 
+                    checked={requireCoverLetter} 
+                    onChange={e => setRequireCoverLetter(e.target.checked)}
+                    className="text-blue-600"
+                  />
+                  <span className="text-sm">Require cover letter</span>
+                </label>
+              </div>
+              
+              <div>
+                <label className="block mb-1 text-sm font-medium">Auto-reply message <span className="text-gray-500">(optional)</span></label>
+                <textarea 
+                  className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white text-sm" 
+                  rows={2}
+                  value={autoReplyMessage} 
+                  onChange={e => setAutoReplyMessage(e.target.value)}
+                  placeholder="Thank you for applying! We'll review your application and get back to you soon."
+                />
+              </div>
+            </div>
+          )}
         </div>
         <div className="mb-2">
           <label className="block mb-1">Contact Info <span className='text-xs text-gray-400'>(optional)</span></label>

@@ -57,6 +57,7 @@ const UserNavBar: React.FC = () => {
     <div className="bg-gray-100 border-b px-4 py-2 flex space-x-6">
       <Link to="/my-listings" className="font-medium text-gray-700 hover:text-teal-600">My Listings</Link>
       <Link to="/my-orders" className="font-medium text-gray-700 hover:text-teal-600">My Orders</Link>
+      <Link to="/applications" className="font-medium text-gray-700 hover:text-teal-600">Applications</Link>
       <Link to="/notifications" className="font-medium text-gray-700 hover:text-teal-600 relative">
         Notifications
         {unreadCount > 0 && (

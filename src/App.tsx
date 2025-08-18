@@ -34,6 +34,7 @@ import Digital from './pages/Digital';
 import Ads from './pages/Ads';
 import Handyman from './pages/Handyman';
 import HandymanDetail from './pages/HandymanDetail';
+import ApplicationsDashboard from './pages/ApplicationsDashboard';
 import MyListings from './pages/MyListings';
 import MyOrders from './pages/MyOrders';
 import MessagesPage from './components/MessagesPage';
@@ -627,6 +628,7 @@ const App = () => {
                   <Route path="/my-listings" element={<MyListings />} />
                   <Route path="/my-orders" element={<MyOrders />} />
                   <Route path="/seller-orders" element={<SellerOrders />} />
+                  <Route path="/applications" element={<ApplicationsDashboard />} />
                   <Route path="/rentals/:id" element={<RentalDetail />} />
                   <Route path="/ads/:id" element={<AdDetail />} />
                   <Route path="/handyman/:id" element={<HandymanDetail />} />
