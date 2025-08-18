@@ -186,7 +186,7 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
         const { error: insertError } = await supabase.from('listings').insert({
           seller_id: user.id,
           title,
-          price: parseFloat(price),
+          price: price,
           category,
           description,
           location: locationName,
@@ -286,10 +286,10 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
               <div>
                 <label className="block text-sm font-medium mb-2">Price *</label>
                 <Input
-                  type="number"
+                  type="text"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
-                  placeholder="0"
+                  placeholder="e.g., $25, Free, Negotiable"
                   required
                 />
               </div>

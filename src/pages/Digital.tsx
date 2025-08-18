@@ -81,7 +81,7 @@ const DigitalForm = ({ onClose }: { onClose: () => void }) => {
       const { error: insertError } = await supabase.from('listings').insert({
         seller_id: user.id,
         title,
-        price: parseFloat(price),
+        price: price,
         category: 'digital',
         description,
         digital_file_urls: uploadedUrls, // store as array
@@ -108,7 +108,7 @@ const DigitalForm = ({ onClose }: { onClose: () => void }) => {
         </div>
         <div className="mb-2">
           <label className="block mb-1">Price</label>
-          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" type="number" value={price} onChange={e => setPrice(e.target.value)} required />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" type="text" value={price} onChange={e => setPrice(e.target.value)} required placeholder="e.g., $10, Free, $5.99" />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Description</label>

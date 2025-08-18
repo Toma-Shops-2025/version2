@@ -99,7 +99,7 @@ const JobForm = ({ onClose }: { onClose: () => void }) => {
         </div>
         <div className="mb-2">
           <label className="block mb-1">Salary</label>
-          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={salary} onChange={e => setSalary(e.target.value)} />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={salary} onChange={e => setSalary(e.target.value)} placeholder="e.g., $50,000/year, $25/hour, Negotiable" />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Description</label>

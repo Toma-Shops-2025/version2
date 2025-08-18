@@ -63,7 +63,7 @@ const RentalForm = ({ onClose }: { onClose: () => void }) => {
       const { error: insertError } = await supabase.from('listings').insert({
         seller_id: user.id,
         title,
-        rent: parseFloat(rent),
+        rent: rent,
         deposit: deposit ? parseFloat(deposit) : null,
         category: 'rental',
         description,
@@ -101,7 +101,7 @@ const RentalForm = ({ onClose }: { onClose: () => void }) => {
         </div>
         <div className="mb-2">
           <label className="block mb-1">Rent</label>
-          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" type="number" value={rent} onChange={e => setRent(e.target.value)} required />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" type="text" value={rent} onChange={e => setRent(e.target.value)} required placeholder="e.g., $1200/month, Negotiable" />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Deposit</label>

@@ -126,7 +126,7 @@ const AdForm = ({ onClose }: { onClose: () => void }) => {
         </div>
         <div className="mb-2">
           <label className="block mb-1">Price/Rate <span className='text-xs text-gray-400'>(optional)</span></label>
-          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" type="text" value={price} onChange={e => setPrice(e.target.value)} />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" type="text" value={price} onChange={e => setPrice(e.target.value)} placeholder="e.g., $15/hour, $50, Free, Negotiable" />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Images <span className='text-xs text-gray-400'>(optional)</span></label>
