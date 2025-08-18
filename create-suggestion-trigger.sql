@@ -5,7 +5,7 @@ BEGIN
   -- Call the edge function when a new suggestion is inserted
   PERFORM
     net.http_post(
-      url := 'https://hfhnslaprxowdxvyhpco.supabase.co/functions/v1/send-suggestion-email',
+      url := 'https://nkkpfzqtgbpncdtyirid.supabase.co/functions/v1/send-suggestion-email',
       headers := '{"Content-Type": "application/json", "Authorization": "Bearer YOUR_SUPABASE_ANON_KEY"}'::jsonb,
       body := json_build_object(
         'suggestion', json_build_object(

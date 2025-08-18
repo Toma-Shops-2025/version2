@@ -14,8 +14,8 @@ cloudinary.config({
   api_secret: '3AZ8ZAVDx-z5L4sYBfnys5JNDa8'
 });
 
-const SUPABASE_URL = 'https://hfhnslaprxowdxvyhpco.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhmaG5zbGFwcnhvd2R4dnlocGNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEzMDQzOTcsImV4cCI6MjA2Njg4MDM5N30._zRZW21nqWFFpYO9_BmAghUz05V2-m6jKKaILeaV-MA';
+const SUPABASE_URL = 'https://nkkpfzqtgbpncdtyirid.supabase.co';
+const SUPABASE_KEY = 'YOUR_NEW_ANON_KEY_HERE';
 const BUCKET = 'uploads';
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
