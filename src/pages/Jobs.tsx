@@ -299,9 +299,13 @@ const Jobs = () => {
             {listings.map(listing => (
               <Link key={listing.id} to={`/jobs/${listing.id}`} className="block">
                 <div className="bg-gray-950 rounded-lg shadow p-4 hover:ring-2 hover:ring-green-400 transition">
-                  {listing.images && listing.images.length > 0 && (
-                    <img src={listing.images[0]} alt={listing.title} className="w-full h-40 object-cover rounded mb-2" crossOrigin="anonymous" />
-                  )}
+                  {listing.image_url || (listing.images && listing.images.length > 0) ? (
+                    <img src={listing.image_url || listing.images[0]} alt={listing.title} className="w-full h-40 object-cover rounded mb-2" crossOrigin="anonymous" />
+                  ) : listing.video_url ? (
+                    <video src={listing.video_url} controls className="w-full mt-2 rounded" style={{ maxHeight: 120 }} crossOrigin="anonymous" />
+                  ) : listing.video ? (
+                    <video src={listing.video} controls className="w-full mt-2 rounded" style={{ maxHeight: 120 }} crossOrigin="anonymous" />
+                  ) : null}
                   <h2 className="text-xl font-semibold mb-1 text-white">{listing.title}</h2>
                   <div className="text-green-400 font-bold mb-1">{listing.company_name}</div>
                   <div className="text-gray-300 mb-1">{listing.location}</div>

@@ -46,6 +46,8 @@ const HandymanForm = ({ onClose }: { onClose: () => void }) => {
     try {
       if (!user) throw new Error('You must be logged in to create a handyman listing.');
       
+      console.log('Creating handyman listing for user:', user.id);
+      
       // Upload images if present
       let imageUrls: string[] = [];
       if (images && images.length > 0) {
@@ -56,7 +58,7 @@ const HandymanForm = ({ onClose }: { onClose: () => void }) => {
       let videoUrl = '';
       if (video) videoUrl = await uploadToSupabase(video, 'videos');
       
-      const { error: insertError } = await supabase.from('listings').insert({
+      const listingData = {
         seller_id: user.id,
         title,
         service_type: serviceType,
@@ -69,12 +71,25 @@ const HandymanForm = ({ onClose }: { onClose: () => void }) => {
         longitude,
         phone: phone || null,
         category: 'handyman',
+        type: 'service',
+        status: 'active',
+        images: imageUrls,
         image_url: imageUrls.length > 0 ? imageUrls[0] : null,
         video_url: videoUrl || null
-      });
-      if (insertError) throw insertError;
+      };
+      
+      console.log('Listing data to insert:', listingData);
+      
+      const { error: insertError, data } = await supabase.from('listings').insert(listingData);
+      if (insertError) {
+        console.error('Insert error:', insertError);
+        throw insertError;
+      }
+      
+      console.log('Listing created successfully:', data);
       onClose();
     } catch (err: any) {
+      console.error('Handyman listing creation error:', err);
       setError(err.message);
     } finally {
       setLoading(false);

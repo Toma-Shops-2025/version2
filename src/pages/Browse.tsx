@@ -54,16 +54,17 @@ const Browse = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {listings.map(listing => (
               <div key={listing.id} className="bg-gray-950 rounded-lg shadow p-4">
-                {listing.images && listing.images.length > 0 && (
-                  <img src={listing.images[0]} alt={listing.title} className="w-full h-40 object-cover rounded mb-2" crossOrigin="anonymous" />
-                )}
+                {listing.image_url || (listing.images && listing.images.length > 0) ? (
+                  <img src={listing.image_url || listing.images[0]} alt={listing.title} className="w-full h-40 object-cover rounded mb-2" crossOrigin="anonymous" />
+                ) : listing.video_url ? (
+                  <video src={listing.video_url} controls className="w-full mt-2 rounded" style={{ maxHeight: 120 }} crossOrigin="anonymous" />
+                ) : listing.video ? (
+                  <video src={listing.video} controls className="w-full mt-2 rounded" style={{ maxHeight: 120 }} crossOrigin="anonymous" />
+                ) : null}
                 <h2 className="text-xl font-semibold mb-1 text-white">{listing.title}</h2>
                 <div className="text-green-400 font-bold mb-1">${listing.price}</div>
                 <div className="text-gray-300 mb-1">{listing.location}</div>
                 <div className="text-gray-400 mt-2 line-clamp-2">{listing.description}</div>
-                {listing.video && (
-                  <video src={listing.video} controls className="w-full mt-2 rounded" style={{ maxHeight: 120 }} crossOrigin="anonymous" />
-                )}
               </div>
             ))}
           </div>

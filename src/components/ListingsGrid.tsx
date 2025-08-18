@@ -7,7 +7,9 @@ interface Listing {
   price: number;
   location: string;
   images?: string[];
+  image_url?: string;
   video?: string;
+  video_url?: string;
   isJustListed?: boolean;
   status?: string;
   sold_at?: string | null;
@@ -42,8 +44,8 @@ const ListingsGrid: React.FC<ListingsGridProps> = ({ listings, onListingClick, i
           id={listing.id}
           title={listing.title}
           price={listing.price}
-          image={listing.images && listing.images.length > 0 ? listing.images[0] : undefined}
-          video={listing.video}
+          image={listing.image_url || (listing.images && listing.images.length > 0 ? listing.images[0] : undefined)}
+          video={listing.video_url || listing.video}
           location={listing.location}
           isJustListed={listing.isJustListed}
           status={listing.status}
