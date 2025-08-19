@@ -25,10 +25,11 @@ interface Listing {
   category?: string;
 }
 
-const AdDetail = () => {
-  const { id } = useParams();
+const ServiceDetail = () => {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [listing, setListing] = useState<Listing | null>(null);
+  const [listing, setListing] = useState<any>(null);
+  const [similarServices, setSimilarServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -51,7 +52,7 @@ const AdDetail = () => {
           .from('listings')
           .select('*')
           .eq('id', id)
-          .eq('category', 'ad')
+          .eq('category', 'service')
           .single();
         
         if (error) {
@@ -60,11 +61,11 @@ const AdDetail = () => {
         } else {
           setListing(data);
         }
-      } catch (err) {
-        console.error('Error fetching listing:', err);
-        setError('Failed to load listing');
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     if (id) {
@@ -137,7 +138,7 @@ const AdDetail = () => {
     const { data } = await supabase
       .from('listings')
       .select('*')
-      .eq('category', 'ad')
+      .eq('category', 'service')
       .neq('id', listing.id)
       .limit(6);
     
@@ -382,12 +383,12 @@ const AdDetail = () => {
           )}
         </div>
 
-        <div>
-          <h3 className="text-lg font-semibold mb-2 text-white">Similar Ads</h3>
-          {similarListings.length === 0 ? (
-            <div className="text-gray-400">No similar ads found.</div>
+        <div className="mt-8">
+          <h3 className="text-lg font-semibold mb-2 text-white">Similar Services</h3>
+          {similarServices.length === 0 ? (
+            <div className="text-gray-400">No similar services found.</div>
           ) : (
-            <ListingsGrid listings={similarListings} />
+            <ListingsGrid listings={similarServices} onListingClick={id => navigate(`/services/${id}`)} />
           )}
         </div>
       </div>
@@ -395,4 +396,4 @@ const AdDetail = () => {
   );
 };
 
-export default AdDetail; 
+export default ServiceDetail; 

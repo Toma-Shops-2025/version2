@@ -43,11 +43,11 @@ const BottomNavBar: React.FC = () => {
         <span className="text-xs">Listings</span>
       </Link>
 
-      <Link to="/ads" className="flex flex-col items-center text-gray-500 hover:text-orange-400 transition-colors duration-200">
+      <Link to="/services" className="flex flex-col items-center text-gray-500 hover:text-orange-400 transition-colors duration-200">
         <div className="w-8 h-8 rounded-full bg-gradient-to-r from-orange-600 to-orange-700 flex items-center justify-center mb-1 hover:scale-110 transition-transform duration-200 opacity-80">
           <Tag className="h-5 w-5 text-white" />
         </div>
-        <span className="text-xs">Ads</span>
+        <span className="text-xs">Services</span>
       </Link>
 
       <Link to="/notifications" className="flex flex-col items-center text-gray-500 hover:text-yellow-400 transition-colors duration-200">

@@ -103,8 +103,8 @@ const HomePage: React.FC = () => {
       navigate(`/rentals/${id}`);
     } else if (listing.category === 'digital') {
       navigate(`/digital/${id}`);
-    } else if (listing.category === 'ad') {
-      navigate(`/ads/${id}`);
+    } else if (listing.category === 'service') {
+      navigate(`/services/${id}`);
     } else {
       // Default to ProductDetail for regular listings
       setSelectedListing(id);
@@ -224,7 +224,7 @@ const HomePage: React.FC = () => {
               <Link to="/rentals" className="text-white hover:underline">Rentals</Link>
               <Link to="/jobs" className="text-white hover:underline">Jobs</Link>
               <Link to="/digital" className="text-white hover:underline">Digital</Link>
-              <Link to="/ads" className="text-white hover:underline">Ads</Link>
+              <Link to="/services" className="text-white hover:underline">Services</Link>
               <Link to="/handyman" className="text-white hover:underline">Handyman</Link>
             </div>
           </div>

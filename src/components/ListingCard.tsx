@@ -97,7 +97,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
              category === 'job' ? 'FILLED' : 
              category === 'handyman' ? 'COMPLETED' :
              category === 'digital' ? 'SOLD' :
-             category === 'ad' ? 'COMPLETED' :
+             category === 'service' ? 'COMPLETED' :
              'SOLD'}
           </Badge>
         )}
@@ -110,8 +110,8 @@ const ListingCard: React.FC<ListingCardProps> = ({
         {category === 'digital' && (
           <Badge className="absolute top-2 right-2 bg-purple-600 text-white text-xs px-2 py-1 shadow-sm">Digital</Badge>
         )}
-        {category === 'ad' && (
-          <Badge className="absolute top-2 right-2 bg-yellow-500 text-black text-xs px-2 py-1 shadow-sm">Ad</Badge>
+        {category === 'service' && (
+          <Badge className="absolute top-2 right-2 bg-yellow-500 text-black text-xs px-2 py-1 shadow-sm">Service</Badge>
         )}
         {category === 'handyman' && (
           <Badge className="absolute top-2 right-2 bg-orange-600 text-white text-xs px-2 py-1 shadow-sm">Handyman</Badge>
@@ -162,7 +162,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
                  category === 'job' ? 'Mark Position Filled' : 
                  category === 'handyman' ? 'Mark Job Complete' :
                  category === 'digital' ? 'Mark as Sold' :
-                 category === 'ad' ? 'Mark as Completed' :
+                 category === 'service' ? 'Mark as Completed' :
                  'Mark as Sold'}
               </button>
             </>

@@ -32,7 +32,8 @@ import Browse from './pages/Browse';
 import DigitalDetail from './pages/DigitalDetail';
 import DigitalProductDetail from './pages/DigitalProductDetail';
 import Digital from './pages/Digital';
-import Ads from './pages/Ads';
+import Services from './pages/Services';
+import ServiceDetail from './pages/ServiceDetail';
 import Handyman from './pages/Handyman';
 import HandymanDetail from './pages/HandymanDetail';
 import ApplicationsDashboard from './pages/ApplicationsDashboard';
@@ -42,7 +43,6 @@ import MessagesPage from './components/MessagesPage';
 import SellerOrders from './pages/SellerOrders';
 import JobDetail from './pages/JobsDetail';
 import RentalDetail from './pages/RentalDetail';
-import AdDetail from './pages/AdDetail';
 import DeleteAccountPage from './pages/DeleteAccount';
 import SuggestionBox from './pages/SuggestionBox';
 import React, { useEffect } from 'react';
@@ -628,15 +628,14 @@ const App = () => {
                   <Route path="/browse" element={<Browse />} />
                   <Route path="/digital/:id" element={<DigitalProductDetail />} />
                   <Route path="/digital" element={<Digital />} />
-                  <Route path="/ads" element={<Ads />} />
+                  <Route path="/services" element={<Services />} />
+                  <Route path="/services/:id" element={<ServiceDetail />} />
                   <Route path="/handyman" element={<Handyman />} />
                   <Route path="/my-listings" element={<MyListings />} />
                   <Route path="/my-orders" element={<MyOrders />} />
                   <Route path="/seller-orders" element={<SellerOrders />} />
                   <Route path="/applications" element={<ApplicationsDashboard />} />
                   <Route path="/rentals/:id" element={<RentalDetail />} />
-                  <Route path="/ads/:id" element={<AdDetail />} />
-                  <Route path="/handyman/:id" element={<HandymanDetail />} />
                   <Route path="/delete-account" element={<DeleteAccountPage onBack={() => window.history.back()} />} />
                   <Route path="/suggestion-box" element={<SuggestionBox />} />
                   <Route path="*" element={<NotFound />} />

@@ -400,8 +400,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
                     navigate(`/rentals/${id}`);
                   } else if (listing.category === 'digital') {
                     navigate(`/digital/${id}`);
-                  } else if (listing.category === 'ad') {
-                    navigate(`/ads/${id}`);
+                  } else if (listing.category === 'service') {
+                    navigate(`/services/${id}`);
                   } else {
                     // For regular listings, navigate to home with the listing selected
                     navigate(`/?listing=${id}`);
@@ -429,8 +429,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
                     navigate(`/rentals/${id}`);
                   } else if (listing.category === 'digital') {
                     navigate(`/digital/${id}`);
-                  } else if (listing.category === 'ad') {
-                    navigate(`/ads/${id}`);
+                  } else if (listing.category === 'service') {
+                    navigate(`/services/${id}`);
                   } else {
                     // For regular listings, navigate to home with the listing selected
                     navigate(`/?listing=${id}`);

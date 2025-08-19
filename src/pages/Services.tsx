@@ -19,16 +19,15 @@ const AD_CATEGORIES = [
   'Other',
 ];
 
-const AdForm = ({ onClose }: { onClose: () => void }) => {
+const ServiceForm: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { user } = useAppContext();
   const [title, setTitle] = useState('');
-  const [category, setCategory] = useState('');
+  const [priceRate, setPriceRate] = useState('');
   const [description, setDescription] = useState('');
-  const [location, setLocation] = useState('');
-  const [latitude, setLatitude] = useState<number | null>(null);
-  const [longitude, setLongitude] = useState<number | null>(null);
+  const [location, setLocation] = useState('Louisville, Kentucky');
+  const [latitude, setLatitude] = useState(38.2527);
+  const [longitude, setLongitude] = useState(-85.7585);
   const [contactInfo, setContactInfo] = useState('');
-  const [price, setPrice] = useState('');
   const [images, setImages] = useState<FileList | null>(null);
   const [video, setVideo] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
@@ -55,7 +54,7 @@ const AdForm = ({ onClose }: { onClose: () => void }) => {
     setLoading(true);
     setError(null);
     try {
-      if (!user) throw new Error('You must be logged in to create an ad.');
+      if (!user) throw new Error('You must be logged in to create a service.');
       // Upload video if present
       let videoUrl = '';
       if (video) videoUrl = await uploadToSupabase(video, 'videos');
@@ -67,14 +66,14 @@ const AdForm = ({ onClose }: { onClose: () => void }) => {
       const { error: insertError } = await supabase.from('listings').insert({
         seller_id: user.id,
         title,
-        category: 'ad',
-        ad_type: category,
+        category: 'service',
+        ad_type: 'Other', // Assuming 'Other' is the default category for services
         description,
         location,
         latitude,
         longitude,
         contact_info: contactInfo || null,
-        price: price || null,
+        price: priceRate || null,
         video: videoUrl || null,
         images: imageUrls,
       });
@@ -90,7 +89,7 @@ const AdForm = ({ onClose }: { onClose: () => void }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
       <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg w-full max-w-lg overflow-y-auto max-h-[90vh]">
-        <h2 className="text-2xl font-bold mb-4">Create Ad</h2>
+        <h2 className="text-2xl font-bold mb-4">Create Service</h2>
         {error && <div className="mb-2 text-red-600">{error}</div>}
         <div className="mb-2">
           <label className="block mb-1">Title</label>
@@ -98,9 +97,8 @@ const AdForm = ({ onClose }: { onClose: () => void }) => {
         </div>
         <div className="mb-2">
           <label className="block mb-1">Category</label>
-          <select className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={category} onChange={e => setCategory(e.target.value)} required>
-            <option value="">Select a category</option>
-            {AD_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+          <select className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value="Other" onChange={e => {}} required>
+            <option value="Other">Other</option>
           </select>
         </div>
         <div className="mb-2">
@@ -126,7 +124,7 @@ const AdForm = ({ onClose }: { onClose: () => void }) => {
         </div>
         <div className="mb-2">
           <label className="block mb-1">Price/Rate <span className='text-xs text-gray-400'>(optional)</span></label>
-          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" type="text" value={price} onChange={e => setPrice(e.target.value)} placeholder="e.g., $15/hour, $50, Free, Negotiable" />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" type="text" value={priceRate} onChange={e => setPriceRate(e.target.value)} placeholder="e.g., $15/hour, $50, Free, Negotiable" />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Images <span className='text-xs text-gray-400'>(optional)</span></label>
@@ -145,32 +143,32 @@ const AdForm = ({ onClose }: { onClose: () => void }) => {
   );
 };
 
-const Ads = () => {
+const Services = () => {
   const [showForm, setShowForm] = useState(false);
-  const [ads, setAds] = useState<any[]>([]);
+  const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchAds = async () => {
+    const fetchServices = async () => {
       setLoading(true);
       setError(null);
       try {
         const { data, error } = await supabase
           .from('listings')
           .select('*')
-          .eq('category', 'ad')
+          .eq('category', 'service')
           .order('created_at', { ascending: false });
         if (error) throw error;
-        setAds(data || []);
+        setServices(data || []);
       } catch (err: any) {
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
-    fetchAds();
+    fetchServices();
   }, [showForm]);
 
   return (
@@ -178,23 +176,23 @@ const Ads = () => {
       <div className="sticky top-0 z-40 bg-black pb-2">
         <BackButton />
       </div>
-      <h1 className="text-3xl font-bold mb-4 text-white">Ad Listings</h1>
-      <button className="bg-blue-600 text-white px-4 py-2 rounded" onClick={() => setShowForm(true)}>Create New Ad</button>
+      <h1 className="text-3xl font-bold mb-4 text-white">Service Listings</h1>
+      <button className="bg-blue-600 text-white px-4 py-2 rounded" onClick={() => setShowForm(true)}>Create New Service</button>
       <div className="mt-8">
         {loading ? (
           <div className="text-gray-400">Loading listings...</div>
         ) : error ? (
           <div className="text-red-400">{error}</div>
-        ) : ads.length === 0 ? (
-          <div className="text-gray-400">No ad listings yet.</div>
+        ) : services.length === 0 ? (
+          <div className="text-gray-400">No service listings yet.</div>
         ) : (
-          <ListingsGrid listings={ads} onListingClick={id => navigate(`/ads/${id}`)} />
+          <ListingsGrid listings={services} onListingClick={id => navigate(`/services/${id}`)} />
         )}
       </div>
-      <Map listings={ads} />
-      {showForm && <AdForm onClose={() => setShowForm(false)} />}
+      <Map listings={services} />
+      {showForm && <ServiceForm onClose={() => setShowForm(false)} />}
     </div>
   );
 };
 
-export default Ads; 
+export default Services; 

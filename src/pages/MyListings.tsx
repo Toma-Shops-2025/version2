@@ -63,7 +63,7 @@ const MyListings: React.FC = () => {
                            category === 'job' ? 'Position marked as filled' : 
                            category === 'handyman' ? 'Job marked as completed' :
                            category === 'digital' ? 'Listing marked as sold' :
-                           category === 'ad' ? 'Ad marked as completed' :
+                           category === 'service' ? 'Service marked as completed' :
                            'Listing marked as sold';
       
       toast({
@@ -176,8 +176,8 @@ const MyListings: React.FC = () => {
       case 'handyman':
         navigate(`/handyman/${listingId}`);
         break;
-      case 'ad':
-        navigate(`/ads/${listingId}`);
+      case 'service':
+        navigate(`/services/${listingId}`);
         break;
       default:
         navigate(`/browse/${listingId}`);
@@ -203,8 +203,8 @@ const MyListings: React.FC = () => {
       case 'handyman':
         navigate(`/handyman/edit/${listingId}`);
         break;
-      case 'ad':
-        navigate(`/ads/edit/${listingId}`);
+      case 'service':
+        navigate(`/services/edit/${listingId}`);
         break;
       default:
         navigate(`/sell/edit/${listingId}`);
