@@ -218,14 +218,14 @@ const HomePage: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center space-x-4 mb-4">
-            <Button onClick={handleSellClick} className="bg-cyan-500 hover:bg-cyan-600 text-white font-semibold">Sell</Button>
-            <div className="flex items-center space-x-4">
-              <Link to="/rentals" className="text-white hover:underline">Rentals</Link>
-              <Link to="/jobs" className="text-white hover:underline">Jobs</Link>
-              <Link to="/digital" className="text-white hover:underline">Digital</Link>
-              <Link to="/services" className="text-white hover:underline">Services</Link>
-              <Link to="/handyman" className="text-white hover:underline">Handyman</Link>
+          <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 mb-4">
+            <Button onClick={handleSellClick} className="bg-cyan-500 hover:bg-cyan-600 text-white font-semibold w-full sm:w-auto">Sell</Button>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+              <Link to="/rentals" className="text-white hover:underline text-sm sm:text-base">Rentals</Link>
+              <Link to="/jobs" className="text-white hover:underline text-sm sm:text-base">Jobs</Link>
+              <Link to="/digital" className="text-white hover:underline text-sm sm:text-base">Digital</Link>
+              <Link to="/services" className="text-white hover:underline text-sm sm:text-base">Services</Link>
+              <Link to="/handyman" className="text-white hover:underline text-sm sm:text-base">Handyman</Link>
             </div>
           </div>
           
