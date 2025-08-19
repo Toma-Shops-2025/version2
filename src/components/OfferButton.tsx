@@ -103,7 +103,9 @@ const OfferButton: React.FC<OfferButtonProps> = ({
                 />
               </div>
               <p className="text-sm text-gray-500 mt-1">
-                Listed price: ${currentPrice.toLocaleString()}
+                Listed price: {currentPrice && typeof currentPrice === 'number' && !isNaN(currentPrice) ? 
+                              `$${currentPrice.toLocaleString()}` : 
+                              'Price not specified'}
               </p>
             </div>
             <Button 
