@@ -22,6 +22,7 @@ interface Listing {
   requirements?: string;
   description?: string;
   application_url?: string;
+  rate?: string; // For handyman services
 }
 
 interface ListingsGridProps {
@@ -66,6 +67,7 @@ const ListingsGrid: React.FC<ListingsGridProps> = ({ listings, onListingClick, i
           requirements={listing.requirements}
           description={listing.description}
           application_url={listing.application_url}
+          rate={listing.rate}
         />
       ))}
     </div>

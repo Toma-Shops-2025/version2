@@ -30,6 +30,7 @@ interface ListingCardProps {
   requirements?: string;
   description?: string;
   application_url?: string;
+  rate?: string; // For handyman services
 }
 
 const ListingCard: React.FC<ListingCardProps> = ({
@@ -57,7 +58,8 @@ const ListingCard: React.FC<ListingCardProps> = ({
   deadline,
   requirements,
   description,
-  application_url
+  application_url,
+  rate
 }) => {
   const isJob = category === 'job';
   return (
@@ -119,14 +121,18 @@ const ListingCard: React.FC<ListingCardProps> = ({
         <CardContent className="p-3">
           <div className="mb-1">
             <h3 className="font-bold text-lg text-white">
-              {/* Show salary for jobs, price for others */}
+              {/* Show salary for jobs, rate for handyman, price for others */}
               {category === 'job'
                 ? (salary && !isNaN(Number(salary))
                     ? `$${Number(salary).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
                     : salary || 'N/A')
+                : category === 'handyman'
+                  ? rate || 'Contact for pricing'
                 : price === 0
                   ? 'Free'
-                  : `$${(price && typeof price === 'number') ? price.toLocaleString() : price || 'N/A'}`}
+                  : price && typeof price === 'number' && !isNaN(price)
+                    ? `$${price.toLocaleString()}`
+                    : price || 'N/A'}
             </h3>
           </div>
           <p className="text-gray-200 text-sm mb-2 line-clamp-2 leading-tight font-bold">{title}</p>
