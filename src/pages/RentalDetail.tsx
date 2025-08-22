@@ -23,6 +23,7 @@ interface Listing {
   latitude?: number;
   longitude?: number;
   category?: string;
+  rent?: number; // Added rent property
 }
 
 const RentalDetail = () => {
@@ -288,7 +289,9 @@ const RentalDetail = () => {
 
       <div className="p-4">
         <div className="mb-4">
-          <h1 className="text-2xl font-bold text-white mb-2">${listing.price === 0 ? 'Free' : listing.price.toLocaleString()}</h1>
+          <h1 className="text-2xl font-bold text-white mb-2">
+            {listing.rent || 'Contact for rent'}
+          </h1>
           <h2 className="text-lg text-gray-200 mb-3">{listing.title}</h2>
           <div className="flex items-center text-gray-400 text-sm mb-4">
             <MapPin className="h-4 w-4 mr-1" />
