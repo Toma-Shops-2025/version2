@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 interface ListingCardProps {
 	id: string;
 	title: string;
-	price?: number | null;
+	price?: number | string | null; // Updated to accept string for text prices
 	rent?: string; // For rentals (text like "$1200/month")
 	image?: string;
 	video?: string;
@@ -80,8 +80,12 @@ const ListingCard: React.FC<ListingCardProps> = ({
 		if (isRental) {
 			return rent || 'Contact for rent';
 		}
-		if (price === 0) {
+		// Handle price for regular listings (can be string or number)
+		if (price === 0 || price === '0') {
 			return 'Free';
+		}
+		if (typeof price === 'string' && price.trim()) {
+			return price; // Display text prices as-is (e.g., "$25", "Free", "Negotiable")
 		}
 		if (typeof price === 'number' && !isNaN(price)) {
 			return `$${price.toLocaleString()}`;

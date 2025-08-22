@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 interface Listing {
   id: string;
   title: string;
-  price?: number | null;
+  price?: number | string | null; // Updated to accept string for text prices
   rent?: string;
   location: string;
   images?: string[];
