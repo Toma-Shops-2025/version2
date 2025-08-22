@@ -163,47 +163,59 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
       // Pause music before upload
       pauseMusicForUpload();
 
-      // Compress the video before uploading
-      setCompressionProgress(0);
-      const videoZipper = new VideoZipper({ quality: 'medium' });
-      await videoZipper.load();
-      videoZipper.progress((percent: number) => {
-        setCompressionProgress(Math.round(percent));
-      });
+      // Check if SharedArrayBuffer is available for video compression
+      const canCompressVideo = typeof SharedArrayBuffer !== 'undefined';
+      
+      let videoToUpload = videoFile;
+      
+      if (canCompressVideo) {
+        try {
+          // Compress the video before uploading
+          setCompressionProgress(0);
+          const videoZipper = new VideoZipper({ quality: 'medium' });
+          await videoZipper.load();
+          videoZipper.progress((percent: number) => {
+            setCompressionProgress(Math.round(percent));
+          });
 
-      // Ensure videoFile exists before proceeding
-      if (videoFile) {
-        await videoZipper.compress(videoFile);
-        const compressedBlob = videoZipper.getBlob();
-        const compressedFile = new File([compressedBlob], videoFile.name, { type: compressedBlob.type });
-        setCompressionProgress(100);
+          await videoZipper.compress(videoFile);
+          const compressedBlob = videoZipper.getBlob();
+          videoToUpload = new File([compressedBlob], videoFile.name, { type: compressedBlob.type });
+          setCompressionProgress(100);
+        } catch (compressionError) {
+          console.warn('Video compression failed, using original file:', compressionError);
+          // Fallback to original file if compression fails
+          videoToUpload = videoFile;
+        }
+      } else {
+        console.log('SharedArrayBuffer not available, skipping video compression');
+        // Use original file without compression
+        videoToUpload = videoFile;
+      }
 
-        // Upload compressed video and photos
-        const videoUrl = await uploadToSupabase(compressedFile, 'videos');
-        const imageUrls = await Promise.all(photoFiles.map(file => uploadToSupabase(file, 'images')));
+      // Upload video and photos
+      const videoUrl = await uploadToSupabase(videoToUpload, 'videos');
+      const imageUrls = await Promise.all(photoFiles.map(file => uploadToSupabase(file, 'images')));
         
-              // Resume music after upload completes
+      // Resume music after upload completes
       resumeMusicAfterUpload();
         
-        const { error: insertError } = await supabase.from('listings').insert({
-          seller_id: user.id,
-          title,
-          price: price,
-          category,
-          description,
-          location: locationName,
-          latitude,
-          longitude,
-          location_name: locationName,
-          video: videoUrl,
-          images: imageUrls
-        });
-        if (insertError) throw insertError;
-        showToast('Listing created!', 'success');
-        onBack();
-      } else {
-        throw new Error("No video file selected.");
-      }
+      const { error: insertError } = await supabase.from('listings').insert({
+        seller_id: user.id,
+        title,
+        price: price,
+        category,
+        description,
+        location: locationName,
+        latitude,
+        longitude,
+        location_name: locationName,
+        video: videoUrl,
+        images: imageUrls
+      });
+      if (insertError) throw insertError;
+      showToast('Listing created!', 'success');
+      onBack();
     } catch (err: any) {
       setError(err.message);
       showToast(err.message, 'error');

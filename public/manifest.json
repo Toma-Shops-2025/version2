@@ -1,21 +1,35 @@
 {
-  "name": "TomaShops",
+  "name": "TomaShops - Video 1st Marketplace",
   "short_name": "TomaShops",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#14b8a6",
-  "description": "Video 1st Marketplace",
+  "description": "The first video-first marketplace. Buy, sell, and discover items through video listings.",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["shopping", "marketplace", "business"],
   "icons": [
     {
       "src": "/logo-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/logo-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide"
     }
   ]
 } 

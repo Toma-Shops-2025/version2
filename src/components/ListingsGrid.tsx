@@ -1,10 +1,12 @@
 import React from 'react';
 import ListingCard from './ListingCard';
+import { useNavigate } from 'react-router-dom';
 
 interface Listing {
   id: string;
   title: string;
-  price: number;
+  price?: number | null;
+  rent?: string;
   location: string;
   images?: string[];
   image_url?: string;
@@ -37,6 +39,21 @@ interface ListingsGridProps {
 }
 
 const ListingsGrid: React.FC<ListingsGridProps> = ({ listings, onListingClick, isOwner = false, onMarkAsSold, onDelete, onRestore, onEdit, onPermanentDelete }) => {
+  const navigate = useNavigate();
+
+  const defaultNavigate = (listing: Listing) => {
+    if (onListingClick) {
+      onListingClick(listing.id);
+      return;
+    }
+    // Fallback routing by category
+    if (listing.category === 'job') navigate(`/jobs/${listing.id}`);
+    else if (listing.category === 'rental') navigate(`/rentals/${listing.id}`);
+    else if (listing.category === 'digital') navigate(`/digital/${listing.id}`);
+    else if (listing.category === 'service') navigate(`/services/${listing.id}`);
+    else navigate(`/browse`); // or open modal in callers as needed
+  };
+
   return (
     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-4 px-2 md:px-4">
       {listings.map((listing) => (
@@ -45,6 +62,7 @@ const ListingsGrid: React.FC<ListingsGridProps> = ({ listings, onListingClick, i
           id={listing.id}
           title={listing.title}
           price={listing.price}
+          rent={(listing as any).rent}
           image={listing.image_url || (listing.images && listing.images.length > 0 ? listing.images[0] : undefined)}
           video={listing.video_url || listing.video}
           location={listing.location}
@@ -57,7 +75,7 @@ const ListingsGrid: React.FC<ListingsGridProps> = ({ listings, onListingClick, i
           onRestore={onRestore ? () => onRestore(listing.id) : undefined}
           onEdit={onEdit ? () => onEdit(listing.id) : undefined}
           onPermanentDelete={onPermanentDelete ? () => onPermanentDelete(listing.id) : undefined}
-          onClick={() => onListingClick?.(listing.id)}
+          onClick={() => defaultNavigate(listing)}
           // Pass all job-specific fields
           category={listing.category}
           company_name={listing.company_name}
