@@ -9,6 +9,7 @@ import Map from '@/components/Map';
 import MessageButton from '@/components/MessageButton';
 import OfferButton from '@/components/OfferButton';
 import ListingsGrid from '@/components/ListingsGrid';
+import ImageGallery from '@/components/ImageGallery';
 
 interface Listing {
   id: string;
@@ -306,7 +307,7 @@ const RentalDetail = () => {
 
         {listing.images && listing.images.length > 0 && (
           <div className="mb-6">
-            <img src={listing.images[0]} alt={listing.title} className="w-full rounded-lg" crossOrigin="anonymous" />
+            <ImageGallery images={listing.images} title={listing.title} />
           </div>
         )}
 

@@ -4,7 +4,8 @@ import { supabase } from '@/lib/supabase';
 import { useAppContext } from '@/contexts/AppContext';
 import { ArrowLeft, Heart, Share2, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { MessageButton } from '@/components/MessageButton';
+import MessageButton from '@/components/MessageButton';
+import ImageGallery from '@/components/ImageGallery';
 
 const DigitalDetail = () => {
   const navigate = useNavigate();
@@ -248,7 +249,7 @@ const DigitalDetail = () => {
 
         {listing.images && listing.images.length > 0 && (
           <div className="mb-6">
-            <img src={listing.images[0]} alt={listing.title} className="w-full rounded-lg" crossOrigin="anonymous" />
+            <ImageGallery images={listing.images} title={listing.title} />
           </div>
         )}
 

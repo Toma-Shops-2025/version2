@@ -10,6 +10,7 @@ import { supabase } from '@/lib/supabase';
 import { useAppContext } from '@/contexts/AppContext';
 import ListingsGrid from './ListingsGrid';
 import { Link, useNavigate } from 'react-router-dom';
+import ImageGallery from './ImageGallery';
 
 interface ProductDetailProps {
   listing: Listing;
@@ -304,6 +305,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
         <div className="mb-4">
           <h1 className="text-2xl font-bold text-white mb-2">
             {listing.price === 0 ? 'Free' : 
+             listing.price && typeof listing.price === 'string' ? 
+             listing.price : 
              listing.price && typeof listing.price === 'number' && !isNaN(listing.price) ? 
              `$${listing.price.toLocaleString()}` : 
              'Price not available'}
@@ -353,7 +356,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ listing, onBack }) => {
 
         <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
           <MessageButton listingId={listing.id} sellerId={listing.seller_id} listingTitle={listing.title} />
-          {listing.price > 0 && (
+          {listing.price && listing.price !== 0 && listing.price !== '0' && (
             <OfferButton listingId={listing.id} sellerId={listing.seller_id} currentPrice={listing.price} listingTitle={listing.title} />
           )}
           {listing.category === 'digital' && !hasPurchased && (
