@@ -64,7 +64,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
 	rate
 }) => {
 	const isJob = category === 'job';
-	const isHandyman = category === 'handyman';
+	const isService = category === 'service';
 	const isRental = category === 'rental';
 
 	const renderPrimaryPrice = (): string => {
@@ -74,7 +74,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
 			}
 			return salary || 'N/A';
 		}
-		if (isHandyman) {
+		if (isService) {
 			return rate || 'Contact for pricing';
 		}
 		if (isRental) {
@@ -115,7 +115,34 @@ const ListingCard: React.FC<ListingCardProps> = ({
 					/>
 				) : (
 					<div className="w-full aspect-square flex items-center justify-center bg-gray-100 rounded-t-lg">
-						<span className="text-gray-400 text-4xl">🎬</span>
+						{/* Section-specific placeholders */}
+						{category === 'job' ? (
+							<img 
+								src="/placeholders/jobs-placeholder.svg" 
+								alt="Job Opportunity" 
+								className="w-full h-full object-cover rounded-t-lg"
+							/>
+						) : category === 'digital' ? (
+							<img 
+								src="/placeholders/digital-placeholder.svg" 
+								alt="Digital Product" 
+								className="w-full h-full object-cover rounded-t-lg"
+							/>
+						) : category === 'service' ? (
+							<img 
+								src="/placeholders/services-placeholder.svg" 
+								alt="Professional Service" 
+								className="w-full h-full object-cover rounded-t-lg"
+							/>
+						) : category === 'event' ? (
+							<img 
+								src="/placeholders/events-placeholder.svg" 
+								alt="Exciting Event" 
+								className="w-full h-full object-cover rounded-t-lg"
+							/>
+						) : (
+							<span className="text-gray-400 text-4xl">🎬</span>
+						)}
 					</div>
 				)}
 				{/* Badges for all categories */}
@@ -128,7 +155,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
 					<Badge className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 shadow-sm">
 						{category === 'rental' ? 'RENTED' : 
 						 category === 'job' ? 'FILLED' : 
-						 category === 'handyman' ? 'COMPLETED' :
+						 category === 'service' ? 'COMPLETED' :
 						 category === 'digital' ? 'SOLD' :
 						 category === 'service' ? 'COMPLETED' :
 						 'SOLD'}
@@ -146,8 +173,8 @@ const ListingCard: React.FC<ListingCardProps> = ({
 				{category === 'service' && (
 					<Badge className="absolute top-2 right-2 bg-yellow-500 text-black text-xs px-2 py-1 shadow-sm">Service</Badge>
 				)}
-				{category === 'handyman' && (
-					<Badge className="absolute top-2 right-2 bg-orange-600 text-white text-xs px-2 py-1 shadow-sm">Handyman</Badge>
+				{category === 'service' && (
+					<Badge className="absolute top-2 right-2 bg-yellow-500 text-black text-xs px-2 py-1 shadow-sm">Service</Badge>
 				)}
 				<CardContent className="p-3">
 					<div className="mb-1">
@@ -186,7 +213,7 @@ const ListingCard: React.FC<ListingCardProps> = ({
 							>
 								{category === 'rental' ? 'Mark as Rented' : 
 								 category === 'job' ? 'Mark Position Filled' : 
-								 category === 'handyman' ? 'Mark Job Complete' :
+								 category === 'service' ? 'Mark Job Complete' :
 								 category === 'digital' ? 'Mark as Sold' :
 								 category === 'service' ? 'Mark as Completed' :
 								 'Mark as Sold'}
