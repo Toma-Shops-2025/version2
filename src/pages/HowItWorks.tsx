@@ -22,7 +22,7 @@ const HowItWorks: React.FC = () => {
         <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
           <iframe
             className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
-            src="https://www.youtube.com/embed/Mtj3zKkRHdI"
+            src="https://www.youtube.com/embed/j9S19cguS-s"
             title="TomaShops Introduction Video"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -49,7 +49,7 @@ const HowItWorks: React.FC = () => {
         <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
           <iframe
             className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
-            src="https://www.youtube.com/embed/0XYtJzPZjUo"
+            src="https://www.youtube.com/embed/tnb9fML3VZM"
             title="TomaShops Platform Demo"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
