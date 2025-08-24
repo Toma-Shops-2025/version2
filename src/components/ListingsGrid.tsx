@@ -51,7 +51,8 @@ const ListingsGrid: React.FC<ListingsGridProps> = ({ listings, onListingClick, i
     else if (listing.category === 'rental') navigate(`/rentals/${listing.id}`);
     else if (listing.category === 'digital') navigate(`/digital/${listing.id}`);
     else if (listing.category === 'service') navigate(`/services/${listing.id}`);
-    else if (listing.category === 'handyman') navigate(`/handyman/${listing.id}`);
+    else if (listing.category === 'freebie') navigate(`/freebies/${listing.id}`);
+    else if (listing.category === 'event') navigate(`/events/${listing.id}`);
     else navigate(`/browse`); // or open modal in callers as needed
   };
 

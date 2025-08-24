@@ -34,8 +34,10 @@ import DigitalProductDetail from './pages/DigitalProductDetail';
 import Digital from './pages/Digital';
 import Services from './pages/Services';
 import ServiceDetail from './pages/ServiceDetail';
-import Handyman from './pages/Handyman';
-import HandymanDetail from './pages/HandymanDetail';
+import Freebies from './pages/Freebies';
+import FreebiesDetail from './pages/FreebiesDetail';
+import Events from './pages/Events';
+import EventsDetail from './pages/EventsDetail';
 import ApplicationsDashboard from './pages/ApplicationsDashboard';
 import MyListings from './pages/MyListings';
 import MyOrders from './pages/MyOrders';
@@ -633,8 +635,10 @@ const App = () => {
                   <Route path="/digital" element={<Digital />} />
                   <Route path="/services" element={<Services />} />
                   <Route path="/services/:id" element={<ServiceDetail />} />
-                  <Route path="/handyman" element={<Handyman />} />
-                  <Route path="/handyman/:id" element={<HandymanDetail />} />
+                  <Route path="/freebies" element={<Freebies />} />
+                  <Route path="/freebies/:id" element={<FreebiesDetail />} />
+                  <Route path="/events" element={<Events />} />
+                  <Route path="/events/:id" element={<EventsDetail />} />
                   <Route path="/my-listings" element={<MyListings />} />
                   <Route path="/my-orders" element={<MyOrders />} />
                   <Route path="/seller-orders" element={<SellerOrders />} />

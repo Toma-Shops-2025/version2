@@ -326,7 +326,8 @@ const HomePage: React.FC = () => {
               <Link to="/jobs" className="text-white hover:underline text-sm sm:text-base">Jobs</Link>
               <Link to="/digital" className="text-white hover:underline text-sm sm:text-base">Digital</Link>
               <Link to="/services" className="text-white hover:underline text-sm sm:text-base">Services</Link>
-              <Link to="/handyman" className="text-white hover:underline text-sm sm:text-base">Handyman</Link>
+              <Link to="/freebies" className="text-white hover:underline text-sm sm:text-base">Freebies</Link>
+              <Link to="/events" className="text-white hover:underline text-sm sm:text-base">Events</Link>
             </div>
           </div>
           
