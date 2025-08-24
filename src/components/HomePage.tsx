@@ -344,6 +344,7 @@ const HomePage: React.FC = () => {
                 </span>
               )}
             </Link>
+            <Link to="/suggestion-box" className="text-cyan-400 hover:text-cyan-300 font-medium text-sm">🐛 Report a Problem</Link>
           </div>
         </div>
       </div>
