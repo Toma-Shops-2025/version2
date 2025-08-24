@@ -31,13 +31,22 @@ const DigitalForm = ({ onClose }: { onClose: () => void }) => {
   const [video, setVideo] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const MAX_FILE_SIZE_MB = 50;
+  const MAX_FILE_SIZE_MB = 100; // Increased to 100MB per file
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = e.target.files ? Array.from(e.target.files) : [];
+    
+    // Check file count limit
+    if (selectedFiles.length > 10) {
+      setError(`Maximum 10 files allowed. You selected ${selectedFiles.length} files.`);
+      setFiles([]);
+      return;
+    }
+    
+    // Check file size limit
     const tooLarge = selectedFiles.find(f => f.size > MAX_FILE_SIZE_MB * 1024 * 1024);
     if (tooLarge) {
-      setError(`Each file must be 50MB or less. File "${tooLarge.name}" is too large.`);
+      setError(`Each file must be ${MAX_FILE_SIZE_MB}MB or less. File "${tooLarge.name}" is too large.`);
       setFiles([]);
     } else {
       setError(null);
@@ -49,10 +58,17 @@ const DigitalForm = ({ onClose }: { onClose: () => void }) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    // Check file count limit
+    if (files.length > 10) {
+      setError(`Maximum 10 files allowed. You selected ${files.length} files.`);
+      setLoading(false);
+      return;
+    }
+    
     // Check file sizes again before upload
     const tooLarge = files.find(f => f.size > MAX_FILE_SIZE_MB * 1024 * 1024);
     if (tooLarge) {
-      setError(`Each file must be 50MB or less. File "${tooLarge.name}" is too large.`);
+      setError(`Each file must be ${MAX_FILE_SIZE_MB}MB or less. File "${tooLarge.name}" is too large.`);
       setLoading(false);
       return;
     }
@@ -115,8 +131,9 @@ const DigitalForm = ({ onClose }: { onClose: () => void }) => {
           <textarea className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={description} onChange={e => setDescription(e.target.value)} required />
         </div>
         <div className="mb-2">
-          <label className="block mb-1">Digital File(s)</label>
-          <input className="w-full" type="file" multiple onChange={handleFileChange} required />
+          <label className="block mb-1">Digital File(s) * (Up to 10 files)</label>
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" type="file" multiple onChange={handleFileChange} required />
+          <p className="text-sm text-gray-500 mt-1">Upload up to 10 digital files. Maximum 100MB per file. Supported formats: PDF, DOC, XLS, PPT, ZIP, RAR, EXE, etc.</p>
           {files.length > 0 && (
             <ul className="mt-2 text-xs text-gray-600 list-disc list-inside">
               {files.map((file, idx) => (
@@ -131,7 +148,8 @@ const DigitalForm = ({ onClose }: { onClose: () => void }) => {
         </div>
         <div className="mb-2">
           <label className="block mb-1">Video <span className='text-xs text-gray-400'>(optional)</span></label>
-          <input className="w-full" type="file" accept="video/*" onChange={e => setVideo(e.target.files?.[0] || null)} />
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" type="file" accept="video/*" onChange={e => setVideo(e.target.files?.[0] || null)} />
+          <p className="text-sm text-gray-500 mt-1">Maximum file size: 2GB. Supported formats: MP4, MOV, AVI, MKV</p>
         </div>
         <div className="flex justify-start gap-2 mt-4">
           <button type="submit" className="px-4 py-2 rounded bg-blue-600 text-white" disabled={loading}>{loading ? 'Submitting...' : 'Submit'}</button>

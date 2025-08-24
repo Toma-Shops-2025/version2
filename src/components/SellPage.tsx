@@ -141,7 +141,7 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    const newFiles = [...photoFiles, ...files].slice(0, 10);
+    const newFiles = [...photoFiles, ...files].slice(0, 9);
     setPhotoFiles(newFiles);
     setPhotoPreviews(newFiles.map(f => URL.createObjectURL(f)));
   };
@@ -263,6 +263,7 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
                 )}
                 <p className="text-gray-600 mb-2">Upload a video for your listing (required)</p>
                 <input type="file" accept="video/*" onChange={handleVideoChange} className="mb-2" required />
+                <p className="text-xs text-gray-500">Maximum file size: 2GB. Supported formats: MP4, MOV, AVI, MKV</p>
               </div>
             </CardContent>
           </Card>
@@ -282,8 +283,8 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
                     </div>
                   ))}
                 </div>
-                <input type="file" accept="image/*" multiple onChange={handlePhotoChange} className="mb-2" disabled={photoFiles.length >= 10} />
-                <p className="text-gray-600">You can upload up to 10 photos.</p>
+                <input type="file" accept="image/*" multiple onChange={handlePhotoChange} className="mb-2" disabled={photoFiles.length >= 9} />
+                <p className="text-gray-600">You can upload up to 9 photos.</p>
               </div>
             </CardContent>
           </Card>

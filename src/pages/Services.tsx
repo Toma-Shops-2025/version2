@@ -225,6 +225,7 @@ const ServicesForm = ({ onClose }: { onClose: () => void }) => {
             className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" 
             onChange={e => setVideo(e.target.files?.[0] || null)} 
           />
+          <p className="text-sm text-gray-500 mt-1">Maximum file size: 2GB. Supported formats: MP4, MOV, AVI, MKV</p>
         </div>
 
         <div className="flex space-x-2">

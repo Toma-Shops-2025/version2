@@ -225,7 +225,7 @@ const FreebiesForm = ({ onClose }: { onClose: () => void }) => {
             onChange={e => setVideo(e.target.files?.[0] || null)} 
             required
           />
-          <p className="text-sm text-gray-500 mt-1">A short video showing the item in detail</p>
+          <p className="text-sm text-gray-500 mt-1">Maximum file size: 2GB. Supported formats: MP4, MOV, AVI, MKV. A short video showing the item in detail</p>
         </div>
 
         <div className="flex space-x-2">
