@@ -131,17 +131,37 @@ const FreebiesForm = ({ onClose }: { onClose: () => void }) => {
             onChange={e => setCategory(e.target.value)} 
           >
             <option value="">Select Category</option>
-            <option value="Furniture">Furniture</option>
+            <option value="Vehicles">Vehicles</option>
             <option value="Electronics">Electronics</option>
-            <option value="Clothing">Clothing</option>
-            <option value="Books">Books</option>
-            <option value="Toys">Toys</option>
-            <option value="Kitchen Items">Kitchen Items</option>
-            <option value="Tools">Tools</option>
-            <option value="Sports Equipment">Sports Equipment</option>
-            <option value="Baby Items">Baby Items</option>
+            <option value="Furniture">Furniture</option>
+            <option value="Jewelry">Jewelry</option>
+            <option value="Collectibles & Art">Collectibles & Art</option>
             <option value="Pet Supplies">Pet Supplies</option>
-            <option value="Other">Other</option>
+            <option value="Health & Beauty">Health & Beauty</option>
+            <option value="Everything Else">Everything Else</option>
+            <option value="Sports & Outdoors">Sports & Outdoors</option>
+            <option value="Home & Garden">Home & Garden</option>
+            <option value="Toys & Games">Toys & Games</option>
+            <option value="Free Stuff">Free Stuff</option>
+            <option value="Musical Instruments">Musical Instruments</option>
+            <option value="Office Supplies">Office Supplies</option>
+            <option value="Hobbies">Hobbies</option>
+            <option value="Tools">Tools</option>
+            <option value="Tickets">Tickets</option>
+            <option value="Business Equipment">Business Equipment</option>
+            <option value="Sports Memorabilia">Sports Memorabilia</option>
+            <option value="Motorcycles/Mopeds">Motorcycles/Mopeds</option>
+            <option value="Baby Items/Accessories">Baby Items/Accessories</option>
+            <option value="Shoes">Shoes</option>
+            <option value="3D Printers/Accessories">3D Printers/Accessories</option>
+            <option value="Drones/Planes/Helicopters">Drones/Planes/Helicopters</option>
+            <option value="Cell Phones/Accessories">Cell Phones/Accessories</option>
+            <option value="Real Estate">Real Estate</option>
+            <option value="Auto Parts">Auto Parts</option>
+            <option value="Menswear">Menswear</option>
+            <option value="Womenswear">Womenswear</option>
+            <option value="Workout/Exercise Equipment">Workout/Exercise Equipment</option>
+            <option value="Kidswear">Kidswear</option>
           </select>
         </div>
 
@@ -177,12 +197,12 @@ const FreebiesForm = ({ onClose }: { onClose: () => void }) => {
         <div className="mb-4">
           <label className="block mb-1 text-black dark:text-white">Location *</label>
           <LocationPicker 
-            onLocationSelect={(loc, lat, lng) => {
-              setLocation(loc);
-              setLatitude(lat);
-              setLongitude(lng);
+            onChange={({ address, latitude, longitude }) => {
+              setLocation(address);
+              setLatitude(latitude);
+              setLongitude(longitude);
             }}
-            initialLocation={location}
+            address={location}
           />
         </div>
 
