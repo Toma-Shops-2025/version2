@@ -118,12 +118,11 @@ const EventsForm = ({ onClose }: { onClose: () => void }) => {
         </div>
 
         <div className="mb-4">
-          <label className="block mb-1 text-black dark:text-white">Event Type *</label>
+          <label className="block mb-1 text-black dark:text-white">Event Type</label>
           <select 
             className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" 
             value={eventType} 
             onChange={e => setEventType(e.target.value)} 
-            required
           >
             <option value="">Select Event Type</option>
             <option value="Music">Music</option>
@@ -142,34 +141,33 @@ const EventsForm = ({ onClose }: { onClose: () => void }) => {
 
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
-            <label className="block mb-1 text-black dark:text-white">Date *</label>
+            <label className="block mb-1 text-black dark:text-white">Date</label>
             <input 
               type="date" 
               className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" 
               value={date} 
               onChange={e => setDate(e.target.value)} 
-              required 
             />
           </div>
           <div>
-            <label className="block mb-1 text-black dark:text-white">Time *</label>
+            <label className="block mb-1 text-black dark:text-white">Time</label>
             <input 
               type="time" 
               className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" 
               value={time} 
               onChange={e => setTime(e.target.value)} 
-              required 
             />
           </div>
         </div>
 
         <div className="mb-4">
-          <label className="block mb-1 text-black dark:text-white">Price</label>
+          <label className="block mb-1 text-black dark:text-white">Price/Text *</label>
           <input 
             className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" 
             value={price} 
             onChange={e => setPrice(e.target.value)} 
             placeholder="e.g., $25, Free, $50-100"
+            required
           />
         </div>
 

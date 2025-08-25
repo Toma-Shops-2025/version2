@@ -119,20 +119,46 @@ const DigitalForm = ({ onClose }: { onClose: () => void }) => {
         <h2 className="text-2xl font-bold mb-4">Create Digital Product</h2>
         {error && <div className="mb-2 text-red-600">{error}</div>}
         <div className="mb-2">
-          <label className="block mb-1">Title</label>
+          <label className="block mb-1">Title *</label>
           <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={title} onChange={e => setTitle(e.target.value)} required />
         </div>
         <div className="mb-2">
-          <label className="block mb-1">Price</label>
-          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" type="text" value={price} onChange={e => setPrice(e.target.value)} required placeholder="e.g., $10, Free, $5.99" />
+          <label className="block mb-1">Price/Text *</label>
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={price} onChange={e => setPrice(e.target.value)} required />
         </div>
         <div className="mb-2">
-          <label className="block mb-1">Description</label>
+          <label className="block mb-1">Category</label>
+          <select className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={category} onChange={e => setCategory(e.target.value)}>
+            <option value="">Select Category</option>
+            <option value="Software">Software</option>
+            <option value="E-books">E-books</option>
+            <option value="Music">Music</option>
+            <option value="Videos">Videos</option>
+            <option value="Templates">Templates</option>
+            <option value="Graphics">Graphics</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div className="mb-2">
+          <label className="block mb-1">Description *</label>
           <textarea className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={description} onChange={e => setDescription(e.target.value)} required />
         </div>
         <div className="mb-2">
-          <label className="block mb-1">Digital File(s) * (Up to 10 files)</label>
-          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" type="file" multiple onChange={handleFileChange} required />
+          <label className="block mb-1">Location *</label>
+          <LocationPicker
+            onChange={({ latitude, longitude, address }) => {
+              setLatitude(latitude);
+              setLongitude(longitude);
+              setLocation(address);
+            }}
+          />
+          {location && (
+            <div className="text-xs text-gray-600 mt-1">Selected: {location}</div>
+          )}
+        </div>
+        <div className="mb-2">
+          <label className="block mb-1">Digital File(s) <span className='text-xs text-gray-400'>(optional)</span></label>
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" type="file" multiple onChange={handleFileChange} />
           <p className="text-sm text-gray-500 mt-1">Upload up to 10 digital files. Maximum 100MB per file. Supported formats: PDF, DOC, XLS, PPT, ZIP, RAR, EXE, etc.</p>
           {files.length > 0 && (
             <ul className="mt-2 text-xs text-gray-600 list-disc list-inside">

@@ -124,12 +124,11 @@ const FreebiesForm = ({ onClose }: { onClose: () => void }) => {
         </div>
 
         <div className="mb-4">
-          <label className="block mb-1 text-black dark:text-white">Category *</label>
+          <label className="block mb-1 text-black dark:text-white">Category</label>
           <select 
             className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" 
             value={category} 
             onChange={e => setCategory(e.target.value)} 
-            required
           >
             <option value="">Select Category</option>
             <option value="Furniture">Furniture</option>
@@ -147,12 +146,11 @@ const FreebiesForm = ({ onClose }: { onClose: () => void }) => {
         </div>
 
         <div className="mb-4">
-          <label className="block mb-1 text-black dark:text-white">Condition *</label>
+          <label className="block mb-1 text-black dark:text-white">Condition</label>
           <select 
             className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" 
             value={condition} 
             onChange={e => setCondition(e.target.value)} 
-            required
           >
             <option value="">Select Condition</option>
             <option value="New">New</option>

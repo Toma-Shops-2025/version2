@@ -158,6 +158,10 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
     setError(null);
     try {
       if (!user) throw new Error('You must be logged in to create a listing.');
+      if (!title.trim()) throw new Error('Title is required.');
+      if (!description.trim()) throw new Error('Description is required.');
+      if (!price.trim()) throw new Error('Price/Text is required.');
+      if (!locationName.trim()) throw new Error('Location is required.');
       if (!videoFile) throw new Error('A video is required for every listing.');
 
       // Pause music before upload
@@ -202,14 +206,14 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
         
       const { error: insertError } = await supabase.from('listings').insert({
         seller_id: user.id,
-        title,
-        price: price,
-        category,
-        description,
-        location: locationName,
+        title: title.trim(),
+        price: price.trim(),
+        category: category || null,
+        description: description.trim(),
+        location: locationName.trim(),
         latitude,
         longitude,
-        location_name: locationName,
+        location_name: locationName.trim(),
         video: videoUrl,
         images: imageUrls
       });
@@ -306,7 +310,7 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Price *</label>
+                <label className="block text-sm font-medium mb-2">Price/Text *</label>
                 <Input
                   type="text"
                   value={price}
@@ -317,7 +321,7 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Category *</label>
+                <label className="block text-sm font-medium mb-2">Category</label>
                 <Select value={category} onValueChange={setCategory}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a category" />
@@ -331,12 +335,13 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Description</label>
+                <label className="block text-sm font-medium mb-2">Description *</label>
                 <Textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Describe your item..."
                   rows={4}
+                  required
                 />
               </div>
             </CardContent>
@@ -345,7 +350,7 @@ const SellPage: React.FC<SellPageProps> = ({ onBack }) => {
           {/* Location Picker */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Location</CardTitle>
+              <CardTitle className="text-lg">Location *</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="mb-2">Search for your address and drop a pin:</div>

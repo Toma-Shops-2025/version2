@@ -113,31 +113,35 @@ const JobForm = ({ onClose }: { onClose: () => void }) => {
         <h2 className="text-2xl font-bold mb-4">Create Job Listing</h2>
         {error && <div className="mb-2 text-red-600">{error}</div>}
         <div className="mb-2">
-          <label className="block mb-1">Job Title</label>
+          <label className="block mb-1">Job Title *</label>
           <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={jobTitle} onChange={e => setJobTitle(e.target.value)} required />
         </div>
         <div className="mb-2">
-          <label className="block mb-1">Company Name</label>
-          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={companyName} onChange={e => setCompanyName(e.target.value)} required />
+          <label className="block mb-1">Company/Organization</label>
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={companyName} onChange={e => setCompanyName(e.target.value)} />
         </div>
         <div className="mb-2">
           <label className="block mb-1">Job Type</label>
-          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={jobType} onChange={e => setJobType(e.target.value)} placeholder="Full-time, Part-time, Contract, etc." />
+          <select className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={jobType} onChange={e => setJobType(e.target.value)}>
+            <option value="">Select Job Type</option>
+            <option value="Full-time">Full-time</option>
+            <option value="Part-time">Part-time</option>
+            <option value="Contract">Contract</option>
+            <option value="Temporary">Temporary</option>
+            <option value="Internship">Internship</option>
+            <option value="Freelance">Freelance</option>
+          </select>
         </div>
         <div className="mb-2">
-          <label className="block mb-1">Salary</label>
-          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={salary} onChange={e => setSalary(e.target.value)} placeholder="e.g., $50,000/year, $25/hour, Negotiable" />
+          <label className="block mb-1">Salary/Rate *</label>
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={salary} onChange={e => setSalary(e.target.value)} required placeholder="e.g., $50,000/year, $25/hour, Negotiable" />
         </div>
         <div className="mb-2">
-          <label className="block mb-1">Description</label>
-          <textarea className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={description} onChange={e => setDescription(e.target.value)} required />
-        </div>
-        <div className="mb-2">
-          <label className="block mb-1">Requirements</label>
-          <textarea className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={requirements} onChange={e => setRequirements(e.target.value)} />
+          <label className="block mb-1">Description *</label>
+          <textarea className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={description} onChange={e => setDescription(e.target.value)} required rows={4} />
         </div>
         <div className="mb-4">
-          <label className="block mb-1 font-semibold">Location</label>
+          <label className="block mb-1 font-semibold">Location *</label>
           <LocationPicker
             onChange={({ latitude, longitude, address }) => {
               setLatitude(latitude);

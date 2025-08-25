@@ -104,7 +104,7 @@ const ServicesForm = ({ onClose }: { onClose: () => void }) => {
         {error && <div className="mb-2 text-red-600">{error}</div>}
         
         <div className="mb-4">
-          <label className="block mb-1 text-black dark:text-white">Title</label>
+          <label className="block mb-1 text-black dark:text-white">Title *</label>
           <input 
             className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" 
             value={title} 
@@ -119,7 +119,6 @@ const ServicesForm = ({ onClose }: { onClose: () => void }) => {
             className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" 
             value={serviceType} 
             onChange={e => setServiceType(e.target.value)} 
-            required
           >
             <option value="">Select Service Type</option>
             <option value="Plumbing">Plumbing</option>
@@ -139,7 +138,7 @@ const ServicesForm = ({ onClose }: { onClose: () => void }) => {
         </div>
 
         <div className="mb-4">
-          <label className="block mb-1 text-black dark:text-white">Rate (per hour, per job, etc.)</label>
+          <label className="block mb-1 text-black dark:text-white">Rate (per hour, per job, etc.) *</label>
           <input 
             className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" 
             value={rate} 
@@ -174,7 +173,7 @@ const ServicesForm = ({ onClose }: { onClose: () => void }) => {
         </div>
 
         <div className="mb-4">
-          <label className="block mb-1 text-black dark:text-white">Description</label>
+          <label className="block mb-1 text-black dark:text-white">Description *</label>
           <textarea 
             className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" 
             value={description} 
@@ -185,7 +184,7 @@ const ServicesForm = ({ onClose }: { onClose: () => void }) => {
         </div>
 
         <div className="mb-4">
-          <label className="block mb-1 text-black dark:text-white">Location</label>
+          <label className="block mb-1 text-black dark:text-white">Location *</label>
           <LocationPicker 
             onLocationSelect={(loc, lat, lng) => {
               setLocation(loc);

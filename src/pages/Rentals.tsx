@@ -96,11 +96,11 @@ const RentalForm = ({ onClose }: { onClose: () => void }) => {
         <h2 className="text-2xl font-bold mb-4">Create Rental Listing</h2>
         {error && <div className="mb-2 text-red-600">{error}</div>}
         <div className="mb-2">
-          <label className="block mb-1">Title</label>
+          <label className="block mb-1">Title *</label>
           <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={title} onChange={e => setTitle(e.target.value)} required />
         </div>
         <div className="mb-2">
-          <label className="block mb-1">Rent</label>
+          <label className="block mb-1">Rent *</label>
           <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" type="text" value={rent} onChange={e => setRent(e.target.value)} required placeholder="e.g., $1200/month, Negotiable" />
         </div>
         <div className="mb-2">
@@ -108,11 +108,11 @@ const RentalForm = ({ onClose }: { onClose: () => void }) => {
           <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" type="number" value={deposit} onChange={e => setDeposit(e.target.value)} />
         </div>
         <div className="mb-2">
-          <label className="block mb-1">Description</label>
+          <label className="block mb-1">Description *</label>
           <textarea className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" value={description} onChange={e => setDescription(e.target.value)} required />
         </div>
         <div className="mb-4">
-          <label className="block mb-1 font-semibold">Location</label>
+          <label className="block mb-1 font-semibold">Location *</label>
           <LocationPicker
             onChange={({ latitude, longitude, address }) => {
               setLatitude(latitude);
@@ -159,12 +159,12 @@ const RentalForm = ({ onClose }: { onClose: () => void }) => {
           </label>
         </div>
         <div className="mb-2">
-          <label className="block mb-1">Images</label>
+          <label className="block mb-1">Images <span className='text-xs text-gray-400'>(optional)</span></label>
           <input className="w-full" type="file" multiple onChange={e => setImages(e.target.files)} />
         </div>
         <div className="mb-2">
-          <label className="block mb-1">Video *</label>
-          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" type="file" accept="video/*" onChange={e => setVideo(e.target.files?.[0] || null)} required />
+          <label className="block mb-1">Video <span className='text-xs text-gray-400'>(optional)</span></label>
+          <input className="w-full p-2 border rounded bg-white dark:bg-gray-800 text-black dark:text-white" type="file" accept="video/*" onChange={e => setVideo(e.target.files?.[0] || null)} />
           <p className="text-sm text-gray-500 mt-1">Maximum file size: 2GB. Supported formats: MP4, MOV, AVI, MKV</p>
         </div>
         <div className="flex justify-start gap-2 mt-4">
