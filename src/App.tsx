@@ -51,7 +51,6 @@ import React, { useEffect } from 'react';
 import './tomabot-widget.css';
 import { AudioProvider } from './hooks/use-audio-context.tsx';
 import MusicPlatformIntegration from './components/MusicPlatformIntegration';
-import PWAInstallPrompt from './components/PWAInstallPrompt';
 import PWAFirstOpenInstall from './components/PWAFirstOpenInstall';
 
 const queryClient = new QueryClient();
@@ -649,7 +648,6 @@ const App = () => {
                   <Route path="*" element={<NotFound />} />
                 </Routes>
                 <MusicPlatformIntegration />
-                <PWAInstallPrompt />
               </BrowserRouter>
             </TooltipProvider>
           </QueryClientProvider>

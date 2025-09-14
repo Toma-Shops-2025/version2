@@ -7,7 +7,7 @@ import MessagesPage from './MessagesPage';
 import Footer from './Footer';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase';
-import { MapPin, MessageCircle, Download, Smartphone, X } from 'lucide-react';
+import { MapPin, MessageCircle } from 'lucide-react';
 import Map from './Map';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { useAppContext } from '@/contexts/AppContext';
@@ -17,7 +17,6 @@ import UserNavBar from './UserNavBar';
 import BottomNavBar from './BottomNavBar';
 import { useUnreadMessagesCount } from '@/hooks/use-unread-messages-count';
 import { useUnreadNotificationsCount } from '@/hooks/use-unread-notifications-count';
-import PWAInstallGuide from './PWAInstallGuide';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -37,76 +36,12 @@ const HomePage: React.FC = () => {
   const [visibleCount, setVisibleCount] = useState(20);
   const unreadCount = useUnreadMessagesCount();
   const unreadNotificationsCount = useUnreadNotificationsCount();
-  const [showPWABanner, setShowPWABanner] = useState(false);
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
   // Scroll to top when HomePage mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  // PWA Installation Logic
-  useEffect(() => {
-    // Check if app is already installed
-    if (window.matchMedia('(display-mode: standalone)').matches || 
-        (window.navigator as any).standalone === true) {
-      return;
-    }
-
-    // Check if recently dismissed (within 24 hours)
-    const dismissedTime = localStorage.getItem('pwa-banner-dismissed');
-    if (dismissedTime && Date.now() - parseInt(dismissedTime) < 24 * 60 * 60 * 1000) {
-      return;
-    }
-
-    // Listen for beforeinstallprompt event
-    const handleBeforeInstallPrompt = (e: Event) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-      setShowPWABanner(true);
-    };
-
-    // Listen for appinstalled event
-    const handleAppInstalled = () => {
-      setShowPWABanner(false);
-      setDeferredPrompt(null);
-    };
-
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    window.addEventListener('appinstalled', handleAppInstalled);
-
-    // Show banner after a delay if no install prompt was triggered
-    const timer = setTimeout(() => {
-      if (!deferredPrompt) {
-        setShowPWABanner(true);
-      }
-    }, 3000); // Show after 3 seconds
-
-    return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-      window.removeEventListener('appinstalled', handleAppInstalled);
-      clearTimeout(timer);
-    };
-  }, [deferredPrompt]);
-
-  const handleInstallClick = async () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        setDeferredPrompt(null);
-        setShowPWABanner(false);
-      }
-    } else {
-      // Fallback for browsers that don't support beforeinstallprompt
-      alert('To install TomaShops:\n\n1. Tap the share button in your browser\n2. Select "Add to Home Screen"\n3. Tap "Add" to install');
-    }
-  };
-
-  const handleDismissBanner = () => {
-    setShowPWABanner(false);
-    localStorage.setItem('pwa-banner-dismissed', Date.now().toString());
-  };
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -260,39 +195,6 @@ const HomePage: React.FC = () => {
       <div className="sticky top-0 z-50">
         <Header />
         
-        {/* PWA Installation Banner */}
-        {showPWABanner && (
-          <div className="bg-gradient-to-r from-cyan-500 to-teal-500 text-white px-4 py-4 shadow-lg">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                  <Smartphone className="h-6 w-6" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg">Get the TomaShops App!</h3>
-                  <p className="text-sm opacity-90">Install for faster access and offline features</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Button 
-                  onClick={handleInstallClick}
-                  className="bg-white text-cyan-600 hover:bg-gray-100 font-semibold px-4 py-2"
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  Install
-                </Button>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={handleDismissBanner}
-                  className="text-white hover:bg-white hover:bg-opacity-20"
-                >
-                  <X className="h-5 w-5" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
         
         {/* Dark Banner Area - Also Sticky */}
         <div className="bg-gray-900 text-white px-4 py-3 shadow-lg">
@@ -300,7 +202,6 @@ const HomePage: React.FC = () => {
             <h1 className="text-2xl font-bold text-cyan-400">Marketplace</h1>
             <div className="flex items-center space-x-4">
               <Link to="/offers" className="text-cyan-400 hover:text-cyan-300">Offers</Link>
-              <PWAInstallGuide />
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -390,24 +291,6 @@ const HomePage: React.FC = () => {
       <Footer />
       <BottomNavBar />
 
-      {showPWABanner && (
-        <div className="fixed bottom-0 left-0 w-full bg-cyan-600 text-white p-4 shadow-lg z-50">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Smartphone className="h-6 w-6 mr-2" />
-              <span className="font-semibold">Install TomaShops for a better experience!</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button variant="ghost" size="sm" onClick={handleInstallClick} className="text-white hover:bg-cyan-700">
-                Install
-              </Button>
-              <Button variant="ghost" size="sm" onClick={handleDismissBanner} className="text-white hover:bg-cyan-700">
-                <X className="h-5 w-5" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
