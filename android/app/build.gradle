@@ -3,6 +3,16 @@ apply plugin: 'com.android.application'
 android {
     namespace "com.tomashops.videoapp"
     compileSdk rootProject.ext.compileSdkVersion
+    
+    signingConfigs {
+        release {
+            storeFile file('../../signing.keystore')
+            storePassword 'tmrbrnzMrcxy'
+            keyAlias 'my-key-alias'
+            keyPassword 'tmrbrnzMrcxy'
+        }
+    }
+    
     defaultConfig {
         applicationId "com.tomashops.videoapp"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -24,6 +34,7 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
             
             // Add crash reporting
             manifestPlaceholders = [
