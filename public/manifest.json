@@ -47,5 +47,12 @@
       "type": "image/png",
       "form_factor": "wide"
     }
+  ],
+  "dir": "ltr",
+  "display_override": [
+    "fullscreen",
+    "minimal-ui",
+    "standalone",
+    "window-controls-overlay"
   ]
 }
