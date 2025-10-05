@@ -9,7 +9,11 @@
   "orientation": "portrait-primary",
   "scope": "/",
   "lang": "en",
-  "categories": ["shopping", "marketplace", "business"],
+  "categories": [
+    "shopping",
+    "marketplace",
+    "business"
+  ],
   "icons": [
     {
       "src": "/logo-192.png",
@@ -32,4 +36,4 @@
       "form_factor": "wide"
     }
   ]
-} 
+}
