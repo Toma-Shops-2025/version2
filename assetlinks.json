@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.netlify.tomasahops_version2.twa",
+        "sha256_cert_fingerprints": ["B8:8D:B8:E0:2C:39:D5:C8:8D:7D:5C:22:B3:1C:5A:DA:12:0C:75:AD:8E:34:77:6D:7A:37:70:5D:AE:4E:7A:C9"]
+      }
+    }]
